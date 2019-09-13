@@ -1,3 +1,6 @@
+# sensbox-dashboard
+Sensbox UI for manage devices and visualize dashboards from Sensbox API.
+
 ## Installation
 
 * Install latest node.js: https://nodejs.org​
@@ -6,8 +9,3 @@
 * Run the app `yarn start`
 * For build production files use `yarn build` (build to /build/ folder)
 
-## Reference
-
-[https://facebook.github.io/create-react-app/](https://facebook.github.io/create-react-app/)
-# sensbox-dashboard
-Sensbox Dashboard 
