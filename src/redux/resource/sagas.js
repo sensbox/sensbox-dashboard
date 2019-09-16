@@ -47,17 +47,18 @@ export function* CREATE({ payload }) {
       payload: {
         current: resource,
         list: resourceCollection.map(i => i.objectId === resource.objectId ? resource : i),
+        formErrors: {},
       },
     })
     if (notify){
       notification.success({
-        message: "Perfecto!",
+        message: "Perfect!",
         description: "Resource created successfully!",
         duration: 1.5
       });
     }
   } catch (error) {
-    handleError(error, data);
+    yield call(handleError, error, data);
     notification.error({
       message: "Oops!",
       description: "Error trying to save the resource",
@@ -81,6 +82,7 @@ export function* UPDATE({ payload }) {
       type: 'resource/SET_STATE',
       payload: {
         saving: true,
+        current: {objectId, ...data },
       },
     })
     const resource = yield call(Api.update, className, objectId, data)
@@ -90,6 +92,7 @@ export function* UPDATE({ payload }) {
       payload: {
         current: resource,
         list: resourceCollection.map(i => i.objectId === resource.objectId ? resource : i),
+        formErrors: {},
       },
     })
     if (notify){
@@ -100,7 +103,7 @@ export function* UPDATE({ payload }) {
       });
     }
   } catch (error) {
-    handleError(error, data);
+    yield call(handleError, error, {objectId, ...data });
     notification.error({
       message: "Oops!",
       description: "Error trying to update the resource",
@@ -155,8 +158,7 @@ export function* GET_DATA({ payload }) {
 }
 
 function* handleError(error, data) {
-  console.log(error);
-  const { code, message: msg} = error;
+  const { code, message: msg } = error;
   switch (code) {
     case 209:
       yield put({

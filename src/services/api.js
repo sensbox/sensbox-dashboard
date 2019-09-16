@@ -90,6 +90,7 @@ async function create(className, data) {
  */
 async function update(className, objectId, data, fetchBeforeSync = false) {
     let object;
+    if (!objectId) throw new Error("Cannot update object without objectId");
     if (fetchBeforeSync) {
       const Class = Parse.Object.extend(className);
       const query = new Parse.Query(Class);
@@ -101,7 +102,10 @@ async function update(className, objectId, data, fetchBeforeSync = false) {
       });
     }
     object.set(data)
-    const result = await object.save();
+    const result = await object.save().catch( err => {
+      object.revert();
+      throw err;
+    });
     return result ? result.toJSON() : null ;
 }
 

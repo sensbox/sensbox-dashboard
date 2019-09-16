@@ -147,20 +147,12 @@ export async function getLeftMenuData() {
       url: '/devices',
       icon: 'fa fa-cube',
     },
-    // {
-    //   title: 'Centros',
-    //   key: 'centros',
-    //   url: '/centros',
-    //   icon: 'icmn icmn-library',
-    //   // children: [
-    //   //   {
-    //   //     title: 'Centros Edit',
-    //   //     key: 'centros-edit',
-    //   //     url: '/centros/edit',
-    //   //     icon: 'icmn icmn-library',
-    //   //   },
-    //   // ]
-    // },
+    {
+      title: 'Organizations',
+      key: 'organizations',
+      url: '/organizations',
+      icon: 'fa fa-building',
+    },
     // {
     //   title: 'Centros Edit',
     //   key: 'centros-edit',

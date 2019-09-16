@@ -258,7 +258,7 @@ const routes = [
   //   exact: true,
   // },
 
-  // Admin ABMS
+  // CRUDS
   {
     path: '/devices',
     component: loadable(() => import('pages/devices/list')),
@@ -271,6 +271,20 @@ const routes = [
   {
     path: '/devices/settings/:uuid',
     component: loadable(() => import('pages/devices/edit')),
+    exact: true,
+  },
+  {
+    path: '/organizations',
+    component: loadable(() => import('pages/organizations/list')),
+    exact: true,
+  }, {
+    path: '/organizations/new',
+    component: loadable(() => import('pages/organizations/new')),
+    exact: true,
+  },
+  {
+    path: '/organizations/edit',
+    component: loadable(() => import('pages/organizations/edit')),
     exact: true,
   },
   // {
