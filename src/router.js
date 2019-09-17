@@ -281,13 +281,23 @@ const routes = [
     path: '/organizations/new',
     component: loadable(() => import('pages/organizations/new')),
     exact: true,
-  },
-  {
+  }, {
     path: '/organizations/edit',
     component: loadable(() => import('pages/organizations/edit')),
     exact: true,
+  }, {
+    path: '/organizations/:organizationId/zones',
+    component: loadable(() => import('pages/zones/list')),
+    exact: true,
+  }, {
+    path: '/organizations/:organizationId/zones/new',
+    component: loadable(() => import('pages/zones/new')),
+    exact: true,
+  }, {
+    path: '/organizations/:organizationId/zones/edit',
+    component: loadable(() => import('pages/zones/edit')),
+    exact: true,
   },
-  // {
 ]
 
 class Router extends React.Component {

@@ -1,0 +1,8 @@
+@import 'assets/styles/mixins.scss';
+
+.editor {
+  min-height: 200px;
+  padding: 1rem;
+  border-radius: 5px;
+  border: 1px solid $gray-border;
+}
