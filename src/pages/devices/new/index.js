@@ -27,7 +27,7 @@ class DeviceNew extends React.Component {
       const { history } = this.props;
       history.push({
         pathname: '/devices/edit',
-        state: { centro: current }
+        state: { device: current }
       });
     }
   }

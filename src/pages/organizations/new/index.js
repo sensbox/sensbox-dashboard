@@ -14,6 +14,10 @@ const mapStateToProps = ({ resource }) => ({
 
 @connect(mapStateToProps)
 class OrganizationNew extends React.Component {
+  state = {
+    backLink: '/organizations',
+    editLink: '/organizations/edit',
+  }
 
   constructor(props) {
     super(props);
@@ -22,11 +26,12 @@ class OrganizationNew extends React.Component {
 
   componentDidUpdate() {
     const { current } = this.props;
+    const { editLink } = this.state;
     console.log("CURRENT", current);
     if( current && current.objectId ){
       const { history } = this.props;
       history.push({
-        pathname: '/organizations/edit',
+        pathname: editLink,
         state: { organization: current }
       });
     }
@@ -48,11 +53,11 @@ class OrganizationNew extends React.Component {
 
   render() {
     const { saving, current, formErrors, history} = this.props
-    
+    const { backLink } = this.state;
     return (
       <div>
         <Helmet title="New Organization" />
-        <PageHeader className="mb-2" onBack={() => history.goBack()} title="New Organization" />
+        <PageHeader className="mb-2" onBack={() => history.replace({ pathname: backLink })} title="New Organization" />
         <div className="card">
           <div className="card-body">
             <div className="row">
@@ -62,6 +67,7 @@ class OrganizationNew extends React.Component {
                   disableSaveButton={saving}
                   saveAction={this.saveAction}
                   errors={formErrors}
+                  backLink={backLink}
                 />
               </div>
             </div>

@@ -20,6 +20,9 @@ const mapStateToProps = ({ resource }) => ({
 
 @connect(mapStateToProps)
 class OrganizationEdit extends React.Component {
+  state = {
+    backLink: '/organizations',
+  }
 
   constructor(props) {
     super(props);
@@ -52,7 +55,7 @@ class OrganizationEdit extends React.Component {
 
   render() {
     const { saving, objectNotFound, location, history, current, formErrors } = this.props
-    // console.log(history);
+    const { backLink } = this.state;
     const metadata = {
       createdBy: current.createdBy,
       updatedBy: current.updatedBy,
@@ -61,12 +64,12 @@ class OrganizationEdit extends React.Component {
     }
 
     if (!location.state || objectNotFound) {
-      return <Redirect to="/organizations" />
+      return <Redirect to={backLink} />
     }
     return (
       <div>
         <Helmet title="Organization Edit" />
-        <PageHeader className="mb-2" onBack={() => history.goBack()} title="Organization Edit" subTitle={current.name} />
+        <PageHeader className="mb-2" onBack={() => history.replace({ pathname: backLink })} title="Organization Edit" subTitle={current.name} />
         <div className="card">
           <div className="card-body">
             <div className="row">
@@ -77,6 +80,7 @@ class OrganizationEdit extends React.Component {
                     disableSaveButton={saving}
                     saveAction={this.saveAction}
                     errors={formErrors}
+                    backLink={backLink}
                   />
                 }
               </div>

@@ -64,6 +64,14 @@ class Organizations extends React.Component {
     // console.log(row, this.props);
   }
 
+  onManageZones = (row) => {
+    const { history } = this.props;
+    history.push({
+      pathname: `/organizations/${row.objectId}/zones`,
+      state: { organization: row }
+    });
+  }
+
   updateActive(objectId, active) {
     const { dispatch } = this.props;
     dispatch({
@@ -153,7 +161,7 @@ class Organizations extends React.Component {
               <Button shape="circle" type="primary" icon="edit" className="mr-1" onClick={() => this.onEdit(row)} />
             </Tooltip>
             <Tooltip title="Manage Zones">
-              <Button shape="circle" icon="apartment" onClick={() => this.onEdit(row)} />
+              <Button shape="circle" icon="apartment" onClick={() => this.onManageZones(row)} />
             </Tooltip>
             <Tooltip title="Remove Organization">
               <Button shape="circle" type="danger" icon="delete" onClick={() => this.onRemove(row)} />

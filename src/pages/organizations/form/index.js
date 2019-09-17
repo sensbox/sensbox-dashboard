@@ -40,6 +40,7 @@ class OrganizationForm extends React.Component {
   render() {
     const {
       form,
+      backLink,
       disableSaveButton,
     } = this.props
     
@@ -79,7 +80,7 @@ class OrganizationForm extends React.Component {
         </div>
         <div className="col-lg-12">
           <div className="form-actions">
-            <Link to="/organizations">
+            <Link to={backLink}>
               <Button className="mr-2" icon="arrow-left" type="default">Return Back</Button>
             </Link>
             <Button className="float-right" icon="save" disabled={disableSaveButton} type="primary" onClick={this.save}>
@@ -93,7 +94,7 @@ class OrganizationForm extends React.Component {
 }
 
 OrganizationForm.defaultProps = {
-  centro: {},
+  organization: {},
   errors: {},
   saveAction: (formData) => console.log(formData)
 };
