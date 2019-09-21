@@ -11,10 +11,11 @@ import DeviceForm  from "../form";
 import style from './style.module.scss'
 
 
-const mapStateToProps = ({ resource }) => ({
+const mapStateToProps = ({ resource, sensor }) => ({
   current: resource.current,
   saving: resource.saving,
-  objectNotFound: resource.objectNotFound
+  objectNotFound: resource.objectNotFound,
+  currentSensor: sensor.current,
 })
 
 @connect(mapStateToProps)
@@ -28,7 +29,7 @@ class DeviceSettings extends React.Component {
         type: 'resource/GET_CURRENT',
         payload: {
           className: 'Device',
-          objectId: location.state.device.objectId
+          objectId: location.state.device.objectId,
         }
       });
     }
@@ -37,7 +38,8 @@ class DeviceSettings extends React.Component {
 
   saveAction(formData) {
     const { current, dispatch } = this.props;
-    console.log("GUARDANDO", formData);
+
+    console.log("GUARDANDO", { ...formData });
     dispatch({
       type: 'resource/UPDATE',
       payload: {
@@ -67,12 +69,6 @@ class DeviceSettings extends React.Component {
         <Helmet title="Device Settings" />
         <PageHeader className="mb-2" onBack={() => history.goBack()} title="Device Settings" subTitle={current.nombre} />
         <div className="card">
-          {/* <div className="card-header">
-            {/* 
-            <div className="utils__title">
-              <strong>Editar Centro</strong>
-            </div> 
-          </div> */}
           <div className="card-body">
             <div className="row">
               <div className="col-lg-8">

@@ -10,7 +10,7 @@ const initialState = {
   saving: false,
 }
 
-export default function resourceReducer(state = initialState, action) {
+export default function sensorReducer(state = initialState, action) {
   switch (action.type) {
     case actions.SET_STATE:
       return { ...state, ...action.payload }

@@ -1,61 +1,53 @@
-import { all, put, call, takeEvery, select } from 'redux-saga/effects'
+import { all, put, call, takeEvery } from 'redux-saga/effects'
 import { notification, message } from 'antd'
-import Api from 'services/api'
+import Sensor from 'services/sensor'
 import actions from './actions'
-
-const getList = ({ resource }) => resource.list;
 
 export function* GET_CURRENT({ payload }) {
   try {
-    const { objectId, className } = payload;
+    const { objectId, callback } = payload;
     delete payload.objectId;
-    delete payload.className;
-    const current = yield call(Api.findById, className, objectId, payload);
+    const current = yield call(Sensor.findById, objectId, payload);
     yield put({
-      type: 'resource/SET_STATE',
+      type: 'sensor/SET_STATE',
       payload: {
         current: current || {},
         objectNotFound: false
       },
     })
+    if (callback) yield call(callback);
   } catch (error) {
-    if (error.code === 101) {
-      yield put({
-        type: 'resource/SET_STATE',
-        payload: {
-          current: {},
-          objectNotFound: true
-        },
-      })
-    }
+    yield call(handleError, error);
   }
 }
 
 export function* CREATE({ payload }) {
   const savingMessage = message.loading('Saving...', 0);
-  const { className, data, notify} = payload;
+  const { data, successCallback, notify} = payload;
 
   try {
     yield put({
-      type: 'resource/SET_STATE',
+      type: 'sensor/SET_STATE',
       payload: {
         saving: true,
       },
     })
-    const resource = yield call(Api.create, className, data);
-    const resourceCollection = yield select(getList);
+    const resource = yield call(Sensor.create, data);
+    yield put({ type: 'sensor/CLEAR' })
     yield put({
-      type: 'resource/SET_STATE',
+      type: 'resource/GET_CURRENT',
       payload: {
-        current: resource,
-        list: resourceCollection.map(i => i.objectId === resource.objectId ? resource : i),
-        formErrors: {},
+        className: 'Device',
+        objectId: resource.device.objectId,
       },
     })
+
+    yield call(successCallback);
+
     if (notify){
       notification.success({
         message: "Perfect!",
-        description: "Resource created successfully!",
+        description: "Sensor added successfully!",
         duration: 1.5
       });
     }
@@ -63,12 +55,12 @@ export function* CREATE({ payload }) {
     yield call(handleError, error, data);
     notification.error({
       message: "Oops!",
-      description: "Error trying to save the resource",
+      description: "Error trying to add the sensor",
     });
   }
   setTimeout(savingMessage, 0);
   yield put({
-    type: 'resource/SET_STATE',
+    type: 'sensor/SET_STATE',
     payload: {
       saving: false,
     },
@@ -77,26 +69,26 @@ export function* CREATE({ payload }) {
 
 export function* UPDATE({ payload }) {
   const savingMessage = message.loading('Updating...', 0);
-  const { className, objectId, data, notify = false} = payload;
+  const { objectId, data, successCallback, notify = false} = payload;
 
   try {
     yield put({
-      type: 'resource/SET_STATE',
+      type: 'sensor/SET_STATE',
       payload: {
         saving: true,
         current: {objectId, ...data },
       },
     })
-    const resource = yield call(Api.update, className, objectId, data)
-    const resourceCollection = yield select(getList);
+    const resource = yield call(Sensor.update, objectId, data)
+    yield put({ type: 'sensor/CLEAR' })
     yield put({
-      type: 'resource/SET_STATE',
+      type: 'resource/GET_CURRENT',
       payload: {
-        current: resource,
-        list: resourceCollection.map(i => i.objectId === resource.objectId ? resource : i),
-        formErrors: {},
+        className: 'Device',
+        objectId: resource.device.objectId,
       },
     })
+    yield call(successCallback);
     if (notify){
       notification.success({
         message: "Perfect!",
@@ -113,7 +105,7 @@ export function* UPDATE({ payload }) {
   }
   setTimeout(savingMessage, 0);
   yield put({
-    type: 'resource/SET_STATE',
+    type: 'sensor/SET_STATE',
     payload: {
       saving: false,
     },
@@ -122,7 +114,7 @@ export function* UPDATE({ payload }) {
 
 export function* GET_DATA({ payload }) {
   yield put({
-    type: 'resource/SET_STATE',
+    type: 'sensor/SET_STATE',
     payload: {
       loading: true,
       current: {},
@@ -131,12 +123,10 @@ export function* GET_DATA({ payload }) {
     },
   })
   
-  const { className } = payload;
-  delete payload.className;
   try {
-    const { results, total } = yield call(Api.find, className, payload)
+    const { results, total } = yield call(Sensor.find, payload)
     yield put({
-      type: 'resource/SET_STATE',
+      type: 'sensor/SET_STATE',
       payload: {
         list: results,
         total,
@@ -152,7 +142,7 @@ export function* GET_DATA({ payload }) {
   }
 
   yield put({
-    type: 'resource/SET_STATE',
+    type: 'sensor/SET_STATE',
     payload: {
       loading: false,
     },
@@ -170,7 +160,7 @@ function* handleError(error, data) {
       return;
     case 400:
       yield put({
-        type: 'resource/SET_STATE',
+        type: 'sensor/SET_STATE',
         payload: {
           current: data,
           formErrors: JSON.parse(msg),
@@ -182,12 +172,26 @@ function* handleError(error, data) {
       break;
   }
 }
-
+export function* CLEAR() {
+  yield put({
+    type: 'sensor/SET_STATE',
+    payload: {
+      list: [],
+      formErrors: {},
+      current: {},
+      objectNotFound: false,
+      total: 0,
+      loading: false,
+      saving: false,
+    },
+  })
+}
 export default function* rootSaga() {
   yield all([
     takeEvery(actions.GET_DATA, GET_DATA),
     takeEvery(actions.GET_CURRENT, GET_CURRENT),
     takeEvery(actions.UPDATE, UPDATE),
     takeEvery(actions.CREATE, CREATE),
+    takeEvery(actions.CLEAR, CLEAR),
   ])
 }
