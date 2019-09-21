@@ -59,6 +59,10 @@ class Devices extends React.Component {
     });
   }
 
+   // eslint-disable-next-line no-unused-vars
+  onConsole = (row) => {
+  }
+
   // eslint-disable-next-line no-unused-vars
   onRemove = (row) => { 
     // console.log(row, this.props);
@@ -152,6 +156,9 @@ class Devices extends React.Component {
           <>
             <Tooltip title="Device Settings">
               <Button shape="circle" icon="setting" className="mr-1" onClick={() => this.onEdit(row)} />
+            </Tooltip>
+            <Tooltip title="Device Console">
+              <Button shape="circle" icon="desktop" className="mr-1" onClick={() => this.onConsole(row)} />
             </Tooltip>
             <Tooltip title="Remove Device">
               <Button shape="circle" type="danger" icon="delete" onClick={() => this.onRemove(row)} />

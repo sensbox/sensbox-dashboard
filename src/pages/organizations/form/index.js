@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, Button, Form, Switch, message } from 'antd'
+import { Input, Button, Form, Checkbox, message } from 'antd'
 import { Link } from "react-router-dom";
 
 const FormItem = Form.Item;
@@ -71,8 +71,8 @@ class OrganizationForm extends React.Component {
             </div>
             <div className="col-lg-6">
               <div className="form-group">
-                <FormItem label="Active">
-                  {form.getFieldDecorator('active', { valuePropName: 'checked' })(<Switch />)}
+                <FormItem>
+                  {form.getFieldDecorator('active', { valuePropName: 'checked' })(<Checkbox>Active</Checkbox>)}
                 </FormItem>
               </div>
             </div>
