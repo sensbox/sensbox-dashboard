@@ -22,9 +22,14 @@ async function update(objectId, updatedCentro) {
   return result;
 }
 
+async function remove(objectId) {
+  await Api.remove(RESOURCE_CLASS_NAME, objectId);
+}
+
 export default {
   find,
   findById,
   create,
   update,
+  remove,
 }

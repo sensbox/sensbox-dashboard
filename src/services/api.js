@@ -109,6 +109,12 @@ async function update(className, objectId, data, fetchBeforeSync = false) {
     return result ? result.toJSON() : null ;
 }
 
+async function remove(className, objectId) {
+  const Class = Parse.Object.extend(className);
+  const object = Class.createWithoutData(objectId);
+  await object.destroy();
+}
+
 function createPointer(className, objectId) {
   const Class = Parse.Object.extend(className);
   const pointer = new Class();
@@ -121,5 +127,6 @@ export default {
   findById,
   create,
   update,
+  remove,
   createPointer
 }

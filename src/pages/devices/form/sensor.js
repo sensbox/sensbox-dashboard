@@ -42,11 +42,12 @@ const mapStateToProps = ({ sensor }) => ({
 @Form.create({ mapPropsToFields })
 class SensorForm extends React.Component {
   render() {
-    const { visible, onCancel, onConfirm, form, sensor } = this.props;
+    const { saving, visible, onCancel, onConfirm, form, sensor } = this.props;
     const { getFieldDecorator } = form;
     return (
       <Modal
         visible={visible}
+        okButtonProps={{loading: saving}}
         title={sensor.objectId ? 'Edit Sensor' : 'Add Sensor'}
         okText={sensor.objectId ? 'Edit' : 'Create'}
         onCancel={onCancel}

@@ -4,6 +4,7 @@ const actions = {
   GET_CURRENT: 'sensor/GET_CURRENT',
   UPDATE: 'sensor/UPDATE',
   CREATE: 'sensor/CREATE',
+  REMOVE: 'sensor/REMOVE',
   CLEAR: 'sensor/CLEAR',
 }
 

@@ -33,6 +33,7 @@ export function* CREATE({ payload }) {
       },
     })
     const resource = yield call(Sensor.create, data);
+    yield call(successCallback);
     yield put({ type: 'sensor/CLEAR' })
     yield put({
       type: 'resource/GET_CURRENT',
@@ -42,11 +43,10 @@ export function* CREATE({ payload }) {
       },
     })
 
-    yield call(successCallback);
 
     if (notify){
       notification.success({
-        message: "Perfect!",
+        message: "Success!",
         description: "Sensor added successfully!",
         duration: 1.5
       });
@@ -80,6 +80,7 @@ export function* UPDATE({ payload }) {
       },
     })
     const resource = yield call(Sensor.update, objectId, data)
+    yield call(successCallback);
     yield put({ type: 'sensor/CLEAR' })
     yield put({
       type: 'resource/GET_CURRENT',
@@ -88,10 +89,9 @@ export function* UPDATE({ payload }) {
         objectId: resource.device.objectId,
       },
     })
-    yield call(successCallback);
     if (notify){
       notification.success({
-        message: "Perfect!",
+        message: "Success!",
         description: "Resource updated successfully",
         duration: 1.5
       });
@@ -149,6 +149,31 @@ export function* GET_DATA({ payload }) {
   })
 }
 
+export function* REMOVE({ payload }) {
+  try {
+    const { objectId, device, callback } = payload;
+    yield call(Sensor.remove, objectId);
+    if (callback) yield call(callback);
+    yield put({ type: 'sensor/CLEAR' });
+    if (device) {
+      yield put({
+        type: 'resource/GET_CURRENT',
+        payload: {
+          className: 'Device',
+          objectId: device.objectId,
+        },
+      })
+    }
+    notification.success({
+      message: "Success!",
+      description: "Sensor deleted successfully",
+      duration: 1.5
+    });
+  } catch (error) {
+    yield call(handleError, error);
+  }
+}
+
 function* handleError(error, data) {
   const { code, message: msg } = error;
   switch (code) {
@@ -172,6 +197,7 @@ function* handleError(error, data) {
       break;
   }
 }
+
 export function* CLEAR() {
   yield put({
     type: 'sensor/SET_STATE',
@@ -186,6 +212,7 @@ export function* CLEAR() {
     },
   })
 }
+
 export default function* rootSaga() {
   yield all([
     takeEvery(actions.GET_DATA, GET_DATA),
@@ -193,5 +220,6 @@ export default function* rootSaga() {
     takeEvery(actions.UPDATE, UPDATE),
     takeEvery(actions.CREATE, CREATE),
     takeEvery(actions.CLEAR, CLEAR),
+    takeEvery(actions.REMOVE, REMOVE),
   ])
 }

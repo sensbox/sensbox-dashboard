@@ -1,14 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { Tooltip, Table, Input, Button, Form, Checkbox, message, Descriptions } from 'antd'
+import { Tooltip, Table, Input, Button, Form, Checkbox, message, Descriptions, Modal } from 'antd'
 import { Link } from "react-router-dom";
 import SensorForm from './sensor';
 import api from '../../../services/api';
 
+const { confirm } = Modal;
 const FormItem = Form.Item;
-// const { Option } = Select;
-// const { TextArea } = Input;
 
 const getFormField = (value, errors) => Form.createFormField({ value, errors: errors && errors.map(e => new Error(e)) });
 
@@ -82,6 +81,30 @@ class DeviceForm extends React.Component {
     });
   }
 
+  removeSensor = (sensor) => {
+    const { dispatch, device } = this.props;
+    console.log(sensor.objectId);
+    confirm({
+      title: 'Are you sure delete this sensor?',
+      content: 'All associated data such as dashboard graphs that contains it will be deleted too',
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk() {
+        dispatch({
+          type: 'sensor/REMOVE',
+          payload: {
+            objectId: sensor.objectId,
+            device,
+          }
+        });
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  }
+
   saveFormRef = formRef => {
     this.formRef = formRef;
   };
@@ -120,28 +143,31 @@ class DeviceForm extends React.Component {
         title: 'Technical Specifications',
         key: 'techSpecs',
         sorter: false,
-        render: (row) => (
-          <Descriptions
-            size="small"
-            bordered
-            column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
-          >
-            <Descriptions.Item label={row.inputType}>
-              From: {`${row.inputMin}`}
-              <br />
-              To: {`${row.inputMax}`}
-              <br />
-              Unit: {`${row.inputUnit}`}
-            </Descriptions.Item>
-            <Descriptions.Item label={row.outputType} span={2}>
-              From: {`${row.outputMin}`}
-              <br />
-              To: {`${row.outputMax}`}
-              <br />
-              Unit: {`${row.outputUnit}`}
-            </Descriptions.Item>
-          </Descriptions>
-        )
+        render: (row) => {
+          const { inputType='-', inputMin='-', inputMax='-', inputUnit='-', outputType='-', outputMin='-', outputMax='-', outputUnit='-' } = row;
+          return (
+            <Descriptions
+              size="small"
+              bordered
+              column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
+            >
+              <Descriptions.Item label={inputType}>
+                From: {`${inputMin}`}
+                <br />
+                To: {`${inputMax}`}
+                <br />
+                Unit: {`${inputUnit}`}
+              </Descriptions.Item>
+              <Descriptions.Item label={outputType} span={2}>
+                From: {`${outputMin}`}
+                <br />
+                To: {`${outputMax}`}
+                <br />
+                Unit: {`${outputUnit}`}
+              </Descriptions.Item>
+            </Descriptions>
+          );
+        }
       }, {
         key: 'action',
         render: (row) => (
@@ -150,7 +176,7 @@ class DeviceForm extends React.Component {
               <Button shape="circle" type="primary" icon="edit" className="mr-1" onClick={() => this.editSensor(row)} />
             </Tooltip>
             <Tooltip title="Remove Sensor">
-              <Button shape="circle" type="danger" icon="delete" onClick={() => this.onRemove(row)} />
+              <Button shape="circle" type="danger" icon="delete" onClick={() => this.removeSensor(row)} />
             </Tooltip>
           </>
         ),
