@@ -26,7 +26,7 @@ class DeviceNew extends React.Component {
     if( current && current.objectId ){
       const { history } = this.props;
       history.push({
-        pathname: '/devices/edit',
+        pathname: `/devices/settings/${current.uuid}`,
         state: { device: current }
       });
     }

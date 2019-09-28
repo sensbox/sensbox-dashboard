@@ -151,14 +151,18 @@ class DeviceForm extends React.Component {
               bordered
               column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
             >
-              <Descriptions.Item label={inputType}>
+              <Descriptions.Item label="Input">
+                Type: {`${inputType}`}
+                <br />
                 From: {`${inputMin}`}
                 <br />
                 To: {`${inputMax}`}
                 <br />
                 Unit: {`${inputUnit}`}
               </Descriptions.Item>
-              <Descriptions.Item label={outputType} span={2}>
+              <Descriptions.Item label="Output" span={2}>
+                Type: {`${outputType}`}
+                <br />
                 From: {`${outputMin}`}
                 <br />
                 To: {`${outputMax}`}
