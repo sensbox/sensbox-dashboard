@@ -76,7 +76,8 @@ class Devices extends React.Component {
         className: 'Device',
         objectId,
         data: { active },
-        notify: true
+        notify: true,
+        clearCurrent: true,
       }
     });
   }

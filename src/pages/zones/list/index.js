@@ -99,7 +99,8 @@ class Zones extends React.Component {
         className: 'Zone',
         objectId,
         data: { active },
-        notify: true
+        notify: true,
+        clearCurrent: true,
       }
     });
   }

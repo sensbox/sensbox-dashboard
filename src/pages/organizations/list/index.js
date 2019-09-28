@@ -80,7 +80,8 @@ class Organizations extends React.Component {
         className: 'Organization',
         objectId,
         data: { active },
-        notify: true
+        notify: true,
+        clearCurrent: true,
       }
     });
   }

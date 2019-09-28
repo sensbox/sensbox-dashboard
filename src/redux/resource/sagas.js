@@ -77,7 +77,7 @@ export function* CREATE({ payload }) {
 
 export function* UPDATE({ payload }) {
   const savingMessage = message.loading('Updating...', 0);
-  const { className, objectId, data, notify = false} = payload;
+  const { className, objectId, data, notify = false, clearCurrent = false} = payload;
 
   try {
     yield put({
@@ -92,7 +92,7 @@ export function* UPDATE({ payload }) {
     yield put({
       type: 'resource/SET_STATE',
       payload: {
-        current: resource,
+        current: !clearCurrent ? resource : {},
         list: resourceCollection.map(i => i.objectId === resource.objectId ? resource : i),
         formErrors: {},
       },
