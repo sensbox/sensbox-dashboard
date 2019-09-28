@@ -153,6 +153,12 @@ export async function getLeftMenuData() {
       url: '/organizations',
       icon: 'fa fa-building',
     },
+    {
+      title: 'Accounts',
+      key: 'accounts',
+      url: '/accounts',
+      icon: 'fa fa-user',
+    },
     // {
     //   title: 'Centros Edit',
     //   key: 'centros-edit',

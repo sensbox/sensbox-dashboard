@@ -285,7 +285,7 @@ const routes = [
     path: '/organizations/edit',
     component: loadable(() => import('pages/organizations/edit')),
     exact: true,
-  }, {
+  },{
     path: '/organizations/:organizationId/zones',
     component: loadable(() => import('pages/zones/list')),
     exact: true,
@@ -293,9 +293,21 @@ const routes = [
     path: '/organizations/:organizationId/zones/new',
     component: loadable(() => import('pages/zones/new')),
     exact: true,
-  }, {
+  },{
     path: '/organizations/:organizationId/zones/edit',
     component: loadable(() => import('pages/zones/edit')),
+    exact: true,
+  },  {
+    path: '/accounts',
+    component: loadable(() => import('pages/accounts/list')),
+    exact: true,
+  }, {
+    path: '/accounts/new',
+    component: loadable(() => import('pages/accounts/new')),
+    exact: true,
+  }, {
+    path: '/accounts/edit',
+    component: loadable(() => import('pages/accounts/edit')),
     exact: true,
   },
 ]
