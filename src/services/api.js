@@ -112,7 +112,8 @@ async function update(className, objectId, data, fetchBeforeSync = false) {
 async function remove(className, objectId) {
   const Class = Parse.Object.extend(className);
   const object = Class.createWithoutData(objectId);
-  await object.destroy();
+  const removed = await object.destroy();
+  return removed.toJSON();
 }
 
 function createPointer(className, objectId) {

@@ -159,6 +159,50 @@ export function* GET_DATA({ payload }) {
   })
 }
 
+export function* REMOVE({ payload }) {
+  const savingMessage = message.loading('Removing...', 0);
+  const { className, objectId, notify = false} = payload;
+
+  try {
+    yield put({
+      type: 'resource/SET_STATE',
+      payload: {
+        saving: true,
+      },
+    })
+    const resource = yield call(Api.remove, className, objectId)
+    const resourceCollection = yield select(getList);
+    yield put({
+      type: 'resource/SET_STATE',
+      payload: {
+        current: {},
+        list: resourceCollection.filter(i => i.objectId !== resource.objectId),
+        formErrors: {},
+      },
+    })
+    if (notify){
+      notification.success({
+        message: "Perfect!",
+        description: "Resource removed successfully",
+        duration: 1.5
+      });
+    }
+  } catch (error) {
+    yield call(handleError, error, {});
+    notification.error({
+      message: "Oops!",
+      description: "Error trying to remove the resource",
+    });
+  }
+  setTimeout(savingMessage, 0);
+  yield put({
+    type: 'resource/SET_STATE',
+    payload: {
+      saving: false,
+    },
+  })
+}
+
 function* handleError(error, data) {
   const { code, message: msg } = error;
   switch (code) {
@@ -189,5 +233,6 @@ export default function* rootSaga() {
     takeEvery(actions.GET_CURRENT, GET_CURRENT),
     takeEvery(actions.UPDATE, UPDATE),
     takeEvery(actions.CREATE, CREATE),
+    takeEvery(actions.REMOVE, REMOVE),
   ])
 }

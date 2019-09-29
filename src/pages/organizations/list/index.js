@@ -1,9 +1,10 @@
 import React from 'react'
-import { Tooltip, Row, Switch, Col, Table, Button, Input} from 'antd'
+import { Tooltip, Row, Switch, Col, Table, Button, Input, Modal } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import CustomDate from '../../../components/Custom/Date';
 
+const { confirm } = Modal;
 
 const mapStateToProps = ({ resource }) => ({
   list: resource.list,
@@ -59,9 +60,23 @@ class Organizations extends React.Component {
     });
   }
 
-  // eslint-disable-next-line no-unused-vars
-  onRemove = (row) => { 
-    // console.log(row, this.props);
+  onRemove = (row) => {
+    const { dispatch } = this.props;
+    confirm({
+      title: 'Do you Want to delete the organization?',
+      content: 'If you delete this organization, all zones and object\'s related will be deleted.',
+      okType: 'danger',
+      onOk() {
+        dispatch({
+          type: 'resource/REMOVE',
+          payload: {
+            className: 'Organization',
+            objectId: row.objectId,
+            notify: true,
+          }
+        });
+      }
+    });
   }
 
   onManageZones = (row) => {

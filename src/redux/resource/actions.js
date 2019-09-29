@@ -4,6 +4,7 @@ const actions = {
   GET_CURRENT: 'resource/GET_CURRENT',
   UPDATE: 'resource/UPDATE',
   CREATE: 'resource/CREATE',
+  REMOVE: 'resource/REMOVE',
 }
 
 export default actions

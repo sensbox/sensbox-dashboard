@@ -59,17 +59,22 @@ class Account extends React.Component {
     });
   }
 
-  // eslint-disable-next-line no-unused-vars
   onRemove = (row) => {
+    const { dispatch } = this.props;
     confirm({
       title: 'Do you Want to delete the account?',
       content: 'If you delete this account, all of the object\'s associated will be deleted.',
+      okType: 'danger',
       onOk() {
-        console.log('OK');
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
+        dispatch({
+          type: 'resource/REMOVE',
+          payload: {
+            className: 'Account',
+            objectId: row.objectId,
+            notify: true,
+          }
+        });
+      }
     });
   }
 

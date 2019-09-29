@@ -1,11 +1,12 @@
 import React from 'react'
-import { PageHeader, Tooltip, Row, Switch, Col, Table, Button, Input} from 'antd'
+import { PageHeader, Tooltip, Row, Switch, Col, Table, Button, Input, Modal} from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import { Redirect } from "react-router-dom";
 import CustomDate from '../../../components/Custom/Date';
 import api from '../../../services/api';
 
+const { confirm } = Modal;
 
 const mapStateToProps = ({ resource }) => ({
   list: resource.list,
@@ -77,9 +78,23 @@ class Zones extends React.Component {
     });
   }
 
-  // eslint-disable-next-line no-unused-vars
-  onRemove = (row) => { 
-    // console.log(row, this.props);
+  onRemove = (row) => {
+    const { dispatch } = this.props;
+    confirm({
+      title: 'Do you Want to delete the zone?',
+      content: 'If you delete this zone, all of the object\'s associated will be deleted.',
+      okType: 'danger',
+      onOk() {
+        dispatch({
+          type: 'resource/REMOVE',
+          payload: {
+            className: 'Zone',
+            objectId: row.objectId,
+            notify: true,
+          }
+        });
+      }
+    });
   }
 
   onBack = () => {
