@@ -260,6 +260,10 @@ const routes = [
 
   // CRUDS
   {
+    path: '/dashboards',
+    component: loadable(() => import('pages/dashboards/list')),
+    exact: true,
+  }, {
     path: '/devices',
     component: loadable(() => import('pages/devices/list')),
     exact: true,
@@ -271,6 +275,11 @@ const routes = [
   {
     path: '/devices/settings/:uuid',
     component: loadable(() => import('pages/devices/edit')),
+    exact: true,
+  },
+  {
+    path: '/devices/console',
+    component: loadable(() => import('pages/devices/console')),
     exact: true,
   },
   {

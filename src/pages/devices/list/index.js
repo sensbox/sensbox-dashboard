@@ -61,6 +61,11 @@ class Devices extends React.Component {
 
    // eslint-disable-next-line no-unused-vars
   onConsole = (row) => {
+    const { history } = this.props;
+    history.push({
+      pathname: '/devices/console',
+      state: { device: row }
+    });
   }
 
   // eslint-disable-next-line no-unused-vars

@@ -21,12 +21,12 @@ export async function getLeftMenuData() {
     // {
     //   divider: true,
     // },
-    {
-      title: 'Dashboard',
-      key: 'dashboardAlpha',
-      url: '/dashboard/alpha',
-      icon: 'icmn icmn-home',
-    },
+    // {
+    //   title: 'Dashboard',
+    //   key: 'dashboardAlpha',
+    //   url: '/dashboard/alpha',
+    //   icon: 'icmn icmn-home',
+    // },
     // {
     //   title: 'Dashboard Beta',
     //   key: 'dashboardBeta',
@@ -138,6 +138,18 @@ export async function getLeftMenuData() {
     //   icon: 'icmn icmn-envelop',
     //   pro: true,
     // },
+    {
+      title: 'Dashboard Old',
+      key: 'dashboardAlpha',
+      url: '/dashboard/alpha',
+      icon: 'icmn icmn-home',
+    },
+    {
+      title: 'Dashboards',
+      key: 'dashboards',
+      url: '/dashboards',
+      icon: 'icmn icmn-home',
+    },
     {
       divider: true,
     },

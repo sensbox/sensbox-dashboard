@@ -80,6 +80,17 @@ class Zones extends React.Component {
 
   onRemove = (row) => {
     const { dispatch } = this.props;
+    let callback = () => {
+      const { total, list } = this.props;
+      if (total !==0 && list.length === 0) {
+        this.setState(
+          prevState => ({ currentPage: prevState.currentPage - 1}),
+          () => this.dispatchGetData()
+        );
+      }
+    };
+    callback = callback.bind(this);
+    
     confirm({
       title: 'Do you Want to delete the zone?',
       content: 'If you delete this zone, all of the object\'s associated will be deleted.',
@@ -91,6 +102,7 @@ class Zones extends React.Component {
             className: 'Zone',
             objectId: row.objectId,
             notify: true,
+            callback,
           }
         });
       }

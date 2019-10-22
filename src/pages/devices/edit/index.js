@@ -11,11 +11,10 @@ import DeviceForm  from "../form";
 import style from './style.module.scss'
 
 
-const mapStateToProps = ({ resource, sensor }) => ({
+const mapStateToProps = ({ resource }) => ({
   current: resource.current,
   saving: resource.saving,
   objectNotFound: resource.objectNotFound,
-  currentSensor: sensor.current,
 })
 
 @connect(mapStateToProps)

@@ -1,13 +1,6 @@
 import Parse from 'parse'
 
-async function find(className, payload) {
-    // const lquery = new Parse.Query('DeviceMessage');
-    // lquery.equalTo('uuid', '7697BA99-A630-5162-9B60-885512B0BAC1');
-    // lquery.equalTo('topic', 'agent/message');
-    // const subscription = await lquery.subscribe();
-    // subscription.on('create', (message) => {
-    //   console.log(message.toJSON()); // This should output Mengyan
-    // });
+async function find(className, payload = {}) {
     const {
       where = {},
       includes = [],
@@ -17,6 +10,7 @@ async function find(className, payload) {
       sortOrder = 'ascend',
       limit = 100,
       page = 0,
+      withCount= true,
     } = payload;
     // Configure Parse Query
     const Class = Parse.Object.extend(className);
@@ -45,11 +39,20 @@ async function find(className, payload) {
     // Define pagination
     query.limit(limit);
     query.skip(page * limit);
+    query.withCount(withCount);
 
-    // Count Objects
-    const total = await query.count();
+    let results = {};
+    let total = 0;
     // Query to server
-    const results = await query.find();
+    if (withCount) {
+      const { count, results: responseResults } = await query.find();
+      results = responseResults;
+      total = count;
+    } else {
+      results = await query.find();
+      total = results.length;
+    }
+
     return { 
       results: results.map( r => r.toJSON()),
       total,
@@ -123,11 +126,32 @@ function createPointer(className, objectId) {
   return pointer
 }
 
+async function setPermissions(className, objectId, permissions) {
+  const { public: pubPerm, users } = permissions;
+  const Class = Parse.Object.extend(className);
+  const object = Class.createWithoutData(objectId);
+  const acl = new Parse.ACL();
+  acl.setPublicReadAccess(pubPerm.read);
+  acl.setPublicWriteAccess(pubPerm.write);
+  users.forEach(user => {
+    acl.setReadAccess(user.id, user.read);
+    acl.setWriteAccess(user.id, user.write);
+  });
+
+  object.setACL(acl);
+  const result = await object.save();
+  return result ? result.toJSON() : null;
+}
+
+const ErrorCodes  = Parse.Error;
+
 export default {
   find,
   findById,
   create,
   update,
   remove,
-  createPointer
+  createPointer,
+  setPermissions,
+  ErrorCodes,
 }

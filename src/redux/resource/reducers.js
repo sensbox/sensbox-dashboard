@@ -4,6 +4,7 @@ const initialState = {
   list: [],
   formErrors: {},
   current: {},
+  currentObjectPermissions: {},
   objectNotFound: false,
   total: 0,
   loading: false,

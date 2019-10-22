@@ -1,3 +1,4 @@
+import Parse from 'parse'
 import Api from './api';
 
 const RESOURCE_CLASS_NAME = "Sensor";
@@ -26,10 +27,23 @@ async function remove(objectId) {
   await Api.remove(RESOURCE_CLASS_NAME, objectId);
 }
 
+async function subscribeToChanges(deviceId) {
+  const query = new Parse.Query('Sensor');
+  query.equalTo('device', Api.createPointer("Device", deviceId));
+  const subscription = await query.subscribe();
+  return subscription;
+}
+
+async function unsubscribe(subscription) {
+  return subscription.unsubscribe();
+}
+
 export default {
   find,
   findById,
   create,
   update,
   remove,
+  subscribeToChanges,
+  unsubscribe,
 }

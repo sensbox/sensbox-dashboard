@@ -1,3 +1,4 @@
+import Parse from 'parse';
 import Api from './api';
 
 const RESOURCE_CLASS_NAME = "Device";
@@ -22,9 +23,24 @@ async function update(objectId, updatedCentro) {
     return result;
 }
 
+async function subscribeToMessages(uuid) {
+  const query = new Parse.Query('DeviceMessage');
+  query.equalTo('uuid', uuid);
+  // query.equalTo('topic', 'agent/message');
+  query.descending('createdAt');
+  const subscription = await query.subscribe();
+  return subscription;
+}
+
+async function unsubscribe(subscription) {
+  return subscription.unsubscribe();
+}
+
 export default {
   find,
   findById,
   create,
-  update
+  update,
+  subscribeToMessages,
+  unsubscribe
 }

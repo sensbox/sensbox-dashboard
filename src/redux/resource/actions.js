@@ -5,6 +5,8 @@ const actions = {
   UPDATE: 'resource/UPDATE',
   CREATE: 'resource/CREATE',
   REMOVE: 'resource/REMOVE',
+  CLEAR_CURRENT: 'resource/CLEAR_CURRENT',
+  SET_PERMISSIONS: 'resource/SET_PERMISSIONS',
 }
 
 export default actions

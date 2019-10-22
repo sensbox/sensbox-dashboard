@@ -62,6 +62,16 @@ class Organizations extends React.Component {
 
   onRemove = (row) => {
     const { dispatch } = this.props;
+    const callback = () => {
+      const { total, list } = this.props;
+      if (total !==0 && list.length === 0) {
+        this.setState(
+          prevState => ({ currentPage: prevState.currentPage - 1}),
+          () => this.dispatchGetData()
+        );
+      }
+    };
+
     confirm({
       title: 'Do you Want to delete the organization?',
       content: 'If you delete this organization, all zones and object\'s related will be deleted.',
@@ -73,6 +83,7 @@ class Organizations extends React.Component {
             className: 'Organization',
             objectId: row.objectId,
             notify: true,
+            callback,
           }
         });
       }

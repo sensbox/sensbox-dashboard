@@ -4,6 +4,8 @@ import menu from './menu/sagas'
 import settings from './settings/sagas'
 import resource from './resource/sagas'
 import sensor from './sensor/sagas'
+import common from './common'
+
 
 export default function* rootSaga() {
   yield all([
@@ -12,5 +14,6 @@ export default function* rootSaga() {
     settings(),
     resource(),
     sensor(),
+    common(),
   ])
 }
