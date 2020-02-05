@@ -6,7 +6,7 @@
   justify-content: space-between;
   min-height: 100vh;
   // background-color: $gray-lighten-more;
-  background-color: #001528;
+  background-color: transparentize($silver, 0.8);
   background-size: cover;
   transition: background-image 0.4s linear;
 

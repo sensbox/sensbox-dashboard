@@ -7,3 +7,76 @@
 .ant-input-disabled {
   background: $gray-lighten-more-more;
 }
+
+.ant-input, .ant-input-number, .ant-input-number-focused, .ant-select-selection{
+  &:hover, &:focus {
+    border-color: $primary;
+    border-right-width: 1px !important;
+    box-shadow: 0 0 0 2px transparentize($primary, 0.8);
+  }
+}
+.ant-input-number-focused, .ant-select-focused .ant-select-selection {
+  border-color: $primary;
+  border-right-width: 1px !important;
+  box-shadow: 0 0 0 2px transparentize($primary, 0.8);
+}
+
+.ant-pagination-item-active {
+  border-color: $primary;
+  &:hover, &:focus {
+    border-color: $primary;
+  }
+}
+
+.ant-pagination-item-active {
+  &:hover a, &:focus a{
+    color: $primary;
+  }
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: $primary;
+  border-color: $primary;
+  &:hover {
+    border-color: $primary;
+  }
+}
+
+.ant-checkbox-inner, .ant-checkbox {
+  border-color: $primary;
+  &:hover {
+    border-color: $primary;
+  }
+}
+
+.ant-checkbox-wrapper {
+  border-color: $primary;
+  &:hover .ant-checkbox-inner, &:focus .ant-checkbox-inner {
+    border-color: $primary;
+  }
+}
+
+.ant-checkbox {
+  border-color: $primary;
+  &:hover .ant-checkbox-inner, &:focus .ant-checkbox-inner {
+    border-color: $primary;
+  }
+}
+
+.ant-checkbox-input {
+  border-color: $primary;
+  &:focus {
+    border-color: $primary;
+  }
+}
+
+.ant-calendar-picker{
+  &:hover .ant-calendar-picker-input:not(.ant-input-disabled),
+  &:focus .ant-calendar-picker-input:not(.ant-input-disabled) {
+    border-color: $primary;
+  }
+}
+
+.ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled) {
+  border-color: $primary;
+}

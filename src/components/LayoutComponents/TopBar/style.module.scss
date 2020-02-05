@@ -3,12 +3,17 @@
 .topbar {
   background: $white;
   padding: 0 rem(20);
-  min-height: 64px;
-  height: 64px;
-  border-bottom: 1px solid $gray-border;
+  min-height: 60px;
+  height: 60px;
+  border-bottom: 1px solid $silver-20;
   color: $text;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
+
+  // position:fixed;
+  // top:0px;
+  // z-index: 9999;
+  // width: 95vw;
 }

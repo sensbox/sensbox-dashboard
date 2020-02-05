@@ -1,10 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { PageHeader } from 'antd';
+import { PageHeader } from 'antd'
 import { Helmet } from 'react-helmet'
 
-import AccountForm  from "../form";
-
+import AccountForm from '../form'
 
 const mapStateToProps = ({ resource }) => ({
   saving: resource.saving,
@@ -20,43 +19,48 @@ class AccountNew extends React.Component {
   }
 
   constructor(props) {
-    super(props);
-    this.saveAction = this.saveAction.bind(this);
+    super(props)
+    this.saveAction = this.saveAction.bind(this)
   }
 
   componentDidUpdate() {
-    const { current } = this.props;
-    const { editLink } = this.state;
-    if( current && current.objectId ){
-      const { history } = this.props;
+    const { current } = this.props
+    const { editLink } = this.state
+    if (current && current.objectId) {
+      const { history } = this.props
       history.push({
         pathname: editLink,
-        state: { account: current }
-      });
+        state: { account: current },
+      })
     }
   }
 
   saveAction(formData) {
     // eslint-disable-next-line no-unused-vars
-    const { dispatch } = this.props;
-    console.log("Saving", formData);
+    const { dispatch } = this.props
+    console.log('Saving', formData)
     dispatch({
       type: 'resource/CREATE',
       payload: {
         className: 'Account',
         data: formData,
-        notify: true
-      }
-    });
+        notify: true,
+      },
+    })
   }
 
   render() {
-    const { saving, current, formErrors, history} = this.props
-    const { backLink } = this.state;
+    const { saving, current, formErrors, history } = this.props
+    const { backLink } = this.state
     return (
       <div>
         <Helmet title="New User Account" />
-        <PageHeader className="mb-2" onBack={() => history.replace({ pathname: backLink })} title="New User Account" />
+        <PageHeader
+          className="mb-2"
+          ghost={false}
+          onBack={() => history.replace({ pathname: backLink })}
+          title="New User Account"
+        />
         <div className="card">
           <div className="card-body">
             <div className="row">
@@ -77,4 +81,4 @@ class AccountNew extends React.Component {
   }
 }
 
-export default AccountNew;
+export default AccountNew

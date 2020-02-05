@@ -4,16 +4,9 @@ import menu from './menu/sagas'
 import settings from './settings/sagas'
 import resource from './resource/sagas'
 import sensor from './sensor/sagas'
-import common from './common'
-
+import common from './common/sagas'
+import builder from './builder/sagas'
 
 export default function* rootSaga() {
-  yield all([
-    user(),
-    menu(),
-    settings(),
-    resource(),
-    sensor(),
-    common(),
-  ])
+  yield all([user(), menu(), settings(), resource(), sensor(), common(), builder()])
 }

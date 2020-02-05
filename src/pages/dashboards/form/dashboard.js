@@ -2,13 +2,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Input, Form, Modal } from 'antd'
 
-const getFormField = (value, errors) => Form.createFormField({ value, errors: errors && errors.map(e => new Error(e)) });
+const getFormField = (value, errors) =>
+  Form.createFormField({ value, errors: errors && errors.map(e => new Error(e)) })
 
 const mapPropsToFields = ({ dashboard, formErrors }) => {
-  const {
-    name,
-    description,
-  } = dashboard || {};
+  const { name, description } = dashboard || {}
   return {
     name: getFormField(name, formErrors.name),
     description: getFormField(description, formErrors.description),
@@ -19,19 +17,19 @@ const mapStateToProps = ({ resource }) => ({
   dashboard: resource.current,
   saving: resource.saving,
   formErrors: resource.formErrors,
-  objectNotFound: resource.objectNotFound
+  objectNotFound: resource.objectNotFound,
 })
 
 @connect(mapStateToProps)
 @Form.create({ mapPropsToFields })
 class DashboardForm extends React.Component {
   render() {
-    const { saving, visible, onCancel, onConfirm, form, dashboard } = this.props;
-    const { getFieldDecorator } = form;
+    const { saving, visible, onCancel, onConfirm, form, dashboard } = this.props
+    const { getFieldDecorator } = form
     return (
       <Modal
         visible={visible}
-        okButtonProps={{loading: saving}}
+        okButtonProps={{ loading: saving }}
         title={dashboard.objectId ? 'Edit Dashboard' : 'Add Dashboard'}
         okText={dashboard.objectId ? 'Edit' : 'Create'}
         onCancel={onCancel}
@@ -49,8 +47,8 @@ class DashboardForm extends React.Component {
           </Form.Item>
         </Form>
       </Modal>
-    );
+    )
   }
 }
 
-export default DashboardForm;
+export default DashboardForm

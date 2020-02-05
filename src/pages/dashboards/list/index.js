@@ -2,13 +2,13 @@ import React from 'react'
 import { Button, Input, PageHeader, Row, Pagination, Col, message, Modal } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import DashboardCard from '../../../components/Custom/DashboardCard';
-import DashboardForm from '../form/dashboard';
-import ShareForm from '../form/share';
+import DashboardCard from '../../../components/Custom/DashboardCard'
+import DashboardForm from '../form/dashboard'
+import ShareForm from '../form/share'
 import './styles.scss'
 // import api from '../../../services/api';
 
-const { confirm } = Modal;
+const { confirm } = Modal
 
 const mapStateToProps = ({ resource, user }) => ({
   list: resource.list,
@@ -32,75 +32,77 @@ class Dashboards extends React.Component {
   }
 
   constructor(props) {
-    super(props);
-    this.dispatchGetData();
-    this.addDashboard.bind(this);
-    this.handlePaginationChange.bind(this);
+    super(props)
+    this.dispatchGetData()
+    this.addDashboard.bind(this)
+    this.handlePaginationChange.bind(this)
   }
 
-  handlePaginationChange = (current) => {
-    this.setState({
-      currentPage: current,
-    }, () => this.dispatchGetData());
+  handlePaginationChange = current => {
+    this.setState(
+      {
+        currentPage: current,
+      },
+      () => this.dispatchGetData(),
+    )
   }
 
-  handleConfirmDashboard = (objectId) => {
-    const { dispatch } = this.props;
-    const { form } = this.dashboardFormRef.props;
+  handleConfirmDashboard = objectId => {
+    const { dispatch } = this.props
+    const { form } = this.dashboardFormRef.props
     form.validateFields((err, values) => {
       if (!err) {
         const payload = {
           className: 'Dashboard',
-          data: { 
+          data: {
             ...values,
           },
           callback: () => {
-            form.resetFields();
-            this.setState({ dashboardModalVisible: false }, () => this.dispatchGetData());
+            form.resetFields()
+            this.setState({ dashboardModalVisible: false }, () => this.dispatchGetData())
           },
-          notify: true
+          notify: true,
         }
         dispatch({
           type: !objectId ? 'resource/CREATE' : 'resource/UPDATE',
-          payload: !objectId ? payload : Object.assign({}, payload, { objectId })
-        });
+          payload: !objectId ? payload : Object.assign({}, payload, { objectId }),
+        })
       } else {
-        const firstFieldWithError = Object.keys(err).pop();
-        form.getFieldInstance(firstFieldWithError).focus();
+        const firstFieldWithError = Object.keys(err).pop()
+        form.getFieldInstance(firstFieldWithError).focus()
         message.error('Please check all form fields.', 2.5)
       }
-    });
-  };
+    })
+  }
 
   handleCancelDashboard = () => {
     this.setState({
       dashboardModalVisible: false,
-    });
-  };
+    })
+  }
 
   handleCancelShareDashboard = () => {
     this.setState({
       shareModalVisible: false,
-    });
-  };
+    })
+  }
 
-  handleConfirmShareDashboard = (objectId) => {
-    const { dispatch } = this.props;
-    const { form } = this.shareFormRef.props;
+  handleConfirmShareDashboard = objectId => {
+    const { dispatch } = this.props
+    const { form } = this.shareFormRef.props
     form.validateFields((err, values) => {
-      console.log(err, values);
       const permissions = {
         public: {
           read: values.public,
           write: false,
-        }
-      };
-      permissions.users = values.users.map(u =>({ id: u.key, read: true, write: false }));
+        },
+      }
+      permissions.users = values.users.map(u => ({ id: u.key, read: true, write: false }))
 
       const callback = () => {
-        form.resetFields();
-        this.setState({ shareModalVisible: false }, () => this.dispatchGetData());
-      };
+        form.resetFields()
+        this.setState({ shareModalVisible: false }, () => this.dispatchGetData())
+      }
 
       if (!err) {
         dispatch({
@@ -111,62 +113,66 @@ class Dashboards extends React.Component {
             permissions,
             notify: true,
             callback,
-          }
-        });
+          },
+        })
       } else {
-        const firstFieldWithError = Object.keys(err).pop();
-        form.getFieldInstance(firstFieldWithError).focus();
+        const firstFieldWithError = Object.keys(err).pop()
+        form.getFieldInstance(firstFieldWithError).focus()
         message.error('Please check all form fields.', 2.5)
       }
-    });
+    })
   }
 
-  onSearch = (text) => {
-    this.setState({ searchText: text, currentPage: 1}, () => this.dispatchGetData());
-  } 
+  onSearch = text => {
+    this.setState({ searchText: text, currentPage: 1 }, () => this.dispatchGetData())
+  }
 
-  saveDashboardFormRef = formRef => { this.dashboardFormRef = formRef; };
+  saveDashboardFormRef = formRef => {
+    this.dashboardFormRef = formRef
+  }
 
-  saveShareFormRef = formRef => { this.shareFormRef = formRef; };
+  saveShareFormRef = formRef => {
+    this.shareFormRef = formRef
+  }
 
   addDashboard = () => {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     dispatch({
       type: 'resource/CLEAR_CURRENT',
       payload: {
-        callback: () => this.setState({ dashboardModalVisible: true })
-      }
-    });
+        callback: () => this.setState({ dashboardModalVisible: true }),
+      },
+    })
   }
 
-  editDashboard = (dashboard) => {
+  editDashboard = dashboard => {
     this.fetchDashboard(dashboard.objectId, {
       callback: () => {
-        this.setState({ dashboardModalVisible: true });
+        this.setState({ dashboardModalVisible: true })
       },
-    });
+    })
   }
 
-  shareDashboard = (dashboard) => {
+  shareDashboard = dashboard => {
     this.fetchDashboard(dashboard.objectId, {
       requestObjectPermissions: true,
       callback: () => {
-        this.setState({ shareModalVisible: true });
+        this.setState({ shareModalVisible: true })
       },
-    });
+    })
   }
 
-  removeDashboard = (dashboard) => {
-    const { dispatch } = this.props;
+  removeDashboard = dashboard => {
+    const { dispatch } = this.props
     const callback = () => {
-      const { total, list } = this.props;
-      if (total !==0 && list.length === 0) {
+      const { total, list } = this.props
+      if (total !== 0 && list.length === 0) {
         this.setState(
-          prevState => ({ currentPage: prevState.currentPage - 1}),
-          () => this.dispatchGetData()
-        );
+          prevState => ({ currentPage: prevState.currentPage - 1 }),
+          () => this.dispatchGetData(),
+        )
       }
-    };
+    }
 
     confirm({
       title: 'Do you want to delete the dashboard?',
@@ -180,88 +186,111 @@ class Dashboards extends React.Component {
             objectId: dashboard.objectId,
             notify: true,
             callback,
-          }
-        });
-      }
-    });
+          },
+        })
+      },
+    })
   }
 
   fetchDashboard(dashboardId, opts) {
-    const { dispatch } = this.props;
-    const { requestObjectPermissions = false, callback } = opts;
+    const { dispatch } = this.props
+    const { requestObjectPermissions = false, callback } = opts
     dispatch({
       type: 'resource/GET_CURRENT',
       payload: {
         className: 'Dashboard',
         objectId: dashboardId,
         requestObjectPermissions,
-        callback
-      }
-    });
+        callback,
+      },
+    })
   }
 
   dispatchGetData() {
-    const { dispatch } = this.props;
-    const { searchField, searchText, currentPage, limit, sortField, sortOrder } = this.state;
+    const { dispatch } = this.props
+    const { searchField, searchText, currentPage, limit, sortField, sortOrder } = this.state
 
     dispatch({
       type: 'resource/GET_DATA',
       payload: {
         className: 'Dashboard',
-        includes: ["createdBy", "updatedBy"],
+        includes: ['createdBy', 'updatedBy'],
         searchField,
         searchText,
         page: currentPage > 0 ? currentPage - 1 : 0,
         limit,
         sortField,
         sortOrder,
-      }
-    });
+      },
+    })
+  }
+
+  goToDashboard(uuid) {
+    const { history } = this.props
+    history.push({
+      pathname: `/dashboards/${uuid}`,
+    })
   }
 
   render() {
-    const { limit, dashboardModalVisible, shareModalVisible, currentPage } = this.state;
-    const { list, user, total } = this.props;
+    const { limit, dashboardModalVisible, shareModalVisible, currentPage } = this.state
+    const { list, user, total } = this.props
 
     return (
       <div>
         <Helmet title="My Dashboards" />
         <PageHeader
           className="mb-2"
+          ghost={false}
           title="My Dashboards"
           subTitle="Dashboards created or shared with you."
           extra={[
-            <Input.Search key="search" style={{ float: "right", width: 300 }} placeholder="Search by name" onSearch={this.onSearch} enterButton />,
+            <Input.Search
+              key="search"
+              style={{ float: 'right', width: 300 }}
+              placeholder="Search by name"
+              onSearch={this.onSearch}
+              enterButton
+              allowClear
+            />,
             <Button
               key="button"
               type="primary"
               icon="plus"
               onClick={this.addDashboard}
-              style={{ marginRight: 10, float: "right"}}
+              style={{ marginRight: 10, float: 'right' }}
             >
               New Dashboard
-            </Button>
+            </Button>,
           ]}
         />
         {
           <Row className="cardContainer" type="flex" justify="start" align="middle">
-            { list.map(dashboard =>
-              <Col key={dashboard.objectId} style={{ padding: 15}} span={6}>
+            {list.map(dashboard => (
+              <Col key={dashboard.objectId} style={{ padding: 15 }} span={6}>
                 <DashboardCard
                   title={dashboard.name}
                   description={dashboard.description}
+                  public={dashboard.ACL['*'] ? dashboard.ACL['*'].read : false}
                   sharedBy={dashboard.createdBy.objectId === user.id ? null : dashboard.createdBy}
-                  editAction={()=>this.editDashboard(dashboard)}
-                  removeAction={()=>this.removeDashboard(dashboard)}
-                  shareAction={()=>this.shareDashboard(dashboard)}
+                  editAction={() => this.editDashboard(dashboard)}
+                  removeAction={() => this.removeDashboard(dashboard)}
+                  shareAction={() => this.shareDashboard(dashboard)}
+                  onClick={() => this.goToDashboard(dashboard.uuid)}
                 />
               </Col>
-            )}
+            ))}
           </Row>
         }
-        { total > limit && (
+        {total > limit && (
           <Row type="flex" justify="center">
-            <Pagination defaultCurrent={1} current={currentPage} total={total} onChange={this.handlePaginationChange} pageSize={limit} />
+            <Pagination
+              defaultCurrent={1}
+              current={currentPage}
+              total={total}
+              onChange={this.handlePaginationChange}
+              pageSize={limit}
+            />
           </Row>
         )}
         <DashboardForm
@@ -276,10 +305,9 @@ class Dashboards extends React.Component {
           onCancel={this.handleCancelShareDashboard}
           onConfirm={this.handleConfirmShareDashboard}
         />
-        
       </div>
     )
   }
 }
 
-export default Dashboards;
+export default Dashboards

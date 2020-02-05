@@ -4,16 +4,16 @@
 /* FORMS */
 
 input::-webkit-input-placeholder {
-  color: $gray-darken !important;
+  color: $text-lighten !important;
 }
 input::-moz-placeholder {
-  color: $gray-darken !important;
+  color: $text-lighten !important;
 }
 input:-moz-placeholder {
-  color: $gray-darken !important;
+  color: $text-lighten !important;
 }
 input:-ms-input-placeholder {
-  color: $gray-darken !important;
+  color: $text-lighten !important;
 }
 
 .form-actions {

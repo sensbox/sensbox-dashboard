@@ -1,12 +1,12 @@
 import React from 'react'
-import { PageHeader, Tooltip, Row, Switch, Col, Table, Button, Input, Modal} from 'antd'
+import { PageHeader, Tooltip, Row, Switch, Col, Table, Button, Input, Modal } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import { Redirect } from "react-router-dom";
-import CustomDate from '../../../components/Custom/Date';
-import api from '../../../services/api';
+import { Redirect } from 'react-router-dom'
+import CustomDate from '../../../components/Custom/Date'
+import api from '../../../services/api'
 
-const { confirm } = Modal;
+const { confirm } = Modal
 
 const mapStateToProps = ({ resource }) => ({
   list: resource.list,
@@ -26,74 +26,76 @@ class Zones extends React.Component {
     backLink: '/organizations',
     addLink: null,
     editLink: null,
-
   }
 
   constructor(props) {
-    super(props);
-    const { location } = props;
+    super(props)
+    const { location } = props
     if (location.state) {
-      this.state = { 
+      this.state = {
         ...this.state,
         organization: location.state.organization,
         addLink: `/organizations/${location.state.organization.objectId}/zones/new`,
-        editLink: `/organizations/${location.state.organization.objectId}/zones/edit`
+        editLink: `/organizations/${location.state.organization.objectId}/zones/edit`,
       }
-      this.dispatchGetData();
+      this.dispatchGetData()
     }
-    this.onAdd.bind(this);
+    this.onAdd.bind(this)
   }
 
   handleTableChange = (pagination, filters, sorters) => {
-    const { current } = pagination;
-    const { columnKey, order } = sorters;
-    const { sortField, sortOrder } = this.state;
-    this.setState({
-      currentPage: current,
-      sortField: columnKey || sortField,
-      sortOrder: order || sortOrder,
-    }, () => this.dispatchGetData());
+    const { current } = pagination
+    const { columnKey, order } = sorters
+    const { sortField, sortOrder } = this.state
+    this.setState(
+      {
+        currentPage: current,
+        sortField: columnKey || sortField,
+        sortOrder: order || sortOrder,
+      },
+      () => this.dispatchGetData(),
+    )
   }
 
-  onSearch = (text) => {
-    this.setState({ searchText: text, currentPage: 1}, () => this.dispatchGetData());
-  } 
+  onSearch = text => {
+    this.setState({ searchText: text, currentPage: 1 }, () => this.dispatchGetData())
+  }
 
-  onAdd = () => { 
-    const { history } = this.props;
-    const { addLink, organization } = this.state;
+  onAdd = () => {
+    const { history } = this.props
+    const { addLink, organization } = this.state
     history.push({
       pathname: addLink,
-      state: { organization }
-    });
+      state: { organization },
+    })
   }
 
-  onEdit = (row) => { 
+  onEdit = row => {
     // console.log(row, this.props);
-    const { history } = this.props;
-    const { editLink } = this.state;
+    const { history } = this.props
+    const { editLink } = this.state
     history.push({
       pathname: editLink,
-      state: { zone: row }
-    });
+      state: { zone: row },
+    })
   }
 
-  onRemove = (row) => {
-    const { dispatch } = this.props;
+  onRemove = row => {
+    const { dispatch } = this.props
     let callback = () => {
-      const { total, list } = this.props;
-      if (total !==0 && list.length === 0) {
+      const { total, list } = this.props
+      if (total !== 0 && list.length === 0) {
         this.setState(
-          prevState => ({ currentPage: prevState.currentPage - 1}),
-          () => this.dispatchGetData()
-        );
+          prevState => ({ currentPage: prevState.currentPage - 1 }),
+          () => this.dispatchGetData(),
+        )
       }
-    };
-    callback = callback.bind(this);
-    
+    }
+    callback = callback.bind(this)
+
     confirm({
       title: 'Do you Want to delete the zone?',
-      content: 'If you delete this zone, all of the object\'s associated will be deleted.',
+      content: "If you delete this zone, all of the object's associated will be deleted.",
       okType: 'danger',
       onOk() {
         dispatch({
@@ -103,23 +105,23 @@ class Zones extends React.Component {
             objectId: row.objectId,
             notify: true,
             callback,
-          }
-        });
-      }
-    });
+          },
+        })
+      },
+    })
   }
 
   onBack = () => {
-    const { history } = this.props;
-    const { backLink, organization } = this.state;
+    const { history } = this.props
+    const { backLink, organization } = this.state
     return history.replace({
       pathname: backLink,
-      state: { organization } 
+      state: { organization },
     })
-  };
+  }
 
   updateActive(objectId, active) {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     dispatch({
       type: 'resource/UPDATE',
       payload: {
@@ -128,19 +130,27 @@ class Zones extends React.Component {
         data: { active },
         notify: true,
         clearCurrent: true,
-      }
-    });
+      },
+    })
   }
 
   dispatchGetData() {
-    const { dispatch } = this.props;
-    const { organization, searchField, searchText, currentPage, limit, sortField, sortOrder } = this.state;
+    const { dispatch } = this.props
+    const {
+      organization,
+      searchField,
+      searchText,
+      currentPage,
+      limit,
+      sortField,
+      sortOrder,
+    } = this.state
     dispatch({
       type: 'resource/GET_DATA',
       payload: {
         className: 'Zone',
         where: {
-          organization: api.createPointer('Organization', organization.objectId)
+          organization: api.createPointer('Organization', organization.objectId),
         },
         searchField,
         searchText,
@@ -148,17 +158,17 @@ class Zones extends React.Component {
         limit,
         sortField,
         sortOrder,
-      }
-    });
+      },
+    })
   }
 
   render() {
-    const { location, list, total, loading } = this.props;
-    const { backLink, organization, currentPage } = this.state;
+    const { location, list, total, loading } = this.props
+    const { backLink, organization, currentPage } = this.state
     // console.log(loading)
     const pagination = {
       current: currentPage,
-      total
+      total,
     }
     const columns = [
       {
@@ -177,40 +187,50 @@ class Zones extends React.Component {
         title: 'Status',
         key: 'active',
         sorter: true,
-        render: (row) => (
+        render: row => (
           <Tooltip title={row.active ? 'Enabled' : 'Disabled'}>
             <Switch
               size="small"
               checked={row.active}
-              onChange={(checked) => this.updateActive(row.objectId, checked)}
+              onChange={checked => this.updateActive(row.objectId, checked)}
             />
           </Tooltip>
-        )
+        ),
       },
       {
         title: 'Created',
         dataIndex: 'createdAt',
         key: 'createdAt',
         sorter: true,
-        render: (createdAt) => (<CustomDate raw={createdAt} />)
+        render: createdAt => <CustomDate raw={createdAt} />,
       },
       {
         title: 'Last Modified',
         dataIndex: 'updatedAt',
         key: 'updatedAt',
         sorter: true,
-        render: (updatedAt) => (<CustomDate raw={updatedAt} />)
+        render: updatedAt => <CustomDate raw={updatedAt} />,
       },
       {
         title: 'Actions',
         key: 'action',
-        render: (row) => (
+        render: row => (
           <>
             <Tooltip title="Edit Zone">
-              <Button shape="circle" type="primary" icon="edit" className="mr-1" onClick={() => this.onEdit(row)} />
+              <Button
+                shape="circle"
+                icon="edit"
+                className="mr-1"
+                onClick={() => this.onEdit(row)}
+              />
             </Tooltip>
             <Tooltip title="Remove Zone">
-              <Button shape="circle" type="danger" icon="delete" onClick={() => this.onRemove(row)} />
+              <Button
+                shape="circle"
+                type="danger"
+                icon="delete"
+                onClick={() => this.onRemove(row)}
+              />
             </Tooltip>
           </>
         ),
@@ -222,17 +242,28 @@ class Zones extends React.Component {
     return (
       <div>
         <Helmet title="Zones" />
-        <PageHeader className="mb-2" onBack={this.onBack} title="Manage Zones" subTitle={`in ${organization.name}`} />
+        <PageHeader
+          className="mb-2"
+          ghost={false}
+          onBack={this.onBack}
+          title="Manage Zones"
+          subTitle={`in ${organization.name}`}
+        />
         <div className="card">
           <div className="card-header">
             <Row>
               <Col sm={24} md={12} offset={12}>
-                <Input.Search style={{ float: "right", width: 300 }} placeholder="Search by name" onSearch={this.onSearch} enterButton />
+                <Input.Search
+                  style={{ float: 'right', width: 300 }}
+                  placeholder="Search by name"
+                  onSearch={this.onSearch}
+                  enterButton
+                />
                 <Button
                   type="primary"
                   icon="plus"
                   onClick={this.onAdd}
-                  style={{ marginRight: 10, float: "right"}}
+                  style={{ marginRight: 10, float: 'right' }}
                 >
                   New Zone
                 </Button>
@@ -258,4 +289,4 @@ class Zones extends React.Component {
   }
 }
 
-export default Zones;
+export default Zones

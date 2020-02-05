@@ -1,5 +1,5 @@
 import React from 'react'
-import { LocaleProvider } from 'antd'
+import { ConfigProvider } from 'antd'
 import { IntlProvider, addLocaleData } from 'react-intl'
 import { connect } from 'react-redux'
 import english from 'locales/en-US'
@@ -31,11 +31,11 @@ class Localization extends React.Component {
     } = this.props
     const currentLocale = locales[locale]
     return (
-      <LocaleProvider locale={currentLocale.antdData}>
+      <ConfigProvider locale={currentLocale.antdData}>
         <IntlProvider locale={currentLocale.locale} messages={currentLocale.messages}>
           {children}
         </IntlProvider>
-      </LocaleProvider>
+      </ConfigProvider>
     )
   }
 }

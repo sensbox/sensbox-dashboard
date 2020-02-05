@@ -1,13 +1,14 @@
 import React from 'react'
 import { Input, Button, Form, Checkbox, message } from 'antd'
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom'
 
-const FormItem = Form.Item;
+const FormItem = Form.Item
 
-const getFormField = (value, errors) => Form.createFormField({ value, errors: errors ? errors.map(e => new Error(e)) : null });
+const getFormField = (value, errors) =>
+  Form.createFormField({ value, errors: errors ? errors.map(e => new Error(e)) : null })
 
 const mapPropsToFields = ({ zone, errors }) => {
-  const { name, description, active } = zone || {};
+  const { name, description, active } = zone || {}
   return {
     name: getFormField(name, errors.name),
     description: getFormField(description, errors.description),
@@ -18,32 +19,28 @@ const mapPropsToFields = ({ zone, errors }) => {
 @Form.create({ mapPropsToFields })
 class ZoneForm extends React.Component {
   constructor(props) {
-    super(props);
-    this.save = this.save.bind(this);
+    super(props)
+    this.save = this.save.bind(this)
   }
 
   save() {
-    const { form, saveAction } = this.props;
+    const { form, saveAction } = this.props
 
     form.validateFields((err, values) => {
       if (!err) {
-        saveAction(values);
-        form.getFieldInstance('name').focus();
+        saveAction(values)
+        form.getFieldInstance('name').focus()
       } else {
-        const firstFieldWithError = Object.keys(err).pop();
-        form.getFieldInstance(firstFieldWithError).focus();
+        const firstFieldWithError = Object.keys(err).pop()
+        form.getFieldInstance(firstFieldWithError).focus()
         message.error('Please check all form fields.', 2.5)
       }
-    });
+    })
   }
 
   render() {
-    const {
-      backLink,
-      form,
-      disableSaveButton,
-    } = this.props
-    
+    const { backLink, form, disableSaveButton } = this.props
+
     return (
       <Form layout="vertical" autoComplete="off">
         <div className="col-lg-12">
@@ -54,10 +51,8 @@ class ZoneForm extends React.Component {
             <div className="col-lg-6">
               <div className="form-group">
                 <FormItem label="Name">
-                  {form.getFieldDecorator('name',{
-                    rules: [
-                      { required: true, whitespace: true }
-                    ],
+                  {form.getFieldDecorator('name', {
+                    rules: [{ required: true, whitespace: true }],
                   })(<Input placeholder="Zone name" />)}
                 </FormItem>
               </div>
@@ -65,14 +60,18 @@ class ZoneForm extends React.Component {
             <div className="col-lg-12">
               <div className="form-group">
                 <FormItem label="Description">
-                  {form.getFieldDecorator('description')(<Input.TextArea placeholder="Zone Description..." />)}
+                  {form.getFieldDecorator('description')(
+                    <Input.TextArea placeholder="Zone Description..." />,
+                  )}
                 </FormItem>
               </div>
             </div>
             <div className="col-lg-6">
               <div className="form-group">
                 <FormItem>
-                  {form.getFieldDecorator('active', { valuePropName: 'checked' })(<Checkbox>Active</Checkbox>)}
+                  {form.getFieldDecorator('active', { valuePropName: 'checked' })(
+                    <Checkbox>Active</Checkbox>,
+                  )}
                 </FormItem>
               </div>
             </div>
@@ -81,9 +80,17 @@ class ZoneForm extends React.Component {
         <div className="col-lg-12">
           <div className="form-actions">
             <Link to={backLink}>
-              <Button className="mr-2" icon="arrow-left" type="default">Return Back</Button>
+              <Button className="mr-2" icon="arrow-left" type="default">
+                Return Back
+              </Button>
             </Link>
-            <Button className="float-right" icon="save" disabled={disableSaveButton} type="primary" onClick={this.save}>
+            <Button
+              className="float-right"
+              icon="save"
+              disabled={disableSaveButton}
+              type="primary"
+              onClick={this.save}
+            >
               Save
             </Button>
           </div>
@@ -96,7 +103,7 @@ class ZoneForm extends React.Component {
 ZoneForm.defaultProps = {
   zone: {},
   errors: {},
-  saveAction: (formData) => console.log(formData)
-};
+  saveAction: formData => console.log(formData),
+}
 
-export default ZoneForm;
+export default ZoneForm

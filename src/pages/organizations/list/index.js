@@ -2,9 +2,9 @@ import React from 'react'
 import { Tooltip, Row, Switch, Col, Table, Button, Input, Modal } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import CustomDate from '../../../components/Custom/Date';
+import CustomDate from '../../../components/Custom/Date'
 
-const { confirm } = Modal;
+const { confirm } = Modal
 
 const mapStateToProps = ({ resource }) => ({
   list: resource.list,
@@ -24,57 +24,60 @@ class Organizations extends React.Component {
   }
 
   constructor(props) {
-    super(props);
-    this.dispatchGetData();
-    this.onAdd.bind(this);
+    super(props)
+    this.dispatchGetData()
+    this.onAdd.bind(this)
   }
 
   handleTableChange = (pagination, filters, sorters) => {
-    const { current } = pagination;
-    const { columnKey, order } = sorters;
-    const { sortField, sortOrder } = this.state;
-    this.setState({
-      currentPage: current,
-      sortField: columnKey || sortField,
-      sortOrder: order || sortOrder,
-    }, () => this.dispatchGetData());
+    const { current } = pagination
+    const { columnKey, order } = sorters
+    const { sortField, sortOrder } = this.state
+    this.setState(
+      {
+        currentPage: current,
+        sortField: columnKey || sortField,
+        sortOrder: order || sortOrder,
+      },
+      () => this.dispatchGetData(),
+    )
   }
 
-  onSearch = (text) => {
-    this.setState({ searchText: text, currentPage: 1}, () => this.dispatchGetData());
-  } 
+  onSearch = text => {
+    this.setState({ searchText: text, currentPage: 1 }, () => this.dispatchGetData())
+  }
 
-  onAdd = () => { 
-    const { history } = this.props;
+  onAdd = () => {
+    const { history } = this.props
     history.push({
       pathname: '/organizations/new',
-    });
+    })
   }
 
-  onEdit = (row) => { 
+  onEdit = row => {
     // console.log(row, this.props);
-    const { history } = this.props;
+    const { history } = this.props
     history.push({
       pathname: `/organizations/edit`,
-      state: { organization: row }
-    });
+      state: { organization: row },
+    })
   }
 
-  onRemove = (row) => {
-    const { dispatch } = this.props;
+  onRemove = row => {
+    const { dispatch } = this.props
     const callback = () => {
-      const { total, list } = this.props;
-      if (total !==0 && list.length === 0) {
+      const { total, list } = this.props
+      if (total !== 0 && list.length === 0) {
         this.setState(
-          prevState => ({ currentPage: prevState.currentPage - 1}),
-          () => this.dispatchGetData()
-        );
+          prevState => ({ currentPage: prevState.currentPage - 1 }),
+          () => this.dispatchGetData(),
+        )
       }
-    };
+    }
 
     confirm({
       title: 'Do you Want to delete the organization?',
-      content: 'If you delete this organization, all zones and object\'s related will be deleted.',
+      content: "If you delete this organization, all zones and object's related will be deleted.",
       okType: 'danger',
       onOk() {
         dispatch({
@@ -84,22 +87,22 @@ class Organizations extends React.Component {
             objectId: row.objectId,
             notify: true,
             callback,
-          }
-        });
-      }
-    });
+          },
+        })
+      },
+    })
   }
 
-  onManageZones = (row) => {
-    const { history } = this.props;
+  onManageZones = row => {
+    const { history } = this.props
     history.push({
       pathname: `/organizations/${row.objectId}/zones`,
-      state: { organization: row }
-    });
+      state: { organization: row },
+    })
   }
 
   updateActive(objectId, active) {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     dispatch({
       type: 'resource/UPDATE',
       payload: {
@@ -108,13 +111,13 @@ class Organizations extends React.Component {
         data: { active },
         notify: true,
         clearCurrent: true,
-      }
-    });
+      },
+    })
   }
 
   dispatchGetData() {
-    const { dispatch } = this.props;
-    const { searchField, searchText, currentPage, limit, sortField, sortOrder } = this.state;
+    const { dispatch } = this.props
+    const { searchField, searchText, currentPage, limit, sortField, sortOrder } = this.state
 
     dispatch({
       type: 'resource/GET_DATA',
@@ -126,17 +129,17 @@ class Organizations extends React.Component {
         limit,
         sortField,
         sortOrder,
-      }
-    });
+      },
+    })
   }
 
   render() {
-    const { list, total, loading } = this.props;
-    const { currentPage } = this.state;
+    const { list, total, loading } = this.props
+    const { currentPage } = this.state
     // console.log(loading)
     const pagination = {
       current: currentPage,
-      total
+      total,
     }
     const columns = [
       {
@@ -155,43 +158,58 @@ class Organizations extends React.Component {
         title: 'Status',
         key: 'active',
         sorter: true,
-        render: (row) => (
+        render: row => (
           <Tooltip title={row.active ? 'Enabled' : 'Disabled'}>
             <Switch
               size="small"
               checked={row.active}
-              onChange={(checked) => this.updateActive(row.objectId, checked)}
+              onChange={checked => this.updateActive(row.objectId, checked)}
             />
           </Tooltip>
-        )
+        ),
       },
       {
         title: 'Created',
         dataIndex: 'createdAt',
         key: 'createdAt',
         sorter: true,
-        render: (createdAt) => (<CustomDate raw={createdAt} />)
+        render: createdAt => <CustomDate raw={createdAt} />,
       },
       {
         title: 'Last Modified',
         dataIndex: 'updatedAt',
         key: 'updatedAt',
         sorter: true,
-        render: (updatedAt) => (<CustomDate raw={updatedAt} />)
+        render: updatedAt => <CustomDate raw={updatedAt} />,
       },
       {
         title: 'Actions',
         key: 'action',
-        render: (row) => (
+        render: row => (
           <>
             <Tooltip title="Edit Organization">
-              <Button shape="circle" type="primary" icon="edit" className="mr-1" onClick={() => this.onEdit(row)} />
+              <Button
+                shape="circle"
+                icon="edit"
+                className="mr-1"
+                onClick={() => this.onEdit(row)}
+              />
             </Tooltip>
             <Tooltip title="Manage Zones">
-              <Button shape="circle" icon="apartment" onClick={() => this.onManageZones(row)} />
+              <Button
+                className="mr-1"
+                shape="circle"
+                icon="apartment"
+                onClick={() => this.onManageZones(row)}
+              />
             </Tooltip>
             <Tooltip title="Remove Organization">
-              <Button shape="circle" type="danger" icon="delete" onClick={() => this.onRemove(row)} />
+              <Button
+                shape="circle"
+                type="danger"
+                icon="delete"
+                onClick={() => this.onRemove(row)}
+              />
             </Tooltip>
           </>
         ),
@@ -211,12 +229,17 @@ class Organizations extends React.Component {
                 <div className="utils__titleDescription">List of organizations...</div>
               </Col>
               <Col sm={24} md={12}>
-                <Input.Search style={{ float: "right", width: 300 }} placeholder="Search by name" onSearch={this.onSearch} enterButton />
+                <Input.Search
+                  style={{ float: 'right', width: 300 }}
+                  placeholder="Search by name"
+                  onSearch={this.onSearch}
+                  enterButton
+                />
                 <Button
                   type="primary"
                   icon="plus"
                   onClick={this.onAdd}
-                  style={{ marginRight: 10, float: "right"}}
+                  style={{ marginRight: 10, float: 'right' }}
                 >
                   New Organization
                 </Button>
@@ -242,4 +265,4 @@ class Organizations extends React.Component {
   }
 }
 
-export default Organizations;
+export default Organizations

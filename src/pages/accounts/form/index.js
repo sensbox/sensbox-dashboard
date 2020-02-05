@@ -1,14 +1,15 @@
 import React from 'react'
 import { Input, Button, Form, Checkbox, message, Select } from 'antd'
-import { Link } from "react-router-dom";
-import api from '../../../services/api';
+import { Link } from 'react-router-dom'
+import api from '../../../services/api'
 
-const FormItem = Form.Item;
-const { Option } = Select;
-const getFormField = (value, errors) => Form.createFormField({ value, errors: errors ? errors.map(e => new Error(e)) : null });
+const FormItem = Form.Item
+const { Option } = Select
+const getFormField = (value, errors) =>
+  Form.createFormField({ value, errors: errors ? errors.map(e => new Error(e)) : null })
 
 const mapPropsToFields = ({ account, errors }) => {
-  const { firstName, middleName, lastName, organization, active, email, username } = account || {};
+  const { firstName, middleName, lastName, organization, active, email, username } = account || {}
   return {
     firstName: getFormField(firstName, errors.firstName),
     lastName: getFormField(lastName, errors.lastName),
@@ -28,87 +29,81 @@ class AccountForm extends React.Component {
   }
 
   constructor(props) {
-    super(props);
-    this.save = this.save.bind(this);
-    this.computeUsername = this.computeUsername.bind(this);
-    this.loadOrganizations();
+    super(props)
+    this.save = this.save.bind(this)
+    this.computeUsername = this.computeUsername.bind(this)
+    this.loadOrganizations()
   }
 
   handleConfirmBlur = e => {
-    const { confirmDirty } = this.state;
-    const { value } = e.target;
-    this.setState({ confirmDirty: confirmDirty || !!value });
-  };
-
-  compareToFirstPassword = (rule, value, callback) => {
-    const { form } = this.props;
-    if (value && value !== form.getFieldValue('password')) {
-      callback('Two passwords that you enter are inconsistent!');
-    } else {
-      callback();
-    }
-  };
-
-  validateToNextPassword = (rule, value, callback) => {
-    const { form } = this.props;
-    const { confirmDirty } = this.state;
-    if (value && confirmDirty) {
-      form.validateFields(['confirm'], { force: true });
-    }
-    callback();
-  };
-
-  async loadOrganizations() {
-    const { results } = await api.find("Organization", { limit: 100 })
-    this.setState({ organizations: results.map( r => ({ value: r.objectId, text: r.name })) });
+    const { confirmDirty } = this.state
+    const { value } = e.target
+    this.setState({ confirmDirty: confirmDirty || !!value })
   }
 
-  
+  compareToFirstPassword = (rule, value, callback) => {
+    const { form } = this.props
+    if (value && value !== form.getFieldValue('password')) {
+      callback('Two passwords that you enter are inconsistent!')
+    } else {
+      callback()
+    }
+  }
+
+  validateToNextPassword = (rule, value, callback) => {
+    const { form } = this.props
+    const { confirmDirty } = this.state
+    if (value && confirmDirty) {
+      form.validateFields(['confirm'], { force: true })
+    }
+    callback()
+  }
+
+  async loadOrganizations() {
+    const { results } = await api.find('Organization', { limit: 100 })
+    this.setState({ organizations: results.map(r => ({ value: r.objectId, text: r.name })) })
+  }
+
   save() {
-    const { form, saveAction } = this.props;
+    const { form, saveAction } = this.props
     form.validateFields((err, values) => {
       if (!err) {
         // set a pointer to Organization.
-        values.organization = api.createPointer("Organization", values.organization);
-        delete values.confirm;
-        saveAction(values);
-        form.getFieldInstance('firstName').focus();
+        values.organization = api.createPointer('Organization', values.organization)
+        delete values.confirm
+        saveAction(values)
+        form.getFieldInstance('firstName').focus()
       } else {
-        const firstFieldWithError = Object.keys(err).pop();
-        form.getFieldInstance(firstFieldWithError).focus();
+        const firstFieldWithError = Object.keys(err).pop()
+        form.getFieldInstance(firstFieldWithError).focus()
         message.error('Please check all form fields.', 2.5)
       }
-    });
+    })
   }
 
   computeUsername() {
-    const { form, account } = this.props;
-    let username;
+    const { form, account } = this.props
+    let username
     if (account.objectId) {
       // eslint-disable-next-line prefer-destructuring
-      username = account.user.username;
+      username = account.user.username
     } else if (
-      form.getFieldError("firstName") === undefined &&
-      form.getFieldError("lastName") === undefined
+      form.getFieldError('firstName') === undefined &&
+      form.getFieldError('lastName') === undefined
     ) {
-        const firstName = form.getFieldValue("firstName");
-        const lastName = form.getFieldValue("lastName");
-        username = `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
+      const firstName = form.getFieldValue('firstName')
+      const lastName = form.getFieldValue('lastName')
+      username = `${firstName.toLowerCase()}.${lastName.toLowerCase()}`
     } else {
-      username='';
+      username = ''
     }
-    form.setFieldsValue({ username });
+    form.setFieldsValue({ username })
   }
 
   render() {
-    const {
-      account,
-      form,
-      backLink,
-      disableSaveButton,
-    } = this.props
-    
-    const { organizations } = this.state;
+    const { account, form, backLink, disableSaveButton } = this.props
+
+    const { organizations } = this.state
 
     return (
       <Form layout="vertical" autoComplete="off">
@@ -120,13 +115,14 @@ class AccountForm extends React.Component {
             <div className="col-lg-6">
               <div className="form-group">
                 <FormItem label="First Name">
-                  {form.getFieldDecorator('firstName',{
+                  {form.getFieldDecorator('firstName', {
                     rules: [
-                      { 
+                      {
                         pattern: /^[a-zA-Z]+$/,
                         required: true,
-                        message: "The First Name is required and can only contain letters. No another character like dots or spaces."
-                      }
+                        message:
+                          'The First Name is required and can only contain letters. No another character like dots or spaces.',
+                      },
                     ],
                   })(<Input placeholder="First name" onBlur={this.computeUsername} />)}
                 </FormItem>
@@ -135,10 +131,8 @@ class AccountForm extends React.Component {
             <div className="col-lg-6">
               <div className="form-group">
                 <FormItem label="Middle Name">
-                  {form.getFieldDecorator('middleName',{
-                    rules: [
-                      { required: false, whitespace: true }
-                    ],
+                  {form.getFieldDecorator('middleName', {
+                    rules: [{ required: false, whitespace: true }],
                   })(<Input placeholder="Middle name" />)}
                 </FormItem>
               </div>
@@ -146,13 +140,14 @@ class AccountForm extends React.Component {
             <div className="col-lg-6">
               <div className="form-group">
                 <FormItem label="Last Name">
-                  {form.getFieldDecorator('lastName',{
+                  {form.getFieldDecorator('lastName', {
                     rules: [
-                      { 
+                      {
                         pattern: /^[a-zA-Z]+$/,
                         required: true,
-                        message: "The Last Name is required and can only contain letters. No another character like dots or spaces."
-                      }
+                        message:
+                          'The Last Name is required and can only contain letters. No another character like dots or spaces.',
+                      },
                     ],
                   })(<Input placeholder="Last name" onBlur={this.computeUsername} />)}
                 </FormItem>
@@ -161,10 +156,8 @@ class AccountForm extends React.Component {
             <div className="col-lg-6">
               <div className="form-group">
                 <FormItem label="Organization">
-                  {form.getFieldDecorator('organization',{
-                    rules: [
-                      { required: true }
-                    ],
+                  {form.getFieldDecorator('organization', {
+                    rules: [{ required: true }],
                   })(
                     <Select
                       showSearch
@@ -175,8 +168,10 @@ class AccountForm extends React.Component {
                         option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                       }
                     >
-                      { organizations.map(d => <Option key={d.value}>{d.text}</Option>) }
-                    </Select>
+                      {organizations.map(d => (
+                        <Option key={d.value}>{d.text}</Option>
+                      ))}
+                    </Select>,
                   )}
                 </FormItem>
               </div>
@@ -191,16 +186,14 @@ class AccountForm extends React.Component {
             <div className="col-lg-6">
               <div className="form-group">
                 <FormItem label="Username">
-                  {form.getFieldDecorator('username')(
-                    <Input disabled />
-                  )}
+                  {form.getFieldDecorator('username')(<Input disabled />)}
                 </FormItem>
               </div>
             </div>
             <div className="col-lg-6">
               <div className="form-group">
                 <FormItem label="Email">
-                  {form.getFieldDecorator('email',{
+                  {form.getFieldDecorator('email', {
                     rules: [
                       {
                         type: 'email',
@@ -238,7 +231,7 @@ class AccountForm extends React.Component {
                   {form.getFieldDecorator('confirm', {
                     rules: [
                       {
-                        required: account.objectId === undefined || form.getFieldValue("password"),
+                        required: account.objectId === undefined || form.getFieldValue('password'),
                         message: 'Please confirm your password!',
                       },
                       {
@@ -248,11 +241,13 @@ class AccountForm extends React.Component {
                   })(<Input.Password onBlur={this.handleConfirmBlur} />)}
                 </Form.Item>
               </div>
-            </div>           
+            </div>
             <div className="col-lg-6">
               <div className="form-group">
                 <FormItem>
-                  {form.getFieldDecorator('active', { valuePropName: 'checked' })(<Checkbox>Active</Checkbox>)}
+                  {form.getFieldDecorator('active', { valuePropName: 'checked' })(
+                    <Checkbox>Active</Checkbox>,
+                  )}
                 </FormItem>
               </div>
             </div>
@@ -261,9 +256,17 @@ class AccountForm extends React.Component {
         <div className="col-lg-12">
           <div className="form-actions">
             <Link to={backLink}>
-              <Button className="mr-2" icon="arrow-left" type="default">Return Back</Button>
+              <Button className="mr-2" icon="arrow-left" type="default">
+                Return Back
+              </Button>
             </Link>
-            <Button className="float-right" icon="save" disabled={disableSaveButton} type="primary" onClick={this.save}>
+            <Button
+              className="float-right"
+              icon="save"
+              disabled={disableSaveButton}
+              type="primary"
+              onClick={this.save}
+            >
               Save
             </Button>
           </div>
@@ -276,7 +279,7 @@ class AccountForm extends React.Component {
 AccountForm.defaultProps = {
   account: {},
   errors: {},
-  saveAction: (formData) => console.log(formData)
-};
+  saveAction: formData => console.log(formData),
+}
 
-export default AccountForm;
+export default AccountForm

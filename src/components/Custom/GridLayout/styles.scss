@@ -1,0 +1,15 @@
+.react-grid-layout {
+  // background-color: red;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: none !important;
+}
+.animated .react-grid-item.cssTransforms {
+  transition-property: transform !important;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background-color: #59bac780;
+  opacity: 60%;
+}

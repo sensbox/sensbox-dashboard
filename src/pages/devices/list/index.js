@@ -1,9 +1,8 @@
 import React from 'react'
-import { Tag, Tooltip, Row, Switch, Col, Table, Button, Input} from 'antd'
+import { Tag, Tooltip, Row, Switch, Col, Table, Button, Input } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import CustomDate from '../../../components/Custom/Date';
-
+import CustomDate from '../../../components/Custom/Date'
 
 const mapStateToProps = ({ resource }) => ({
   list: resource.list,
@@ -23,58 +22,61 @@ class Devices extends React.Component {
   }
 
   constructor(props) {
-    super(props);
-    this.dispatchGetData();
-    this.onAdd.bind(this);
+    super(props)
+    this.dispatchGetData()
+    this.onAdd.bind(this)
   }
 
   handleTableChange = (pagination, filters, sorters) => {
-    const { current } = pagination;
-    const { columnKey, order } = sorters;
-    const { sortField, sortOrder } = this.state;
-    this.setState({
-      currentPage: current,
-      sortField: columnKey || sortField,
-      sortOrder: order || sortOrder,
-    }, () => this.dispatchGetData());
+    const { current } = pagination
+    const { columnKey, order } = sorters
+    const { sortField, sortOrder } = this.state
+    this.setState(
+      {
+        currentPage: current,
+        sortField: columnKey || sortField,
+        sortOrder: order || sortOrder,
+      },
+      () => this.dispatchGetData(),
+    )
   }
 
-  onSearch = (text) => {
-    this.setState({ searchText: text, currentPage: 1}, () => this.dispatchGetData());
-  } 
+  onSearch = text => {
+    this.setState({ searchText: text, currentPage: 1 }, () => this.dispatchGetData())
+  }
 
-  onAdd = () => { 
-    const { history } = this.props;
+  onAdd = () => {
+    const { history } = this.props
     history.push({
       pathname: '/devices/new',
-    });
+    })
   }
 
-  onEdit = (row) => { 
+  onEdit = row => {
     // console.log(row, this.props);
-    const { history } = this.props;
+    const { history } = this.props
     history.push({
       pathname: `/devices/settings/${row.uuid}`,
-      state: { device: row }
-    });
-  }
-
-   // eslint-disable-next-line no-unused-vars
-  onConsole = (row) => {
-    const { history } = this.props;
-    history.push({
-      pathname: '/devices/console',
-      state: { device: row }
-    });
+      state: { device: row },
+    })
   }
 
   // eslint-disable-next-line no-unused-vars
-  onRemove = (row) => { 
+  onConsole = row => {
+    const { history } = this.props
+    history.push({
+      pathname: '/devices/console',
+      state: { device: row },
+    })
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  onRemove = row => {
     // console.log(row, this.props);
   }
 
   updateActive(objectId, active) {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     dispatch({
       type: 'resource/UPDATE',
       payload: {
@@ -83,13 +85,13 @@ class Devices extends React.Component {
         data: { active },
         notify: true,
         clearCurrent: true,
-      }
-    });
+      },
+    })
   }
 
   dispatchGetData() {
-    const { dispatch } = this.props;
-    const { searchField, searchText, currentPage, limit, sortField, sortOrder } = this.state;
+    const { dispatch } = this.props
+    const { searchField, searchText, currentPage, limit, sortField, sortOrder } = this.state
 
     dispatch({
       type: 'resource/GET_DATA',
@@ -101,17 +103,17 @@ class Devices extends React.Component {
         limit,
         sortField,
         sortOrder,
-      }
-    });
+      },
+    })
   }
 
   render() {
-    const { list, total, loading } = this.props;
-    const { currentPage } = this.state;
+    const { list, total, loading } = this.props
+    const { currentPage } = this.state
     // console.log(loading)
     const pagination = {
       current: currentPage,
-      total
+      total,
     }
     const columns = [
       {
@@ -119,58 +121,81 @@ class Devices extends React.Component {
         dataIndex: 'uuid',
         key: 'uuid',
         sorter: true,
+        width: 350,
       },
       {
         title: 'Description',
         dataIndex: 'description',
         key: 'description',
         sorter: true,
+        width: 350,
       },
       {
         title: 'Status',
         key: 'connected',
         sorter: true,
-        render: (row) => (
-          <Tag color={row.connected ? 'green' : 'red'}>{row.connected ? 'Connected' : 'Disconnected'}</Tag>
-        )
+        render: row => (
+          <Tag color={row.connected ? 'green' : 'red'}>
+            {row.connected ? 'Connected' : 'Disconnected'}
+          </Tag>
+        ),
+        width: 150,
       },
       {
         title: 'Active',
         key: 'active',
         sorter: true,
-        render: (row) => (
+        render: row => (
           <Tooltip title={row.active ? 'Activado' : 'Desactivado'}>
             <Switch
               size="small"
               checked={row.active}
-              onChange={(checked) => this.updateActive(row.objectId, checked)}
+              onChange={checked => this.updateActive(row.objectId, checked)}
             />
           </Tooltip>
-        )
+        ),
+        width: 100,
       },
       {
         title: 'Last Modified',
         dataIndex: 'updatedAt',
         key: 'updatedAt',
         sorter: true,
-        render: (updatedAt) => (<CustomDate raw={updatedAt} />)
+        render: updatedAt => <CustomDate raw={updatedAt} />,
+        width: 150,
       },
       {
         title: 'Action',
         key: 'action',
-        render: (row) => (
+        render: row => (
           <>
             <Tooltip title="Device Settings">
-              <Button shape="circle" icon="setting" className="mr-1" onClick={() => this.onEdit(row)} />
+              <Button
+                shape="circle"
+                icon="setting"
+                className="mr-1"
+                onClick={() => this.onEdit(row)}
+              />
             </Tooltip>
             <Tooltip title="Device Console">
-              <Button shape="circle" icon="desktop" className="mr-1" onClick={() => this.onConsole(row)} />
+              <Button
+                shape="circle"
+                icon="desktop"
+                className="mr-1"
+                onClick={() => this.onConsole(row)}
+              />
             </Tooltip>
             <Tooltip title="Remove Device">
-              <Button shape="circle" type="danger" icon="delete" onClick={() => this.onRemove(row)} />
+              <Button
+                shape="circle"
+                type="danger"
+                icon="delete"
+                onClick={() => this.onRemove(row)}
+              />
             </Tooltip>
           </>
         ),
+        width: 150,
       },
     ]
 
@@ -187,12 +212,17 @@ class Devices extends React.Component {
                 <div className="utils__titleDescription">Devices created or shared with you.</div>
               </Col>
               <Col sm={24} md={12}>
-                <Input.Search style={{ float: "right", width: 300 }} placeholder="Search by uuid" onSearch={this.onSearch} enterButton />
+                <Input.Search
+                  style={{ float: 'right', width: 300 }}
+                  placeholder="Search by uuid"
+                  onSearch={this.onSearch}
+                  enterButton
+                />
                 <Button
                   type="primary"
                   icon="plus"
                   onClick={this.onAdd}
-                  style={{ marginRight: 10, float: "right"}}
+                  style={{ marginRight: 10, float: 'right' }}
                 >
                   New Device
                 </Button>
@@ -202,7 +232,7 @@ class Devices extends React.Component {
           <div className="card-body">
             <Table
               rowKey="objectId"
-              className="utils__scrollTable"
+              // className="utils__scrollTable"
               scroll={{ x: '100%' }}
               columns={columns}
               dataSource={list}
@@ -218,4 +248,4 @@ class Devices extends React.Component {
   }
 }
 
-export default Devices;
+export default Devices

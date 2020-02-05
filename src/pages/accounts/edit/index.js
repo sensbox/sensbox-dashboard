@@ -1,15 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { PageHeader } from 'antd';
+import { PageHeader } from 'antd'
 
 import { Helmet } from 'react-helmet'
 
-import { Redirect } from "react-router-dom";
-import CustomAvatar from 'components/Custom/Avatar';
-import AccountForm  from "../form";
+import { Redirect } from 'react-router-dom'
+import CustomAvatar from 'components/Custom/Avatar'
+import AccountForm from '../form'
 
 import style from './style.module.scss'
-
 
 const mapStateToProps = ({ resource }) => ({
   current: resource.current,
@@ -25,38 +24,38 @@ class AccountEdit extends React.Component {
   }
 
   constructor(props) {
-    super(props);
-    const { dispatch, location } = props;
+    super(props)
+    const { dispatch, location } = props
     if (location.state) {
       dispatch({
         type: 'resource/GET_CURRENT',
         payload: {
           className: 'Account',
-          includes: ["user"],
-          objectId: location.state.account.objectId
-        }
-      });
+          includes: ['user'],
+          objectId: location.state.account.objectId,
+        },
+      })
     }
-    this.saveAction = this.saveAction.bind(this);
+    this.saveAction = this.saveAction.bind(this)
   }
 
   saveAction(formData) {
-    const { current, dispatch } = this.props;
-    console.log("GUARDANDO", formData);
+    const { current, dispatch } = this.props
+    console.log('GUARDANDO', formData)
     dispatch({
       type: 'resource/UPDATE',
       payload: {
         className: 'Account',
         objectId: current.objectId,
         data: formData,
-        notify: true
-      }
-    });
+        notify: true,
+      },
+    })
   }
 
   render() {
     const { saving, objectNotFound, location, history, current, formErrors } = this.props
-    const { backLink } = this.state;
+    const { backLink } = this.state
     const metadata = {
       createdBy: current.createdBy,
       updatedBy: current.updatedBy,
@@ -70,12 +69,18 @@ class AccountEdit extends React.Component {
     return (
       <div>
         <Helmet title="User Account Edit" />
-        <PageHeader className="mb-2" onBack={() => history.replace({ pathname: backLink })} title="User Account Edit" subTitle={current.name} />
+        <PageHeader
+          className="mb-2"
+          ghost={false}
+          onBack={() => history.replace({ pathname: backLink })}
+          title="User Account Edit"
+          subTitle={current.name}
+        />
         <div className="card">
           <div className="card-body">
             <div className="row">
               <div className="col-lg-8">
-                { current.objectId &&
+                {current.objectId && (
                   <AccountForm
                     account={current}
                     disableSaveButton={saving}
@@ -83,7 +88,7 @@ class AccountEdit extends React.Component {
                     errors={formErrors}
                     backLink={backLink}
                   />
-                }
+                )}
               </div>
               <div className="col-lg-4">
                 <h5 className="mb-3 text-black">
@@ -112,4 +117,4 @@ class AccountEdit extends React.Component {
   }
 }
 
-export default AccountEdit;
+export default AccountEdit

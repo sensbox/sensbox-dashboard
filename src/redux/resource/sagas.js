@@ -4,36 +4,41 @@ import Api from 'services/api'
 import Cloud from 'services/cloud'
 import actions from './actions'
 
-const getList = ({ resource }) => resource.list;
-const getTotal = ({ resource }) => resource.total;
+const getList = ({ resource }) => resource.list
+const getTotal = ({ resource }) => resource.total
 
 export function* GET_CURRENT({ payload }) {
   try {
-    const { objectId, className, requestObjectPermissions, callback } = payload;
-    delete payload.objectId;
-    delete payload.className;
-    const current = yield call(Api.findById, className, objectId, payload);
-    let objectPermissions = {};
+    const { objectId, className, requestObjectPermissions, where, includes, callback } = payload
+
+    let current
+    if (!where) {
+      current = yield call(Api.findById, className, objectId, { includes: includes || [] })
+    } else {
+      const { results } = yield call(Api.find, className, { withCount: false, where })
+      ;[current] = results
+    }
+    let objectPermissions = {}
     if (requestObjectPermissions) {
-      const { permissions } = yield call(Cloud.requestObjectPermissions, className, objectId);
-      objectPermissions = permissions;
+      const { permissions } = yield call(Cloud.requestObjectPermissions, className, objectId)
+      objectPermissions = permissions
     }
     yield put({
       type: 'resource/SET_STATE',
       payload: {
         current: current || {},
         currentObjectPermissions: objectPermissions,
-        objectNotFound: false
+        objectNotFound: false,
       },
     })
-    if (callback) yield call(callback);
+    if (callback) yield call(callback)
   } catch (error) {
     if (error.code === 101) {
       yield put({
         type: 'resource/SET_STATE',
         payload: {
           current: {},
-          objectNotFound: true
+          objectNotFound: true,
         },
       })
     }
@@ -41,8 +46,8 @@ export function* GET_CURRENT({ payload }) {
 }
 
 export function* CREATE({ payload }) {
-  const savingMessage = message.loading('Saving...', 0);
-  const { className, data, notify, callback } = payload;
+  const savingMessage = message.loading('Saving...', 0)
+  const { className, data, notify, callback } = payload
 
   try {
     yield put({
@@ -51,71 +56,70 @@ export function* CREATE({ payload }) {
         saving: true,
       },
     })
-    const resource = yield call(Api.create, className, data);
-    const resourceCollection = yield select(getList);
+    const resource = yield call(Api.create, className, data)
+    const resourceCollection = yield select(getList)
     yield put({
       type: 'resource/SET_STATE',
       payload: {
         current: resource,
-        list: resourceCollection.map(i => i.objectId === resource.objectId ? resource : i),
+        list: resourceCollection.map(i => (i.objectId === resource.objectId ? resource : i)),
         formErrors: {},
       },
     })
-    if (notify){
+    if (notify) {
       notification.success({
-        message: "Perfect!",
-        description: "Resource created successfully!",
-        duration: 1.5
-      });
+        message: 'Perfect!',
+        description: 'Resource created successfully!',
+        duration: 1.5,
+      })
     }
-    if (callback) yield call(callback);
-
+    if (callback) yield call(callback)
   } catch (error) {
-    yield call(handleError, error, data, 'create');
+    yield call(handleError, error, data, 'create')
   }
-  setTimeout(savingMessage, 0);
+  setTimeout(savingMessage, 0)
   yield put({
     type: 'resource/SET_STATE',
     payload: {
       saving: false,
     },
   })
-};
+}
 
 export function* UPDATE({ payload }) {
-  const savingMessage = message.loading('Updating...', 0);
-  const { className, objectId, data, notify = false, clearCurrent = false, callback } = payload;
+  const savingMessage = message.loading('Updating...', 0)
+  const { className, objectId, data, notify = false, clearCurrent = false, callback } = payload
 
   try {
     yield put({
       type: 'resource/SET_STATE',
       payload: {
         saving: true,
-        current: {objectId, ...data },
+        current: { objectId, ...data },
       },
     })
     const resource = yield call(Api.update, className, objectId, data)
-    const resourceCollection = yield select(getList);
+    const resourceCollection = yield select(getList)
     yield put({
       type: 'resource/SET_STATE',
       payload: {
         current: !clearCurrent ? resource : {},
-        list: resourceCollection.map(i => i.objectId === resource.objectId ? resource : i),
+        list: resourceCollection.map(i => (i.objectId === resource.objectId ? resource : i)),
         formErrors: {},
       },
     })
-    if (notify){
+    if (notify) {
       yield notification.success({
-        message: "Perfect!",
-        description: "Resource updated successfully",
-        duration: 1.5
-      });
+        message: 'Perfect!',
+        description: 'Resource updated successfully',
+        duration: 1.5,
+      })
     }
-    if (callback) yield call(callback);
+    if (callback) yield call(callback)
   } catch (error) {
-    yield call(handleError, error, {objectId, ...data }, 'update');
+    yield call(handleError, error, { objectId, ...data }, 'update')
   }
-  setTimeout(savingMessage, 0);
+  setTimeout(savingMessage, 0)
   yield put({
     type: 'resource/SET_STATE',
     payload: {
@@ -131,12 +135,12 @@ export function* GET_DATA({ payload }) {
       loading: true,
       current: {},
       formErrors: {},
-      objectNotFound: false
+      objectNotFound: false,
     },
   })
-  
-  const { className } = payload;
-  delete payload.className;
+
+  const { className } = payload
+  delete payload.className
   try {
     const { results, total } = yield call(Api.find, className, payload)
     yield put({
@@ -164,8 +168,8 @@ export function* GET_DATA({ payload }) {
 }
 
 export function* REMOVE({ payload }) {
-  const savingMessage = message.loading('Removing...', 0);
-  const { className, objectId, notify = false, callback } = payload;
+  const savingMessage = message.loading('Removing...', 0)
+  const { className, objectId, notify = false, callback } = payload
 
   try {
     yield put({
@@ -175,8 +179,8 @@ export function* REMOVE({ payload }) {
       },
     })
     const resource = yield call(Api.remove, className, objectId)
-    const resourceCollection = yield select(getList);
-    const resourceTotal = yield select(getTotal);
+    const resourceCollection = yield select(getList)
+    const resourceTotal = yield select(getTotal)
     yield put({
       type: 'resource/SET_STATE',
       payload: {
@@ -186,18 +190,18 @@ export function* REMOVE({ payload }) {
         formErrors: {},
       },
     })
-    if (callback) yield call(callback);
-    if (notify){
+    if (callback) yield call(callback)
+    if (notify) {
       yield notification.success({
-        message: "Perfect!",
-        description: "Resource removed successfully",
-        duration: 1.5
-      });
+        message: 'Perfect!',
+        description: 'Resource removed successfully',
+        duration: 1.5,
+      })
     }
   } catch (error) {
-    yield call(handleError, error, {}, 'remove');
+    yield call(handleError, error, {}, 'remove')
   }
-  setTimeout(savingMessage, 0);
+  setTimeout(savingMessage, 0)
   yield put({
     type: 'resource/SET_STATE',
     payload: {
@@ -207,52 +211,56 @@ export function* REMOVE({ payload }) {
 }
 
 export function* SET_PERMISSIONS({ payload }) {
-  const { className, objectId, permissions, notify, callback } = payload;
+  const { className, objectId, permissions, notify, callback } = payload
   try {
     yield call(Api.setPermissions, className, objectId, permissions)
-    const { permissions: objectPermissions } = yield call(Cloud.requestObjectPermissions, className, objectId);
+    const { permissions: objectPermissions } = yield call(
+      Cloud.requestObjectPermissions,
+      className,
+      objectId,
+    )
     yield put({
       type: 'resource/SET_STATE',
       payload: {
         currentObjectPermissions: objectPermissions,
-        objectNotFound: false
+        objectNotFound: false,
       },
     })
-    if (notify){
+    if (notify) {
       yield notification.success({
-        message: "Perfect!",
-        description: "Resource permissions configured successfully",
-        duration: 1.5
-      });
+        message: 'Perfect!',
+        description: 'Resource permissions configured successfully',
+        duration: 1.5,
+      })
     }
-    if (callback) yield call(callback);
+    if (callback) yield call(callback)
   } catch (error) {
-    yield call(handleError, error, {}, 'set permissions to');
+    yield call(handleError, error, {}, 'set permissions to')
   }
 }
 
 export function* CLEAR_CURRENT({ payload }) {
-  const { callback } = payload;
+  const { callback } = payload
   yield put({
     type: 'resource/SET_STATE',
     payload: {
       current: {},
       currentObjectPermissions: {},
     },
-  });
-  if (callback) yield call(callback);
+  })
+  if (callback) yield call(callback)
 }
 
 function* handleError(error, data, operation) {
-  const { code, message: msg } = error;
-  let detail;
+  const { code, message: msg } = error
+  let detail
   switch (code) {
     case Api.ErrorCodes.INVALID_SESSION_TOKEN:
       yield put({
         type: 'user/LOGOUT',
         payload: {},
       })
-      break;
+      break
     case Api.ErrorCodes.VALIDATION_ERROR:
       yield put({
         type: 'resource/SET_STATE',
@@ -260,8 +268,8 @@ function* handleError(error, data, operation) {
           current: data,
         },
       })
-      detail = msg;
-      break;
+      detail = msg
+      break
     case 400:
       yield put({
         type: 'resource/SET_STATE',
@@ -272,16 +280,16 @@ function* handleError(error, data, operation) {
       })
       break
     default:
-      console.log(error);
-      break;
+      console.log(error)
+      break
   }
-  let description = `Error trying to ${operation} the resource.`;
-  if (detail) description += ` Detail: ${detail}`;
+  let description = `Error trying to ${operation} the resource.`
+  if (detail) description += ` Detail: ${detail}`
 
   yield notification.error({
-    message: "Oops!",
-    description
-  });
+    message: 'Oops!',
+    description,
+  })
 }
 
 export default function* rootSaga() {

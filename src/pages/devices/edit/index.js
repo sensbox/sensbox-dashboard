@@ -1,15 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { PageHeader } from 'antd';
+import { PageHeader } from 'antd'
 
 import { Helmet } from 'react-helmet'
 
-import { Redirect } from "react-router-dom";
-import CustomAvatar from 'components/Custom/Avatar';
-import DeviceForm  from "../form";
+import { Redirect } from 'react-router-dom'
+import CustomAvatar from 'components/Custom/Avatar'
+import DeviceForm from '../form'
 
 import style from './style.module.scss'
-
 
 const mapStateToProps = ({ resource }) => ({
   current: resource.current,
@@ -19,35 +18,34 @@ const mapStateToProps = ({ resource }) => ({
 
 @connect(mapStateToProps)
 class DeviceSettings extends React.Component {
-
   constructor(props) {
-    super(props);
-    const { dispatch, location } = props;
+    super(props)
+    const { dispatch, location } = props
     if (location.state) {
       dispatch({
         type: 'resource/GET_CURRENT',
         payload: {
           className: 'Device',
           objectId: location.state.device.objectId,
-        }
-      });
+        },
+      })
     }
-    this.saveAction = this.saveAction.bind(this);
+    this.saveAction = this.saveAction.bind(this)
   }
 
   saveAction(formData) {
-    const { current, dispatch } = this.props;
+    const { current, dispatch } = this.props
 
-    console.log("GUARDANDO", { ...formData });
+    console.log('GUARDANDO', { ...formData })
     dispatch({
       type: 'resource/UPDATE',
       payload: {
         className: 'Device',
         objectId: current.objectId,
         data: formData,
-        notify: true
-      }
-    });
+        notify: true,
+      },
+    })
   }
 
   render() {
@@ -66,18 +64,24 @@ class DeviceSettings extends React.Component {
     return (
       <div>
         <Helmet title="Device Settings" />
-        <PageHeader className="mb-2" onBack={() => history.goBack()} title="Device Settings" subTitle={current.nombre} />
+        <PageHeader
+          className="mb-2"
+          ghost={false}
+          onBack={() => history.goBack()}
+          title="Device Settings"
+          subTitle={current.nombre}
+        />
         <div className="card">
           <div className="card-body">
             <div className="row">
               <div className="col-lg-8">
-                { current &&
+                {current && (
                   <DeviceForm
                     device={current}
                     disableSaveButton={saving}
                     saveAction={this.saveAction}
                   />
-                }
+                )}
               </div>
               <div className="col-lg-4">
                 <h5 className="mb-3 text-black">
@@ -106,4 +110,4 @@ class DeviceSettings extends React.Component {
   }
 }
 
-export default DeviceSettings;
+export default DeviceSettings

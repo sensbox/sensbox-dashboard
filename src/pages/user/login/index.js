@@ -33,7 +33,7 @@ class Login extends Component {
           <div className="row">
             <div className="col-xl-12">
               <div className={styles.logo}>
-                <img src="resources/images/sensbox-logo-login.png" alt="Sensbox" />
+                <img src="resources/images/logo-sensbox.png" alt="Sensbox" />
               </div>
               <div className={styles.inner}>
                 <div className={styles.form}>
@@ -45,7 +45,9 @@ class Login extends Component {
                     <Form.Item label="Email">
                       {form.getFieldDecorator('email', {
                         initialValue: '',
-                        rules: [{ required: true, message: 'Por favor ingrese su dirección de e-mail' }],
+                        rules: [
+                          { required: true, message: 'Por favor ingrese su dirección de e-mail' },
+                        ],
                       })(<Input size="default" />)}
                     </Form.Item>
                     <Form.Item label="Password">

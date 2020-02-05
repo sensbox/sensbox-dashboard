@@ -1,15 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { PageHeader } from 'antd';
+import { PageHeader } from 'antd'
 
 import { Helmet } from 'react-helmet'
 
-import { Redirect } from "react-router-dom";
-import CustomAvatar from 'components/Custom/Avatar';
-import OrganizationForm  from "../form";
+import { Redirect } from 'react-router-dom'
+import CustomAvatar from 'components/Custom/Avatar'
+import OrganizationForm from '../form'
 
 import style from './style.module.scss'
-
 
 const mapStateToProps = ({ resource }) => ({
   current: resource.current,
@@ -25,37 +24,37 @@ class OrganizationEdit extends React.Component {
   }
 
   constructor(props) {
-    super(props);
-    const { dispatch, location } = props;
+    super(props)
+    const { dispatch, location } = props
     if (location.state) {
       dispatch({
         type: 'resource/GET_CURRENT',
         payload: {
           className: 'Organization',
-          objectId: location.state.organization.objectId
-        }
-      });
+          objectId: location.state.organization.objectId,
+        },
+      })
     }
-    this.saveAction = this.saveAction.bind(this);
+    this.saveAction = this.saveAction.bind(this)
   }
 
   saveAction(formData) {
-    const { current, dispatch } = this.props;
-    console.log("GUARDANDO", formData);
+    const { current, dispatch } = this.props
+    console.log('GUARDANDO', formData)
     dispatch({
       type: 'resource/UPDATE',
       payload: {
         className: 'Organization',
         objectId: current.objectId,
         data: formData,
-        notify: true
-      }
-    });
+        notify: true,
+      },
+    })
   }
 
   render() {
     const { saving, objectNotFound, location, history, current, formErrors } = this.props
-    const { backLink } = this.state;
+    const { backLink } = this.state
     const metadata = {
       createdBy: current.createdBy,
       updatedBy: current.updatedBy,
@@ -69,12 +68,18 @@ class OrganizationEdit extends React.Component {
     return (
       <div>
         <Helmet title="Organization Edit" />
-        <PageHeader className="mb-2" onBack={() => history.replace({ pathname: backLink })} title="Organization Edit" subTitle={current.name} />
+        <PageHeader
+          className="mb-2"
+          ghost={false}
+          onBack={() => history.replace({ pathname: backLink })}
+          title="Organization Edit"
+          subTitle={current.name}
+        />
         <div className="card">
           <div className="card-body">
             <div className="row">
               <div className="col-lg-8">
-                { current &&
+                {current && (
                   <OrganizationForm
                     organization={current}
                     disableSaveButton={saving}
@@ -82,7 +87,7 @@ class OrganizationEdit extends React.Component {
                     errors={formErrors}
                     backLink={backLink}
                   />
-                }
+                )}
               </div>
               <div className="col-lg-4">
                 <h5 className="mb-3 text-black">
@@ -111,4 +116,4 @@ class OrganizationEdit extends React.Component {
   }
 }
 
-export default OrganizationEdit;
+export default OrganizationEdit

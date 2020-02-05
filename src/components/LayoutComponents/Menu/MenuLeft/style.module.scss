@@ -3,7 +3,7 @@
 .menu {
   box-sizing: content-box;
   position: relative;
-
+  background-color: $gunmetal;
   :global(.ant-menu-light) {
     &:before,
     &:after {
@@ -67,14 +67,17 @@
 }
 
 .logo {
-  height: 64px;
-  background: $menuBg-darken;
+  height: 59px;
+  background: $white;
   overflow: hidden;
+  border-bottom: 1px solid $silver-20;
 }
 
 .logoContainer {
-  height: 64px;
-  padding: 13px 20px 15px 22px;
+  // padding: 13px 20px 15px 22px;
+  height: 59px;
+  padding: 13px 20px 13px 20px;
+  text-align: center;
   img {
     height: 36px;
   }
@@ -88,7 +91,7 @@
   top: 12px;
   margin: 0 !important;
   line-height: 1 !important;
-  color: $text;
+  color: $silver;
 }
 
 .navigation {
@@ -161,21 +164,22 @@
   }
 
   &:global(.ant-menu-dark) {
-    color: $gray-darken;
-
+    color: $silver;
+    background: $gunmetal;
     :global(.ant-menu-item-divider) {
       opacity: 0.2;
     }
 
     :global(.ant-menu-sub) {
-      color: $gray-darken;
+      color: $silver;
     }
 
     :global(.ant-menu-item) {
-      color: $gray-darken;
+      color: $silver;
       > a {
-        color: $gray-darken;
+        color: $silver;
         &:hover {
+          color: $white;
           .icon {
             color: $white !important;
           }
@@ -184,11 +188,18 @@
     }
 
     :global(.ant-menu-item-selected) {
+      background-color: transparent;
       > a {
         color: $white;
-
+        font-weight: bolder;
         .icon {
           color: $white !important;
+        }
+        &:hover {
+          color: $white;
+          .icon {
+            color: $white !important;
+          }
         }
       }
     }
@@ -233,13 +244,18 @@
 
   :global(.ant-layout-sider-trigger) {
     color: inherit;
-    background: $gray-border;
+    &:hover {
+      color: $primary;
+    }
+    height: 52px;
+    background: $silver-10;
+    border-top: 1px solid $silver-20;
   }
 
   :global(.ant-menu-item) > :global(a) {
     color: $text;
     &:hover {
-      color: $blue;
+      color: $primary;
     }
   }
 
@@ -271,4 +287,12 @@
 
 :global(.ant-menu-inline-collapsed) + .buyPro {
   display: none;
+}
+
+:global(.ant-layout-sider-trigger) {
+  background-color: transparent;
+  color: $silver;
+  &:hover {
+    color: $white;
+  }
 }

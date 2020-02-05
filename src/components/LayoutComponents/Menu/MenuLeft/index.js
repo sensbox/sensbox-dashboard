@@ -4,19 +4,20 @@ import { Link, withRouter } from 'react-router-dom'
 import { Menu, Layout } from 'antd'
 import store from 'store'
 import { Scrollbars } from 'react-custom-scrollbars'
-import _ from 'lodash'
+// import _ from 'lodash'
 import styles from './style.module.scss'
 
 const { Sider } = Layout
 const { SubMenu, Divider } = Menu
 
-const mapStateToProps = ({ menu, settings }) => ({
+const mapStateToProps = ({ menu, settings, common }) => ({
   menuData: menu.menuLeftData,
   isMenuCollapsed: settings.isMenuCollapsed,
   isMobileView: settings.isMobileView,
   isSettingsOpen: settings.isSettingsOpen,
   isLightTheme: settings.isLightTheme,
   isMobileMenuOpen: settings.isMobileMenuOpen,
+  selectedKeys: common.selectedKeys,
 })
 
 @withRouter
@@ -40,22 +41,29 @@ class MenuLeft extends React.Component {
     this.setSelectedKeys(newProps)
   }
 
+  // setSelectedKeys = props => {
+  //   const { menuData } = this.props
+  //   const flattenItems = (items, key) =>
+  //     items.reduce((flattenedItems, item) => {
+  //       flattenedItems.push(item)
+  //       if (Array.isArray(item[key])) {
+  //         return flattenedItems.concat(flattenItems(item[key], key))
+  //       }
+  //       return flattenedItems
+  //     }, [])
+  //   const selectedItem = _.find(flattenItems(menuData, 'children'), [
+  //     'url',
+  //     props.location.pathname,
+  //   ])
+  //   this.setState({
+  //     selectedKeys: selectedItem ? [selectedItem.key] : [],
+  //   })
+  // }
+
   setSelectedKeys = props => {
-    const { menuData } = this.props
-    const flattenItems = (items, key) =>
-      items.reduce((flattenedItems, item) => {
-        flattenedItems.push(item)
-        if (Array.isArray(item[key])) {
-          return flattenedItems.concat(flattenItems(item[key], key))
-        }
-        return flattenedItems
-      }, [])
-    const selectedItem = _.find(flattenItems(menuData, 'children'), [
-      'url',
-      props.location.pathname,
-    ])
+    const { selectedKeys } = props
     this.setState({
-      selectedKeys: selectedItem ? [selectedItem.key] : [],
+      selectedKeys: selectedKeys || [],
     })
   }
 
@@ -209,7 +217,7 @@ class MenuLeft extends React.Component {
         <div className={styles.logo}>
           <div className={styles.logoContainer}>
             <img
-              src={`resources/images/logo-inverse${menuSettings.collapsed ? '-mobile' : ''}.png`}
+              src={`resources/images/logo-sensbox${menuSettings.collapsed ? '-mobile' : ''}.png`}
               alt=""
             />
           </div>

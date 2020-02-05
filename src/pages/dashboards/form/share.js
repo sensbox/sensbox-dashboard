@@ -1,17 +1,21 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Form, Modal, Switch } from 'antd'
-import UserSelect from '../../../components/Custom/UserSelect';
+import UserSelect from '../../../components/Custom/UserSelect'
 
-const getFormField = (value, errors) => Form.createFormField({ value, errors: errors && errors.map(e => new Error(e)) });
+const getFormField = (value, errors) =>
+  Form.createFormField({ value, errors: errors && errors.map(e => new Error(e)) })
 
 const mapPropsToFields = ({ currentUser, permissions, formErrors }) => {
-
-  const publicReadAccess = permissions.public ? permissions.public.read : false;
-  const users = permissions.users ? permissions.users
-    .filter(u => u.userId !== currentUser.id && u.read)
-    .map( u => ( { key: u.userId, label: `${u.account.firstName} ${u.account.lastName} (${u.account.username})`}))
-    : [];
+  const publicReadAccess = permissions.public ? permissions.public.read : false
+  const users = permissions.users
+    ? permissions.users
+        .filter(u => u.userId !== currentUser.id && u.read)
+        .map(u => ({
+          key: u.userId,
+          label: `${u.account.firstName} ${u.account.lastName} (${u.account.username})`,
+        }))
+    : []
 
   return {
     public: getFormField(publicReadAccess, formErrors.public),
@@ -25,19 +29,19 @@ const mapStateToProps = ({ resource, user }) => ({
   permissions: resource.currentObjectPermissions,
   saving: resource.saving,
   formErrors: resource.formErrors,
-  objectNotFound: resource.objectNotFound
+  objectNotFound: resource.objectNotFound,
 })
 
 @connect(mapStateToProps)
 @Form.create({ mapPropsToFields })
 class ShareForm extends React.Component {
   render() {
-    const { saving, visible, onCancel, onConfirm, form, dashboard } = this.props;
-    const { getFieldDecorator } = form;
+    const { saving, visible, onCancel, onConfirm, form, dashboard } = this.props
+    const { getFieldDecorator } = form
     return (
       <Modal
         visible={visible}
-        okButtonProps={{loading: saving}}
+        okButtonProps={{ loading: saving }}
         title={`Share Dashboard ${dashboard.name}`}
         okText="Share"
         onCancel={onCancel}
@@ -50,13 +54,16 @@ class ShareForm extends React.Component {
               valuePropName: 'checked',
             })(<Switch />)}
           </Form.Item>
-          <Form.Item label="Share with" extra="List of users that you want to share your dashboard. The users cannot modify the dashboard only visualize it.">
+          <Form.Item
+            label="Share with"
+            extra="List of users that you want to share your dashboard. The users cannot modify the dashboard only visualize it."
+          >
             {getFieldDecorator('users')(<UserSelect />)}
           </Form.Item>
         </Form>
       </Modal>
-    );
+    )
   }
 }
 
-export default ShareForm;
+export default ShareForm

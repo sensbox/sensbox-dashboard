@@ -1,46 +1,57 @@
 import Parse from 'parse'
-import Api from './api';
+import Api from './api'
 
-const RESOURCE_CLASS_NAME = "Sensor";
+const RESOURCE_CLASS_NAME = 'Sensor'
 
 async function find(payload = {}) {
-  const result = await Api.find(RESOURCE_CLASS_NAME, payload);
-  return result;
+  const result = await Api.find(RESOURCE_CLASS_NAME, payload)
+  return result
 }
 
 async function findById(objectId) {
-  const result = await Api.findById(RESOURCE_CLASS_NAME, objectId);
-  return result;
+  const result = await Api.findById(RESOURCE_CLASS_NAME, objectId)
+  return result
 }
 
 async function create(data) {
-  const result = await Api.create(RESOURCE_CLASS_NAME, data);
-  return result;
+  const result = await Api.create(RESOURCE_CLASS_NAME, data)
+  return result
 }
 
 async function update(objectId, updatedCentro) {
-  const result = await Api.update(RESOURCE_CLASS_NAME, objectId, updatedCentro, false);
-  return result;
+  const result = await Api.update(RESOURCE_CLASS_NAME, objectId, updatedCentro, false)
+  return result
 }
 
 async function remove(objectId) {
-  await Api.remove(RESOURCE_CLASS_NAME, objectId);
+  await Api.remove(RESOURCE_CLASS_NAME, objectId)
 }
 
 async function subscribeToChanges(deviceId) {
-  const query = new Parse.Query('Sensor');
-  query.equalTo('device', Api.createPointer("Device", deviceId));
-  const subscription = await query.subscribe();
-  return subscription;
+  if (!deviceId) throw new Error('Device Id cannot be null or undefined ')
+  const query = new Parse.Query('Sensor')
+  query.equalTo('device', Api.createPointer('Device', deviceId))
+  const subscription = await query.subscribe()
+  return subscription
 }
 
 async function unsubscribe(subscription) {
-  return subscription.unsubscribe();
+  return subscription.unsubscribe()
+}
+
+async function findByDevice(deviceId) {
+  const query = new Parse.Query(RESOURCE_CLASS_NAME)
+  query.equalTo('device', Api.createPointer('Device', deviceId))
+  const results = await query.find()
+  return {
+    results: results.map(r => r.toJSON()),
+  }
 }
 
 export default {
   find,
   findById,
+  findByDevice,
   create,
   update,
   remove,

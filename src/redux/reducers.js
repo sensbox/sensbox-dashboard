@@ -5,6 +5,8 @@ import menu from './menu/reducers'
 import resource from './resource/reducers'
 import sensor from './sensor/reducers'
 import settings from './settings/reducers'
+import common from './common/reducers'
+import builder from './builder/reducers'
 
 export default history =>
   combineReducers({
@@ -14,4 +16,6 @@ export default history =>
     resource,
     settings,
     sensor,
+    common,
+    builder,
   })

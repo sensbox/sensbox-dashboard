@@ -140,7 +140,7 @@ export async function getLeftMenuData() {
     // },
     {
       title: 'Dashboard Old',
-      key: 'dashboardAlpha',
+      key: 'dashboard',
       url: '/dashboard/alpha',
       icon: 'icmn icmn-home',
     },

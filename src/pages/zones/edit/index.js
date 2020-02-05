@@ -1,15 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { PageHeader } from 'antd';
+import { PageHeader } from 'antd'
 
 import { Helmet } from 'react-helmet'
 
-import { Redirect } from "react-router-dom";
-import CustomAvatar from 'components/Custom/Avatar';
-import ZoneForm  from "../form";
+import { Redirect } from 'react-router-dom'
+import CustomAvatar from 'components/Custom/Avatar'
+import ZoneForm from '../form'
 
 import style from './style.module.scss'
-
 
 const mapStateToProps = ({ resource }) => ({
   current: resource.current,
@@ -25,8 +24,8 @@ class ZoneEdit extends React.Component {
   }
 
   constructor(props) {
-    super(props);
-    const { dispatch, location } = props;
+    super(props)
+    const { dispatch, location } = props
     if (location.state) {
       this.state = {
         ...this.state,
@@ -36,39 +35,39 @@ class ZoneEdit extends React.Component {
         type: 'resource/GET_CURRENT',
         payload: {
           className: 'Zone',
-          objectId: location.state.zone.objectId
-        }
-      });
+          objectId: location.state.zone.objectId,
+        },
+      })
     }
-    this.saveAction = this.saveAction.bind(this);
+    this.saveAction = this.saveAction.bind(this)
   }
 
   onBack = () => {
-    const { history, current} = this.props;
-    const { backLink } = this.state;
+    const { history, current } = this.props
+    const { backLink } = this.state
     return history.replace({
       pathname: backLink,
-      state: { organization: current.organization } 
+      state: { organization: current.organization },
     })
-  };
+  }
 
   saveAction(formData) {
-    const { current, dispatch } = this.props;
-    console.log("GUARDANDO", formData);
+    const { current, dispatch } = this.props
+    console.log('GUARDANDO', formData)
     dispatch({
       type: 'resource/UPDATE',
       payload: {
         className: 'Zone',
         objectId: current.objectId,
         data: formData,
-        notify: true
-      }
-    });
+        notify: true,
+      },
+    })
   }
 
   render() {
-    const { saving, objectNotFound, location, current, formErrors } = this.props;
-    const { backLink } = this.state;
+    const { saving, objectNotFound, location, current, formErrors } = this.props
+    const { backLink } = this.state
     // console.log(history);
     const metadata = {
       createdBy: current.createdBy,
@@ -85,6 +84,7 @@ class ZoneEdit extends React.Component {
         <Helmet title="Zone Edit" />
         <PageHeader
           className="mb-2"
+          ghost={false}
           onBack={this.onBack}
           title="Zone Edit"
           subTitle={current.name}
@@ -93,15 +93,15 @@ class ZoneEdit extends React.Component {
           <div className="card-body">
             <div className="row">
               <div className="col-lg-8">
-                { current &&
+                {current && (
                   <ZoneForm
                     zone={current}
                     disableSaveButton={saving}
                     saveAction={this.saveAction}
                     errors={formErrors}
-                    backLink={{ pathname: backLink, state: { organization: current.organization }}}
+                    backLink={{ pathname: backLink, state: { organization: current.organization } }}
                   />
-                }
+                )}
               </div>
               <div className="col-lg-4">
                 <h5 className="mb-3 text-black">
@@ -130,4 +130,4 @@ class ZoneEdit extends React.Component {
   }
 }
 
-export default ZoneEdit;
+export default ZoneEdit

@@ -8,28 +8,66 @@ class DashboardCard extends React.Component {
   static defaultProps = {
     title: 'title',
     description: '',
+    onClick: () => console.log('click'),
   }
 
   render() {
-    const { title, description, sharedBy, editAction, shareAction, removeAction } = this.props;
-    let actions = [];
+    const {
+      title,
+      description,
+      public: pubPerm,
+      sharedBy,
+      editAction,
+      shareAction,
+      removeAction,
+      onClick,
+    } = this.props
+
+    let actions = []
     if (!sharedBy) {
       actions = [
-        <div className='actions'>
+        <div className="actions">
           <Tooltip placement="top" title="Edit">
-            <Icon className={styles.actionIconEdit} type="edit" key="edit" onClick={editAction} />
+            <Icon
+              className={styles.actionIconEdit}
+              type="edit"
+              key="edit"
+              onClick={e => {
+                e.stopPropagation()
+                editAction()
+              }}
+            />
           </Tooltip>
           <Tooltip placement="top" title="Share">
-            <Icon className={styles.actionIconShare} type="share-alt" key="share-alt" onClick={shareAction} />
+            <Icon
+              className={styles.actionIconShare}
+              type="share-alt"
+              key="share-alt"
+              onClick={e => {
+                e.stopPropagation()
+                shareAction()
+              }}
+            />
           </Tooltip>
           <Tooltip placement="top" title="Delete">
-            <Icon className={styles.actionIconDelete} type="delete" key="delete" onClick={removeAction} />
+            <Icon
+              className={styles.actionIconDelete}
+              type="delete"
+              key="delete"
+              onClick={e => {
+                e.stopPropagation()
+                removeAction()
+              }}
+            />
           </Tooltip>
-        </div>
-      ];
+        </div>,
+      ]
     } else {
       actions = [
-        <span> Shared by <b>@{sharedBy.username}</b></span>
+        <span>
+          {' '}
+          Shared by <b>@{sharedBy.username}</b>
+        </span>,
       ]
     }
     return (
@@ -45,14 +83,25 @@ class DashboardCard extends React.Component {
         //   />
         // }
         actions={actions}
+        onClick={onClick}
       >
         <Meta
           // avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-          title={<div className={styles.title}>{title}</div>}
+          title={
+            <div className={styles.title}>
+              {title}
+              {pubPerm && (
+                <Tooltip placement="top" title="Public dashboard">
+                  <span className="float-right">
+                    <Icon type="team" style={{ color: '#46be8a' }} />
+                  </span>
+                </Tooltip>
+              )}
+            </div>
+          }
           description={
-            <div className={styles.description}>
-              {description || <span>&nbsp;</span>}
-            </div>}
+            <div className={styles.description}>{description || <span>&nbsp;</span>}</div>
+          }
         />
         {/* <a href="javascript: void(0);" className="m-1 btn btn-outline-success"> Edit </a>
         <a href="javascript: void(0);" className="m-1 btn btn-outline-danger"> Delete </a> */}

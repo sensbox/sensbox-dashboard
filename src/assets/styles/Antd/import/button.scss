@@ -1,0 +1,46 @@
+// Import mixins
+@import 'assets/styles/mixins.scss';
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/*  ANT DESIGN BUTTON */
+
+.ant-btn-primary {
+  color: #fff;
+  background-color: $primary;
+  border-color: $primary;
+  &:hover, &:focus {
+    color: #fff !important;
+    background-color: $primaryLight;
+    border-color: $primaryLight;
+  }
+}
+
+.ant-btn {
+  &:hover, &:focus {
+    color: $primary;
+    border-color: $primary;
+  }
+}
+
+.ant-btn-danger {
+  &:hover, &:focus {
+    color: $white;
+    border-color: $danger;
+  }
+}
+
+.ant-switch-checked {
+  background-color: $primary;
+}
+
+.ant-btn-link {
+  color: $secondary;
+  &:hover, &:focus {
+    color: $secondary;
+    border-color: $secondary;
+  }
+}
+
+.ant-card-actions > li > span:hover {
+  color: $secondary;
+}
