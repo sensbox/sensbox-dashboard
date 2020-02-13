@@ -8,7 +8,6 @@ export function* CLEAR_ALL({ payload }) {
 
   if (!location || location.pathname !== payload.location.pathname) {
     const currentRoute = routes.find(route => matchPath(payload.location.pathname, route))
-    console.log(currentRoute)
     yield put({
       type: 'common/SET_STATE',
       payload: {

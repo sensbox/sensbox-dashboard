@@ -9,8 +9,6 @@ const getFormField = (value, errors) => Form.createFormField({ value, errors: er
 
 const mapPropsToFields = ({ itemDef, errors }) => {
   const { title, series } = itemDef
-  console.log('itemdef', itemDef)
-  console.log('Errors', errors)
   return {
     title: getFormField(title, errors.title),
     series: getFormField(series || [{ id: 0 }], errors.series),
@@ -18,7 +16,6 @@ const mapPropsToFields = ({ itemDef, errors }) => {
 }
 
 const onFieldsChange = ({ onDefinitionChange, itemDef }, changedFields) => {
-  console.log(changedFields)
   const values = {}
   const errors = {}
 
@@ -82,18 +79,7 @@ class EditWidgetForm extends React.Component {
             </TabPane>
           </Tabs>
         </Form>
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            bottom: 0,
-            width: '100%',
-            borderTop: '1px solid #e9e9e9',
-            padding: '10px 16px',
-            background: '#fff',
-            textAlign: 'right',
-          }}
-        >
+        <div className={styles.Actions}>
           <Button onClick={onCancel} style={{ marginRight: 8 }}>
             Cancel
           </Button>

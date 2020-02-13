@@ -2,8 +2,8 @@ import React from 'react'
 import { withSize } from 'react-sizeme'
 
 import { Card, Button, Input, Modal } from 'antd'
-import LineChart from '../../WidgetsComponents/LineChart'
 import './styles.scss'
+import { LineChart } from '../../WidgetsComponents'
 
 const { confirm } = Modal
 
@@ -124,7 +124,7 @@ class GridItem extends React.Component {
           )
         }
       >
-        <LineChart height={dynamicSize ? size.height : null} />
+        <LineChart series={itemDef.series} height={dynamicSize ? size.height : null} />
       </Card>
     )
   }

@@ -192,7 +192,7 @@ function* handleError(error, data) {
       })
       break
     default:
-      console.log(error)
+      console.error(error)
       break
   }
 }

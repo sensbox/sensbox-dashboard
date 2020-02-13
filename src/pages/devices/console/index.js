@@ -153,12 +153,11 @@ class DeviceConsole extends React.Component {
     this.setState({ hasPendingOperations: true }, async () => {
       const { current: device } = this.props
       const { fromDate, toDate } = this.state
-      const data = await cloudApi.storeFetch(device, fromDate.toDate(), toDate.toDate())
+      const data = await cloudApi.metricsStoreFetch(device, fromDate.toDate(), toDate.toDate())
       const chartsData = []
       data.forEach(item => {
         chartsData[item.name] = item.rows.map(r => ({ x: r.time, y: r.value }))
       })
-      // console.log(chartsData);
       this.setState({ chartsData, hasPendingOperations: false })
     })
   }

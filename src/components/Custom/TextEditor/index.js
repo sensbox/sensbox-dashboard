@@ -34,7 +34,6 @@ class TextEditor extends Component {
   constructor(props) {
     super(props)
     const { value } = props
-    console.log(value)
     this.state = {
       editorState: valueToEditorState(value),
       // modified: false

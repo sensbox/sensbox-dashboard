@@ -71,7 +71,6 @@ class DeviceForm extends React.Component {
 
   editSensor = sensor => {
     const { dispatch } = this.props
-    console.log(sensor)
     dispatch({
       type: 'sensor/GET_CURRENT',
       payload: {
@@ -83,7 +82,6 @@ class DeviceForm extends React.Component {
 
   removeSensor = sensor => {
     const { dispatch, device } = this.props
-    console.log(sensor.objectId)
     confirm({
       title: 'Are you sure delete this sensor?',
       content: 'All associated data such as dashboard graphs that contains it will be deleted too',
@@ -100,7 +98,7 @@ class DeviceForm extends React.Component {
         })
       },
       onCancel() {
-        console.log('Cancel')
+        // console.log('Cancel')
       },
     })
   }

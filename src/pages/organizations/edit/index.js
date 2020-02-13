@@ -40,7 +40,6 @@ class OrganizationEdit extends React.Component {
 
   saveAction(formData) {
     const { current, dispatch } = this.props
-    console.log('GUARDANDO', formData)
     dispatch({
       type: 'resource/UPDATE',
       payload: {

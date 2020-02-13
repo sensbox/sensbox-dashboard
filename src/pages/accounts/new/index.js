@@ -38,7 +38,7 @@ class AccountNew extends React.Component {
   saveAction(formData) {
     // eslint-disable-next-line no-unused-vars
     const { dispatch } = this.props
-    console.log('Saving', formData)
+    // console.log('Saving', formData)
     dispatch({
       type: 'resource/CREATE',
       payload: {

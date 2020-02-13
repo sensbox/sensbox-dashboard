@@ -26,7 +26,6 @@ class OrganizationNew extends React.Component {
   componentDidUpdate() {
     const { current } = this.props
     const { editLink } = this.state
-    console.log('CURRENT', current)
     if (current && current.objectId) {
       const { history } = this.props
       history.push({

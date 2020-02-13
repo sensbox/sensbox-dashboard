@@ -11,26 +11,26 @@ class SensorSelect extends React.Component {
   }
 
   componentDidMount() {
-    const { defaultValue, device } = this.props
+    const { defaultValue, devices } = this.props
     const { objectId: key, name: label } = defaultValue || {}
     this.setState({ value: defaultValue ? { key, label } : undefined })
-    this.fetchSensors(device)
+    this.fetchSensors(devices)
   }
 
   componentDidUpdate(prevProps) {
-    const { device, onChange } = this.props
-    if (prevProps.device !== device) {
-      this.fetchSensors(device, true)
+    const { devices, onChange } = this.props
+    if (JSON.stringify(prevProps.devices) !== JSON.stringify(devices)) {
+      this.fetchSensors(devices, true)
       // trigger on change event in order to clear previous sensor value
       onChange()
     }
   }
 
-  fetchSensors = async (deviceId, clearValue = false) => {
+  fetchSensors = async (devices, clearValue = false) => {
     this.setState({ data: [], fetching: true })
     let data = []
-    if (deviceId) {
-      const { results } = await Sensor.findByDevice(deviceId)
+    if (devices && devices.length > 0) {
+      const { results } = await Sensor.findByDevices(devices)
       data = results.map(({ objectId, name }) => ({
         text: `${name}`,
         value: objectId,

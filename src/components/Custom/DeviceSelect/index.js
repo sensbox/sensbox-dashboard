@@ -30,9 +30,9 @@ class DeviceSelect extends React.Component {
 
   handleChange = value => {
     const { onChange } = this.props
-    const { key: objectId, label: uuid } = value
+    const devices = value.map(({ key, label }) => ({ objectId: key, uuid: label }))
     if (onChange) {
-      onChange({ objectId, uuid })
+      onChange(devices)
     }
     this.setState({
       data: [],
@@ -43,11 +43,15 @@ class DeviceSelect extends React.Component {
   render() {
     const { fetching, data } = this.state
     const { defaultValue } = this.props
-    const { objectId: key, uuid: label } = defaultValue || {}
+    const value = defaultValue
+      ? defaultValue.map(({ objectId, uuid }) => ({ key: objectId, label: uuid }))
+      : undefined
+
     return (
       <Select
+        mode="multiple"
         labelInValue
-        value={defaultValue ? { key, label } : undefined}
+        value={value}
         placeholder="Uuid or description to search..."
         notFoundContent={fetching ? <Spin size="small" /> : null}
         filterOption={false}

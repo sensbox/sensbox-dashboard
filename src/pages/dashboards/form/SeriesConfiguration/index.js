@@ -5,21 +5,9 @@ import styles from './style.module.scss'
 import DeviceSelect from '../../../../components/Custom/DeviceSelect'
 import SensorSelect from '../../../../components/Custom/SensorSelect'
 import ColorPicker from '../../../../components/Custom/ColorPicker'
+import FunctionSelect from '../../../../components/Custom/FunctionSelect'
 
 class SeriesConfiguration extends React.Component {
-  // constructor(props) {
-  //   super(props)
-  //   console.log('instanciando', props.value)
-  //   this.state = { series: props.value }
-  // }
-
-  // componentDidUpdate(prevProps) {
-  //   const { value } = this.props
-  //   if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
-  //     this.setState({ series: value })
-  //   }
-  // }
-
   triggerOnChange = series => {
     const { onChange } = this.props
     onChange(series)
@@ -36,9 +24,10 @@ class SeriesConfiguration extends React.Component {
   onAddSerieClick = () => {
     const { value: series } = this.props
     const id = shortid.generate()
+    const name = 'sensor'
     // const newSerie = { id }
     // series.push(newSerie)
-    this.triggerOnChange([...series, { id }])
+    this.triggerOnChange([...series, { id, name }])
   }
 
   onRemoveSerieClick = id => {
@@ -48,8 +37,7 @@ class SeriesConfiguration extends React.Component {
 
   render() {
     const { value: series } = this.props
-    // eslint-disable-next-line no-unused-vars
-    const seriesElement = series.map(({ id, name, color, device, sensor }) => (
+    const seriesElement = series.map(({ id, name, color, devices, sensor, aggregation }) => (
       <Card
         key={id}
         title={name || 'Serie'}
@@ -78,10 +66,6 @@ class SeriesConfiguration extends React.Component {
           </Col>
           <Col span={12}>
             <Form.Item label="Color">
-              {/* <Input
-                onChange={event => this.onSerieChange(id, 'color', event.target.value)}
-                defaultValue={color}
-              /> */}
               <ColorPicker
                 onChange={newColor => this.onSerieChange(id, 'color', newColor.hex)}
                 defaultValue={color}
@@ -96,24 +80,31 @@ class SeriesConfiguration extends React.Component {
               extra="Input device uuid or description to find one and select it."
             >
               <DeviceSelect
-                onChange={devices => this.onSerieChange(id, 'device', devices)}
-                defaultValue={device}
+                onChange={newDevices => this.onSerieChange(id, 'devices', newDevices)}
+                defaultValue={devices}
               />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col span={6}>
             <Form.Item
               label="Sensor"
               extra="List of users that you want to share your dashboard. The users cannot modify the dashboard only visualize it."
             >
-              {/* <Input
-                onChange={event => this.onSerieChange(id, 'sensor', event.target.value)}
-                defaultValue={sensor}
-              /> */}
               <SensorSelect
-                device={device ? device.objectId : undefined}
+                devices={devices}
                 onChange={sensors => this.onSerieChange(id, 'sensor', sensors)}
                 defaultValue={sensor}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item
+              label="Aggregation"
+              extra="List of users that you want to share your dashboard. The users cannot modify the dashboard only visualize it."
+            >
+              <FunctionSelect
+                onChange={value => this.onSerieChange(id, 'aggregation', value)}
+                defaultValue={aggregation}
               />
             </Form.Item>
           </Col>

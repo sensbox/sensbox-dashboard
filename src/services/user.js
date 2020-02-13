@@ -1,9 +1,10 @@
 import Parse from 'parse'
 import { notification } from 'antd'
 import Api from './api'
+import Config from './config'
 
-Parse.initialize('51y2vAkNlpb8Kztg9WjLeXt2wBUOlH3h')
-Parse.serverURL = 'http://localhost:4040/parse/'
+Parse.serverURL = Config.getServerUrl()
+Parse.initialize(Config.getApiKey())
 export async function login(email, password) {
   return Parse.User.logIn(email, password)
     .then(() => true)

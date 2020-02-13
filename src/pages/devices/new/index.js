@@ -20,7 +20,6 @@ class DeviceNew extends React.Component {
 
   componentDidUpdate() {
     const { current } = this.props
-    console.log('CURRENT', current)
     if (current && current.objectId) {
       const { history } = this.props
       history.push({
@@ -33,7 +32,6 @@ class DeviceNew extends React.Component {
   saveAction(formData) {
     // eslint-disable-next-line no-unused-vars
     const { current, dispatch } = this.props
-    console.log('GUARDANDO', formData)
     dispatch({
       type: 'resource/CREATE',
       payload: {

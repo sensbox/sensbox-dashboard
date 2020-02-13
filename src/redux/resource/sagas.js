@@ -280,7 +280,7 @@ function* handleError(error, data, operation) {
       })
       break
     default:
-      console.log(error)
+      console.error(error)
       break
   }
   let description = `Error trying to ${operation} the resource.`

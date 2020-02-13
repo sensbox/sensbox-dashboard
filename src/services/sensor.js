@@ -1,5 +1,6 @@
 import Parse from 'parse'
 import Api from './api'
+import Cloud from './cloud'
 
 const RESOURCE_CLASS_NAME = 'Sensor'
 
@@ -48,10 +49,20 @@ async function findByDevice(deviceId) {
   }
 }
 
+/**
+ * Return sensors intersection between array of devices
+ *
+ * @param {Array} devices
+ */
+async function findByDevices(devices) {
+  return Cloud.findSensorsByDevices(devices)
+}
+
 export default {
   find,
   findById,
   findByDevice,
+  findByDevices,
   create,
   update,
   remove,
