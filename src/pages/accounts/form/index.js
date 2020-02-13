@@ -44,7 +44,7 @@ class AccountForm extends React.Component {
   compareToFirstPassword = (rule, value, callback) => {
     const { form } = this.props
     if (value && value !== form.getFieldValue('password')) {
-      callback('Two passwords that you enter are inconsistent!')
+      callback("The passwords doesn't match!")
     } else {
       callback()
     }
