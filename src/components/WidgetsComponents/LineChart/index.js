@@ -1,8 +1,8 @@
 import React from 'react'
-import { Line } from 'react-chartjs-2'
 import cloudApi from '../../../services/cloud'
+import LineAdapter from '../../Chartjs/Adapters/Line'
 
-class LineChart extends React.PureComponent {
+class LineChart extends React.Component {
   static defaultProps = {
     series: [
       {
@@ -17,10 +17,7 @@ class LineChart extends React.PureComponent {
     seriesData: [],
   }
 
-  constructor(props) {
-    super(props)
-    this.generateDatasets = this.generateDatasets.bind(this)
-    this.processOptions = this.processOptions.bind(this)
+  componentDidMount() {
     this.fetchDataFromCloud()
   }
 
@@ -58,86 +55,13 @@ class LineChart extends React.PureComponent {
     }
   }
 
-  generateDatasets() {
-    // eslint-disable-next-line no-debugger
-    // debugger
-    const { series } = this.props
-    const { seriesData } = this.state
-
-    return series.map(serie => {
-      const hasSensor = serie.sensor
-      let data = []
-
-      if (hasSensor) {
-        // find in response same index as serie
-        const serieData = seriesData.find(s => s.id === serie.id)
-        if (serieData && serieData.rows && serieData.rows.length) {
-          // eslint-disable-next-line prefer-destructuring
-          data = serieData.rows.map(r => ({ x: r.time, y: r.value }))
-        }
-      }
-
-      return {
-        label: serie.name,
-        key: serie.id,
-        data,
-        backgroundColor: '#eaeaea69',
-        borderColor: serie.color,
-        borderWidth: 2,
-        spanGaps: true,
-        pointRadius: 0.5,
-        pointHoverRadius: 2,
-      }
-    })
-  }
-
-  processOptions() {
-    const { series } = this.props
-    const display = series.length > 1
-    return {
-      responsive: true,
-      maintainAspectRatio: false,
-      legend: {
-        display,
-        position: 'bottom',
-      },
-      animation: {
-        duration: 0, // general animation time
-      },
-      scales: {
-        yAxes: [
-          {
-            ticks: {
-              min: 0,
-              max: 100,
-            },
-          },
-        ],
-        xAxes: [
-          {
-            type: 'time',
-            time: {
-              unit: 'day',
-            },
-          },
-        ],
-      },
-    }
-  }
-
   render() {
-    const { height } = this.props
-    // console.log('height', height)
+    const { height, series } = this.props
+    const { seriesData } = this.state
 
     return (
       <div style={{ height: `${height - 70}px` }}>
-        <Line
-          data={{
-            labels: '',
-            datasets: this.generateDatasets(),
-          }}
-          options={this.processOptions()}
-        />
+        <LineAdapter series={series} data={seriesData} />
       </div>
     )
   }
