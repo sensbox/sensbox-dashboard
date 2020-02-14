@@ -89,6 +89,7 @@ class DashboardBuilder extends React.Component {
       widgets: [],
       showAddWidgetPanel: false,
       showEditWidgetPanel: false,
+      stopGridLayoutUpdates: false,
     }
 
     this.saveLayout = this.saveLayout.bind(this)
@@ -179,12 +180,14 @@ class DashboardBuilder extends React.Component {
 
   showEditWidgetPanel(itemDef) {
     const { editWidget } = this.props
-    editWidget(itemDef, {}, () => this.setState({ showEditWidgetPanel: true }))
+    editWidget(itemDef, {}, () =>
+      this.setState({ stopGridLayoutUpdates: true, showEditWidgetPanel: true }),
+    )
   }
 
   closeEditWidgetPanel() {
     const { clearWidget } = this.props
-    clearWidget(() => this.setState({ showEditWidgetPanel: false }))
+    clearWidget(() => this.setState({ stopGridLayoutUpdates: false, showEditWidgetPanel: false }))
   }
 
   saveEditingWidget(itemDef, errors) {
@@ -194,7 +197,13 @@ class DashboardBuilder extends React.Component {
 
   render() {
     const { current, editingWidget, editingWidgetErrors } = this.props
-    const { layouts, widgets, showAddWidgetPanel, showEditWidgetPanel } = this.state
+    const {
+      layouts,
+      widgets,
+      showAddWidgetPanel,
+      showEditWidgetPanel,
+      stopGridLayoutUpdates,
+    } = this.state
 
     return (
       <div>
@@ -236,6 +245,7 @@ class DashboardBuilder extends React.Component {
           onSaveWidget={this.saveWidget}
           onEditButtonClick={this.showEditWidgetPanel}
           onRemoveButtonClick={this.removeWidget}
+          stopUpdates={stopGridLayoutUpdates}
         />
         <Drawer
           title={<div className={styles.drawerTitle}>Add Widgets</div>}
