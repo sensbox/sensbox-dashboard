@@ -25,9 +25,10 @@ class SeriesConfiguration extends React.Component {
     const { value: series } = this.props
     const id = shortid.generate()
     const name = 'sensor'
+    const aggregation = 'MEAN'
     // const newSerie = { id }
     // series.push(newSerie)
-    this.triggerOnChange([...series, { id, name }])
+    this.triggerOnChange([...series, { id, name, aggregation }])
   }
 
   onRemoveSerieClick = id => {
@@ -86,10 +87,7 @@ class SeriesConfiguration extends React.Component {
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item
-              label="Sensor"
-              extra="List of users that you want to share your dashboard. The users cannot modify the dashboard only visualize it."
-            >
+            <Form.Item label="Sensor" extra="Select a sensor from list.">
               <SensorSelect
                 devices={devices}
                 onChange={sensors => this.onSerieChange(id, 'sensor', sensors)}
@@ -98,10 +96,7 @@ class SeriesConfiguration extends React.Component {
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item
-              label="Aggregation"
-              extra="List of users that you want to share your dashboard. The users cannot modify the dashboard only visualize it."
-            >
+            <Form.Item label="Aggregation" extra="Select a function to group data">
               <FunctionSelect
                 onChange={value => this.onSerieChange(id, 'aggregation', value)}
                 defaultValue={aggregation}
