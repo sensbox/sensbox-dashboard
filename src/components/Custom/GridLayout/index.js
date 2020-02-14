@@ -8,18 +8,6 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import './styles.scss'
 
-// const Wrapper = props => {
-//   const { children, style } = props
-//   const newChildren = React.Children.map(children, child => {
-//     return React.cloneElement(child, {
-//       width: parseInt(style.width, 10),
-//       height: parseInt(style.height, 10),
-//     })
-//   })
-
-//   return <div {...props}>{newChildren}</div>
-// }
-
 class GridLayout extends React.Component {
   static defaultProps = {
     layouts: {},
@@ -30,6 +18,12 @@ class GridLayout extends React.Component {
     isResizable: true,
     widgetsHoverable: true,
     widgetsEditable: true,
+    stopUpdates: false,
+  }
+
+  shouldComponentUpdate(nextProps) {
+    const { stopUpdates } = nextProps
+    return !stopUpdates
   }
 
   render() {
