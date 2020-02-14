@@ -1,4 +1,4 @@
 import LineChart from './LineChart'
 
-const named = true
-export { LineChart, named }
+// eslint-disable-next-line import/prefer-default-export
+export { LineChart }
