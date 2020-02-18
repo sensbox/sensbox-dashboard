@@ -1,6 +1,10 @@
 import actions from './actions'
 
 const initialState = {
+  layouts: [],
+  widgets: [],
+  showWidgetEditor: false,
+  stopGridLayoutUpdates: false,
   currentWidget: {},
   currentWidgetErrors: {},
 }
