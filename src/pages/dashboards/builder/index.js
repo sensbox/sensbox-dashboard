@@ -4,10 +4,11 @@ import shortid from 'shortid'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import GridLayout from '../../../components/Custom/GridLayout'
-
-import styles from './style.module.scss'
 import EditWidgetForm from '../form/editWidget'
 import GridItem from '../../../components/Custom/GridItem'
+import Types from '../../../components/WidgetsComponents/types'
+
+import styles from './style.module.scss'
 
 const { TabPane } = Tabs
 const { Meta } = Card
@@ -18,8 +19,12 @@ const mapStateToProps = ({ resource, user, builder }) => ({
   loading: resource.loading,
   current: resource.current,
   user,
-  editingWidget: builder.currentWidget,
-  editingWidgetErrors: builder.currentWidgetErrors,
+  layouts: builder.layouts,
+  widgets: builder.widgets,
+  stopGridLayoutUpdates: builder.stopGridLayoutUpdates,
+  currentWidget: builder.currentWidget,
+  currentWidgetErrors: builder.currentWidgetErrors,
+  showWidgetEditor: builder.showWidgetEditor,
 })
 
 const mapDispatchToProps = dispatch => {
@@ -50,28 +55,93 @@ const mapDispatchToProps = dispatch => {
       },
     })
 
-  const editWidget = (currentWidget, currentWidgetErrors = {}, callback) =>
+  const initBuilder = (layouts, widgets, callback) => {
     dispatch({
-      type: 'builder/EDIT_WIDGET',
+      type: 'builder/INIT',
+      payload: {
+        layouts,
+        widgets,
+        callback,
+      },
+    })
+  }
+
+  const updateLayouts = (layouts, callback) =>
+    dispatch({
+      type: 'builder/UPDATE_LAYOUTS',
+      payload: {
+        layouts,
+        callback,
+      },
+    })
+
+  const addWidget = (widget, callback) =>
+    dispatch({
+      type: 'builder/ADD_WIDGET',
+      payload: {
+        widget,
+        callback,
+      },
+    })
+
+  const openWidgetEditor = (currentWidget, callback) => {
+    dispatch({
+      type: 'builder/OPEN_WIDGET_EDITOR',
+      payload: {
+        currentWidget,
+        callback,
+      },
+    })
+  }
+
+  const closeWidgetEditor = callback => {
+    dispatch({
+      type: 'builder/CLOSE_WIDGET_EDITOR',
+      payload: {
+        callback,
+      },
+    })
+  }
+
+  const updateCurrentWidget = (currentWidget, currentWidgetErrors = {}, callback) =>
+    dispatch({
+      type: 'builder/UPDATE_CURRENT_WIDGET',
       payload: {
         currentWidget,
         currentWidgetErrors,
         callback,
       },
     })
-  const clearWidget = callback =>
+
+  const commitWidgetChanges = (widget, callback) =>
     dispatch({
-      type: 'builder/CLEAR_WIDGET',
+      type: 'builder/COMMIT_WIDGET_CHANGES',
       payload: {
+        widget,
+        callback,
+      },
+    })
+
+  const removeWidget = (widget, callback) =>
+    dispatch({
+      type: 'builder/REMOVE_WIDGET',
+      payload: {
+        widget,
         callback,
       },
     })
 
   return {
+    initBuilder,
+    updateLayouts,
     updateDashboard,
     getCurrentDashboard,
-    editWidget,
-    clearWidget,
+    addWidget,
+    updateCurrentWidget,
+    commitWidgetChanges,
+    removeWidget,
+    openWidgetEditor,
+    closeWidgetEditor,
   }
 }
 
@@ -79,52 +149,38 @@ const mapDispatchToProps = dispatch => {
 class DashboardBuilder extends React.Component {
   constructor(props) {
     super(props)
-    const { match, getCurrentDashboard } = props
+    const { match, getCurrentDashboard, initBuilder } = props
     const { params } = match
 
     // console.log(params.uuid);
     this.state = {
       backLink: `/dashboards/${params.uuid}`,
-      layouts: [],
-      widgets: [],
       showAddWidgetPanel: false,
-      showEditWidgetPanel: false,
-      stopGridLayoutUpdates: false,
     }
 
-    this.saveLayout = this.saveLayout.bind(this)
     this.saveBuild = this.saveBuild.bind(this)
     this.goToDashboard = this.goToDashboard.bind(this)
     this.showAddWidgetPanel = this.showAddWidgetPanel.bind(this)
     this.closeAddWidgetPanel = this.closeAddWidgetPanel.bind(this)
-    this.addWidget = this.addWidget.bind(this)
-    this.saveWidget = this.saveWidget.bind(this)
-    this.removeWidget = this.removeWidget.bind(this)
-    this.showEditWidgetPanel = this.showEditWidgetPanel.bind(this)
-    this.closeEditWidgetPanel = this.closeEditWidgetPanel.bind(this)
-    this.onSubmitEditForm = this.onSubmitEditForm.bind(this)
-    this.onCancelEditForm = this.onCancelEditForm.bind(this)
-    this.saveEditingWidget = this.saveEditingWidget.bind(this)
+    this.onAddWidget = this.onAddWidget.bind(this)
 
     getCurrentDashboard(params.uuid, () => {
       const { current } = this.props
       const { layouts, widgets } = current
-      this.setState({ layouts, widgets })
+      initBuilder(layouts, widgets)
     })
   }
 
-  onSubmitEditForm(itemDef) {
-    console.log(itemDef)
-    this.saveWidget(itemDef)
-    this.closeEditWidgetPanel()
-  }
+  onAddWidget(type) {
+    const key = shortid.generate()
+    const { addWidget } = this.props
+    const widget = {
+      key,
+      type,
+      title: type,
+    }
 
-  onCancelEditForm() {
-    this.closeEditWidgetPanel()
-  }
-
-  saveLayout(layout, layouts) {
-    this.setState({ layouts })
+    addWidget(widget, () => this.setState({ showAddWidgetPanel: false }))
   }
 
   goToDashboard() {
@@ -134,40 +190,8 @@ class DashboardBuilder extends React.Component {
   }
 
   saveBuild() {
-    const { current, updateDashboard } = this.props
-    const { layouts, widgets } = this.state
+    const { layouts, widgets, current, updateDashboard } = this.props
     updateDashboard(current.objectId, layouts, widgets, this.goToDashboard)
-  }
-
-  addWidget(type) {
-    const key = shortid.generate()
-    const { widgets } = this.state
-    this.setState({
-      widgets: [
-        ...widgets,
-        {
-          key,
-          type,
-          title: type,
-        },
-      ],
-      showAddWidgetPanel: false,
-    })
-  }
-
-  saveWidget(itemDef) {
-    const { widgets: currentWidgets } = this.state
-    const widgets = currentWidgets.map(w => {
-      if (w.key === itemDef.key) return itemDef
-      return w
-    })
-    this.setState({ widgets })
-  }
-
-  removeWidget(itemDef) {
-    const { widgets: currentWidgets } = this.state
-    const widgets = currentWidgets.filter(w => w.key !== itemDef.key)
-    this.setState({ widgets })
   }
 
   showAddWidgetPanel() {
@@ -178,32 +202,23 @@ class DashboardBuilder extends React.Component {
     this.setState({ showAddWidgetPanel: false })
   }
 
-  showEditWidgetPanel(itemDef) {
-    const { editWidget } = this.props
-    editWidget(itemDef, {}, () =>
-      this.setState({ stopGridLayoutUpdates: true, showEditWidgetPanel: true }),
-    )
-  }
-
-  closeEditWidgetPanel() {
-    const { clearWidget } = this.props
-    clearWidget(() => this.setState({ stopGridLayoutUpdates: false, showEditWidgetPanel: false }))
-  }
-
-  saveEditingWidget(itemDef, errors) {
-    const { editWidget } = this.props
-    editWidget(itemDef, errors)
-  }
-
   render() {
-    const { current, editingWidget, editingWidgetErrors } = this.props
     const {
       layouts,
       widgets,
-      showAddWidgetPanel,
-      showEditWidgetPanel,
+      current,
+      currentWidget,
+      currentWidgetErrors,
       stopGridLayoutUpdates,
-    } = this.state
+      commitWidgetChanges,
+      showWidgetEditor,
+      openWidgetEditor,
+      closeWidgetEditor,
+      removeWidget,
+      updateCurrentWidget,
+      updateLayouts,
+    } = this.props
+    const { showAddWidgetPanel } = this.state
 
     return (
       <div>
@@ -241,10 +256,10 @@ class DashboardBuilder extends React.Component {
         <GridLayout
           layouts={layouts}
           widgets={widgets}
-          onLayoutChange={this.saveLayout}
-          onSaveWidget={this.saveWidget}
-          onEditButtonClick={this.showEditWidgetPanel}
-          onRemoveButtonClick={this.removeWidget}
+          onLayoutChange={(newLayout, newLayouts) => updateLayouts(newLayouts)}
+          onSaveWidget={widget => commitWidgetChanges(widget)}
+          onEditButtonClick={widget => openWidgetEditor(widget)}
+          onRemoveButtonClick={widget => removeWidget(widget)}
           stopUpdates={stopGridLayoutUpdates}
         />
         <Drawer
@@ -259,7 +274,7 @@ class DashboardBuilder extends React.Component {
         >
           <Tabs defaultActiveKey="1" onChange={key => console.log(key)}>
             <TabPane tab="Historic" key="1">
-              <Card hoverable onClick={() => this.addWidget('lineChart')}>
+              <Card hoverable onClick={() => this.onAddWidget(Types.LINE_CHART)}>
                 <Meta title="Line Chart" description="Basic Line chart" />
               </Card>
             </TabPane>
@@ -274,14 +289,14 @@ class DashboardBuilder extends React.Component {
           // height="95%"
           width="80%"
           placement="right"
-          onClose={this.closeEditWidgetPanel}
-          visible={showEditWidgetPanel}
+          onClose={() => closeWidgetEditor()}
+          visible={showWidgetEditor}
           closable
           destroyOnClose
         >
           <div className={styles.widgetPreview}>
             <GridItem
-              itemDef={editingWidget}
+              itemDef={currentWidget}
               dynamicSize={false}
               hoverable={false}
               editable={false}
@@ -290,11 +305,11 @@ class DashboardBuilder extends React.Component {
           </div>
           <Divider className={styles.divider} dashed />
           <EditWidgetForm
-            itemDef={editingWidget}
-            errors={editingWidgetErrors}
-            onDefinitionChange={this.saveEditingWidget}
-            onSubmit={this.onSubmitEditForm}
-            onCancel={this.onCancelEditForm}
+            itemDef={currentWidget}
+            errors={currentWidgetErrors}
+            onDefinitionChange={(widget, widgetErrors) => updateCurrentWidget(widget, widgetErrors)}
+            onSubmit={widget => commitWidgetChanges(widget)}
+            onCancel={() => closeWidgetEditor()}
           />
         </Drawer>
       </div>
