@@ -78,7 +78,6 @@ class DashboardShow extends React.Component {
         <GridLayout
           layouts={current.layouts}
           widgets={current.widgets}
-          onLayoutChange={this.saveLayout}
           isDraggable={false}
           isResizable={false}
           widgetsHoverable={false}
