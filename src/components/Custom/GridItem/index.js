@@ -1,7 +1,8 @@
 import React, { Suspense } from 'react'
 import { withSize } from 'react-sizeme'
-
 import { Card, Button, Input, Modal } from 'antd'
+import Types from '../../WidgetsComponents/types'
+
 import './styles.scss'
 
 const { confirm } = Modal
@@ -13,8 +14,10 @@ const registerComponent = component => {
 }
 
 const propsByType = itemDef => {
+  const { LINE_CHART } = Types
+
   switch (itemDef.type) {
-    case 'lineChart':
+    case LINE_CHART:
       return { series: itemDef.series }
     default:
       break
@@ -51,9 +54,10 @@ class GridItem extends React.Component {
 
   componentDidMount() {
     const { itemDef } = this.props
+    const { LINE_CHART } = Types
 
     switch (itemDef.type) {
-      case 'lineChart':
+      case LINE_CHART:
         registerComponent(React.lazy(() => import('../../WidgetsComponents/LineChart')))
         break
       default:
