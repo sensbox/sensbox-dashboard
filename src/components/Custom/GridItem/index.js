@@ -1,29 +1,11 @@
-import React, { Suspense } from 'react'
+import React from 'react'
 import { withSize } from 'react-sizeme'
 import { Card, Button, Input, Modal } from 'antd'
-import Types from '../../WidgetsComponents/types'
 
 import './styles.scss'
+import DynamicLoader from '../../WidgetsComponents/DynamicLoader'
 
 const { confirm } = Modal
-
-let Component = () => <div>No widget Found</div>
-
-const registerComponent = component => {
-  Component = component
-}
-
-const propsByType = itemDef => {
-  const { LINE_CHART } = Types
-
-  switch (itemDef.type) {
-    case LINE_CHART:
-      return { series: itemDef.series }
-    default:
-      break
-  }
-  return {}
-}
 
 class GridItem extends React.Component {
   static defaultProps = {
@@ -38,7 +20,6 @@ class GridItem extends React.Component {
   }
 
   state = {
-    componentLoaded: false,
     showTitleInput: false,
     currentTitle: '',
   }
@@ -50,20 +31,6 @@ class GridItem extends React.Component {
     this.inputTitleChange = this.inputTitleChange.bind(this)
     this.handleRemoveClick = this.handleRemoveClick.bind(this)
     this.handleEditClick = this.handleEditClick.bind(this)
-  }
-
-  componentDidMount() {
-    const { itemDef } = this.props
-    const { LINE_CHART } = Types
-
-    switch (itemDef.type) {
-      case LINE_CHART:
-        registerComponent(React.lazy(() => import('../../WidgetsComponents/LineChart')))
-        break
-      default:
-        break
-    }
-    this.setState({ componentLoaded: true })
   }
 
   inputTitleChange(e) {
@@ -107,10 +74,9 @@ class GridItem extends React.Component {
 
   render() {
     const { hoverable, editable, itemDef, size, dynamicSize, bordered } = this.props
-    const { componentLoaded } = this.state
     const { showTitleInput } = this.state
     const { title = 'title' } = itemDef
-    const componentProps = propsByType(itemDef)
+    // const componentProps = propsByType(itemDef)
     return (
       <Card
         className="GridItem"
@@ -158,12 +124,11 @@ class GridItem extends React.Component {
           )
         }
       >
-        {/* <LineChart series={itemDef.series} height={dynamicSize ? size.height : null} /> */}
-        <Suspense fallback={<div>Loading...</div>}>
-          {componentLoaded && (
-            <Component height={dynamicSize ? size.height : null} {...componentProps} />
-          )}
-        </Suspense>
+        <DynamicLoader
+          type={itemDef.type}
+          height={dynamicSize ? size.height : null}
+          extraProps={itemDef}
+        />
       </Card>
     )
   }
