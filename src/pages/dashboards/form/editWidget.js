@@ -19,13 +19,16 @@ const onFieldsChange = ({ onDefinitionChange, itemDef }, changedFields) => {
   const values = {}
   const errors = {}
 
-  Object.keys(changedFields).forEach(field => {
-    errors[field] = changedFields[field].errors
-    values[field] = changedFields[field].value
-  })
+  const [field, properties] = Object.entries(changedFields)[0]
+  const { value: fieldValue, errors: fieldErrors, touched, validating } = properties
+  values[field] = fieldValue
+  errors[field] = fieldErrors
 
-  const newItemDef = Object.assign({}, itemDef, values)
-  onDefinitionChange(newItemDef, errors)
+  // if values and errors are modified
+  if (touched && !validating) {
+    const newItemDef = Object.assign({}, itemDef, values)
+    onDefinitionChange(newItemDef, errors)
+  }
 }
 
 @Form.create({ mapPropsToFields, onFieldsChange })
@@ -37,7 +40,6 @@ class EditWidgetForm extends React.Component {
 
   save() {
     const { form, itemDef, onSubmit } = this.props
-
     form.validateFields((err, values) => {
       if (!err) {
         const newItemDef = Object.assign({}, itemDef, values)
