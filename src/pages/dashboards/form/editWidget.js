@@ -11,7 +11,7 @@ const mapPropsToFields = ({ itemDef, errors }) => {
   const { title, series } = itemDef
   return {
     title: getFormField(title, errors.title),
-    series: getFormField(series || [{ id: 0 }], errors.series),
+    series: getFormField(series, errors.series),
   }
 }
 

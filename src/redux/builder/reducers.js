@@ -4,9 +4,10 @@ const initialState = {
   layouts: [],
   widgets: [],
   showWidgetEditor: false,
+  showWidgetsCatalog: false,
   stopGridLayoutUpdates: false,
-  currentWidget: {},
-  currentWidgetErrors: {},
+  currentWidget: null,
+  currentWidgetErrors: [],
 }
 
 export default function userReducer(state = initialState, action) {

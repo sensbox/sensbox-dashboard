@@ -1,6 +1,5 @@
 import React from 'react'
 import { PageHeader, Button, Drawer, Tabs, Card, Divider } from 'antd'
-import shortid from 'shortid'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import GridLayout from '../../../components/Custom/GridLayout'
@@ -25,6 +24,7 @@ const mapStateToProps = ({ resource, user, builder }) => ({
   currentWidget: builder.currentWidget,
   currentWidgetErrors: builder.currentWidgetErrors,
   showWidgetEditor: builder.showWidgetEditor,
+  showWidgetsCatalog: builder.showWidgetsCatalog,
 })
 
 const mapDispatchToProps = dispatch => {
@@ -75,14 +75,32 @@ const mapDispatchToProps = dispatch => {
       },
     })
 
-  const addWidget = (widget, callback) =>
+  const addWidget = (type, callback) =>
     dispatch({
       type: 'builder/ADD_WIDGET',
       payload: {
-        widget,
+        type,
         callback,
       },
     })
+
+  const openWidgetCatalog = callback => {
+    dispatch({
+      type: 'builder/OPEN_WIDGET_CATALOG',
+      payload: {
+        callback,
+      },
+    })
+  }
+
+  const closeWidgetCatalog = callback => {
+    dispatch({
+      type: 'builder/CLOSE_WIDGET_CATALOG',
+      payload: {
+        callback,
+      },
+    })
+  }
 
   const openWidgetEditor = (currentWidget, callback) => {
     dispatch({
@@ -142,6 +160,8 @@ const mapDispatchToProps = dispatch => {
     removeWidget,
     openWidgetEditor,
     closeWidgetEditor,
+    openWidgetCatalog,
+    closeWidgetCatalog,
   }
 }
 
@@ -155,32 +175,16 @@ class DashboardBuilder extends React.Component {
     // console.log(params.uuid);
     this.state = {
       backLink: `/dashboards/${params.uuid}`,
-      showAddWidgetPanel: false,
     }
 
     this.saveBuild = this.saveBuild.bind(this)
     this.goToDashboard = this.goToDashboard.bind(this)
-    this.showAddWidgetPanel = this.showAddWidgetPanel.bind(this)
-    this.closeAddWidgetPanel = this.closeAddWidgetPanel.bind(this)
-    this.onAddWidget = this.onAddWidget.bind(this)
 
     getCurrentDashboard(params.uuid, () => {
       const { current } = this.props
       const { layouts, widgets } = current
       initBuilder(layouts, widgets)
     })
-  }
-
-  onAddWidget(type) {
-    const key = shortid.generate()
-    const { addWidget } = this.props
-    const widget = {
-      key,
-      type,
-      title: type,
-    }
-
-    addWidget(widget, () => this.setState({ showAddWidgetPanel: false }))
   }
 
   goToDashboard() {
@@ -194,14 +198,6 @@ class DashboardBuilder extends React.Component {
     updateDashboard(current.objectId, layouts, widgets, this.goToDashboard)
   }
 
-  showAddWidgetPanel() {
-    this.setState({ showAddWidgetPanel: true })
-  }
-
-  closeAddWidgetPanel() {
-    this.setState({ showAddWidgetPanel: false })
-  }
-
   render() {
     const {
       layouts,
@@ -212,13 +208,16 @@ class DashboardBuilder extends React.Component {
       stopGridLayoutUpdates,
       commitWidgetChanges,
       showWidgetEditor,
+      showWidgetsCatalog,
       openWidgetEditor,
       closeWidgetEditor,
+      openWidgetCatalog,
+      closeWidgetCatalog,
       removeWidget,
       updateCurrentWidget,
       updateLayouts,
+      addWidget,
     } = this.props
-    const { showAddWidgetPanel } = this.state
 
     return (
       <div>
@@ -234,7 +233,7 @@ class DashboardBuilder extends React.Component {
                 key="addBtn"
                 type="link"
                 icon="plus"
-                onClick={this.showAddWidgetPanel}
+                onClick={() => openWidgetCatalog()}
                 style={{ marginRight: 10 }}
               >
                 Add Widget
@@ -268,13 +267,13 @@ class DashboardBuilder extends React.Component {
           width={450}
           placement="right"
           closable={false}
-          onClose={this.closeAddWidgetPanel}
-          visible={showAddWidgetPanel}
+          onClose={() => closeWidgetCatalog()}
+          visible={showWidgetsCatalog}
           // destroyOnClose
         >
           <Tabs defaultActiveKey="1" onChange={key => console.log(key)}>
             <TabPane tab="Historic" key="1">
-              <Card hoverable onClick={() => this.onAddWidget(Types.LINE_CHART)}>
+              <Card hoverable onClick={() => addWidget(Types.LINE_CHART)}>
                 <Meta title="Line Chart" description="Basic Line chart" />
               </Card>
             </TabPane>
@@ -294,23 +293,29 @@ class DashboardBuilder extends React.Component {
           closable
           destroyOnClose
         >
-          <div className={styles.widgetPreview}>
-            <GridItem
-              itemDef={currentWidget}
-              dynamicSize={false}
-              hoverable={false}
-              editable={false}
-              bordered={false}
-            />
-          </div>
-          <Divider className={styles.divider} dashed />
-          <EditWidgetForm
-            itemDef={currentWidget}
-            errors={currentWidgetErrors}
-            onDefinitionChange={(widget, widgetErrors) => updateCurrentWidget(widget, widgetErrors)}
-            onSubmit={widget => commitWidgetChanges(widget)}
-            onCancel={() => closeWidgetEditor()}
-          />
+          {currentWidget && (
+            <>
+              <div className={styles.widgetPreview}>
+                <GridItem
+                  itemDef={currentWidget}
+                  dynamicSize={false}
+                  hoverable={false}
+                  editable={false}
+                  bordered={false}
+                />
+              </div>
+              <Divider className={styles.divider} dashed />
+              <EditWidgetForm
+                itemDef={currentWidget}
+                errors={currentWidgetErrors}
+                onDefinitionChange={(widget, widgetErrors) =>
+                  updateCurrentWidget(widget, widgetErrors)
+                }
+                onSubmit={widget => commitWidgetChanges(widget)}
+                onCancel={() => closeWidgetEditor()}
+              />
+            </>
+          )}
         </Drawer>
       </div>
     )

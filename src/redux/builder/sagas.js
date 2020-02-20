@@ -1,4 +1,5 @@
 import { all, call, takeEvery, put, select } from 'redux-saga/effects'
+import shortid from 'shortid'
 import actions from './actions'
 
 const getWidgets = ({ builder }) => {
@@ -31,13 +32,35 @@ export function* UPDATE_LAYOUTS({ payload }) {
 }
 
 export function* ADD_WIDGET({ payload }) {
-  const { widget, callback } = payload
+  const { type, callback } = payload
+  const key = shortid.generate()
+  const defaultSerieKey = shortid.generate()
+  const defaultAxisKey = shortid.generate()
+
+  const widget = {
+    key,
+    type,
+    title: type,
+    series: [
+      {
+        id: defaultSerieKey,
+        axisId: defaultAxisKey,
+      },
+    ],
+    axes: [
+      {
+        id: defaultAxisKey,
+      },
+    ],
+  }
 
   const currentWidgets = yield select(getWidgets)
   yield put({
     type: 'builder/SET_STATE',
     payload: {
       widgets: [...currentWidgets, widget],
+      showWidgetsCatalog: false,
+      stopGridLayoutUpdates: false,
     },
   })
   if (callback) yield call(callback)
@@ -65,8 +88,34 @@ export function* CLOSE_WIDGET_EDIOR({ payload }) {
     type: 'builder/SET_STATE',
     payload: {
       showWidgetEditor: false,
-      currentWidget: {},
+      currentWidget: null,
       currentWidgetErrors: [],
+      stopGridLayoutUpdates: false,
+    },
+  })
+  if (callback) yield call(callback)
+}
+
+export function* OPEN_WIDGET_CATALOG({ payload }) {
+  const { callback } = payload
+
+  yield put({
+    type: 'builder/SET_STATE',
+    payload: {
+      showWidgetsCatalog: true,
+      stopGridLayoutUpdates: true,
+    },
+  })
+  if (callback) yield call(callback)
+}
+
+export function* CLOSE_WIDGET_CATALOG({ payload }) {
+  const { callback } = payload
+
+  yield put({
+    type: 'builder/SET_STATE',
+    payload: {
+      showWidgetsCatalog: false,
       stopGridLayoutUpdates: false,
     },
   })
@@ -113,6 +162,7 @@ export function* COMMIT_WIDGET_CHANGES({ payload }) {
     type: 'builder/SET_STATE',
     payload: {
       widgets,
+      currentWidget: null,
       showWidgetEditor: false,
       stopGridLayoutUpdates: false,
     },
@@ -130,5 +180,7 @@ export default function* rootSaga() {
     takeEvery(actions.REMOVE_WIDGET, REMOVE_WIDGET),
     takeEvery(actions.OPEN_WIDGET_EDITOR, OPEN_WIDGET_EDITOR),
     takeEvery(actions.CLOSE_WIDGET_EDIOR, CLOSE_WIDGET_EDIOR),
+    takeEvery(actions.OPEN_WIDGET_CATALOG, OPEN_WIDGET_CATALOG),
+    takeEvery(actions.CLOSE_WIDGET_CATALOG, CLOSE_WIDGET_CATALOG),
   ])
 }
