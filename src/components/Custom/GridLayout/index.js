@@ -19,6 +19,7 @@ class GridLayout extends React.Component {
     widgetsHoverable: true,
     widgetsEditable: true,
     stopUpdates: false,
+    builderMode: false,
   }
 
   shouldComponentUpdate(nextProps) {
@@ -40,6 +41,7 @@ class GridLayout extends React.Component {
       widgetsHoverable,
       widgetsEditable,
       widgets,
+      builderMode,
     } = this.props
 
     return (
@@ -66,6 +68,7 @@ class GridLayout extends React.Component {
               onSaveWidget={onSaveWidget}
               onEditButtonClick={onEditButtonClick}
               onRemoveButtonClick={onRemoveButtonClick}
+              builderMode={builderMode}
             />
           </div>
         ))}

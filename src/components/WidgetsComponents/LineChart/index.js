@@ -22,8 +22,10 @@ class LineChart extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { series: prevSeries } = prevProps
-    const { series } = this.props
+    const { widgetConfiguration: prevWidgetConfiguration } = prevProps
+    const { widgetConfiguration } = this.props
+    const { series: prevSeries } = prevWidgetConfiguration
+    const { series } = widgetConfiguration
     // test if series changed
     if (JSON.stringify(prevSeries) !== JSON.stringify(series)) {
       this.fetchDataFromCloud()
@@ -31,7 +33,8 @@ class LineChart extends React.Component {
   }
 
   async fetchDataFromCloud() {
-    const { series } = this.props
+    const { widgetConfiguration } = this.props
+    const { series } = widgetConfiguration
     const { lastPayload } = this.state
     const payload = series
       .map(serie => {
@@ -56,12 +59,13 @@ class LineChart extends React.Component {
   }
 
   render() {
-    const { height, series } = this.props
+    const { height, widgetConfiguration, builderMode } = this.props
+    const { series, axes } = widgetConfiguration
     const { seriesData } = this.state
 
     return (
       <div style={{ height: `${height - 70}px` }}>
-        <LineAdapter series={series} data={seriesData} />
+        <LineAdapter series={series} axes={axes} data={seriesData} builderMode={builderMode} />
       </div>
     )
   }

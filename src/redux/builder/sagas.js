@@ -45,11 +45,15 @@ export function* ADD_WIDGET({ payload }) {
       {
         id: defaultSerieKey,
         axisId: defaultAxisKey,
+        aggregation: 'MEAN',
       },
     ],
     axes: [
       {
         id: defaultAxisKey,
+        position: 'left',
+        min: 0,
+        max: 100,
       },
     ],
   }

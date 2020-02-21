@@ -45,7 +45,9 @@ class AxisConfiguration extends React.Component {
             <>
               {(i && `Axis ${i + 1}`) || 'Default'}{' '}
               {seriesWithAxis.map(s => (
-                <Tag color="cyan">{s.name}</Tag>
+                <Tag key={s.id} color="cyan">
+                  {s.name}
+                </Tag>
               ))}
             </>
           }

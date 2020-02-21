@@ -4,19 +4,21 @@ import { Line } from 'react-chartjs-2'
 class LineAdapter extends React.PureComponent {
   static defaultProps = {
     series: [],
+    axes: [],
     data: [],
+    builderMode: false,
   }
 
   constructor(props) {
     super(props)
-    this.getDatasets = this.getDatasets.bind(this)
+    this.getData = this.getData.bind(this)
     this.getOptions = this.getOptions.bind(this)
   }
 
-  getDatasets() {
+  getData() {
     const { series, data: seriesData } = this.props
 
-    return series.map(serie => {
+    const datasets = series.map(serie => {
       const hasSensor = serie.sensor
       let data = []
 
@@ -28,7 +30,6 @@ class LineAdapter extends React.PureComponent {
           data = serieData.rows.map(r => ({ x: r.time, y: r.value }))
         }
       }
-
       return {
         label: serie.name,
         key: serie.id,
@@ -39,12 +40,18 @@ class LineAdapter extends React.PureComponent {
         spanGaps: true,
         pointRadius: 0.5,
         pointHoverRadius: 2,
+        yAxisID: serie.axisId,
       }
     })
+
+    return {
+      labels: '',
+      datasets,
+    }
   }
 
   getOptions() {
-    const { series } = this.props
+    const { series, axes } = this.props
     const display = series.length > 1
     return {
       responsive: true,
@@ -57,14 +64,18 @@ class LineAdapter extends React.PureComponent {
         duration: 0, // general animation time
       },
       scales: {
-        yAxes: [
-          {
-            ticks: {
-              min: 0,
-              max: 100,
-            },
+        yAxes: axes.map(axis => ({
+          scaleLabel: {
+            display: !!axis.label,
+            labelString: axis.label,
           },
-        ],
+          position: axis.position,
+          ticks: {
+            min: axis.min != null ? parseInt(axis.min, 10) : undefined,
+            max: axis.max != null ? parseInt(axis.max, 10) : undefined,
+          },
+          id: axis.id,
+        })),
         xAxes: [
           {
             type: 'time',
@@ -78,15 +89,8 @@ class LineAdapter extends React.PureComponent {
   }
 
   render() {
-    return (
-      <Line
-        data={{
-          labels: '',
-          datasets: this.getDatasets(),
-        }}
-        options={this.getOptions()}
-      />
-    )
+    const { builderMode } = this.props
+    return <Line data={this.getData()} options={this.getOptions()} redraw={builderMode} />
   }
 }
 

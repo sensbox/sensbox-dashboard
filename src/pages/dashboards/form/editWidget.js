@@ -2,16 +2,18 @@ import React from 'react'
 import { Form, Row, Col, Input, Button, message, Tabs } from 'antd'
 import SeriesConfiguration from './SeriesConfiguration'
 import styles from './style.module.scss'
+import AxisConfiguration from './AxisConfiguration'
 
 const { TabPane } = Tabs
 
 const getFormField = (value, errors) => Form.createFormField({ value, errors: errors && errors })
 
 const mapPropsToFields = ({ itemDef, errors }) => {
-  const { title, series } = itemDef
+  const { title, series, axes } = itemDef
   return {
     title: getFormField(title, errors.title),
     series: getFormField(series, errors.series),
+    axes: getFormField(axes, errors.axes),
   }
 }
 
@@ -54,7 +56,7 @@ class EditWidgetForm extends React.Component {
   }
 
   render() {
-    const { form, onCancel } = this.props
+    const { form, onCancel, itemDef } = this.props
     const { getFieldDecorator } = form
     // console.log(form.getFieldsValue())
 
@@ -74,10 +76,10 @@ class EditWidgetForm extends React.Component {
               </Row>
             </TabPane>
             <TabPane tab="Series" key="2">
-              {getFieldDecorator('series')(<SeriesConfiguration />)}
+              {getFieldDecorator('series')(<SeriesConfiguration axes={itemDef.axes} />)}
             </TabPane>
-            <TabPane tab="Tab 3" key="3">
-              Content of tab 3
+            <TabPane tab="Axis" key="3">
+              {getFieldDecorator('axes')(<AxisConfiguration series={itemDef.series} />)}
             </TabPane>
           </Tabs>
         </Form>
