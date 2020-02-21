@@ -6,9 +6,9 @@ import { Redirect } from 'react-router-dom'
 import { PageHeader, DatePicker, Icon, Dropdown, Menu, Table, Badge } from 'antd'
 import { Line } from 'react-chartjs-2'
 
-import deviceApi from '../../../services/device'
-import sensorApi from '../../../services/sensor'
-import cloudApi from '../../../services/cloud'
+import deviceApi from 'services/device'
+import sensorApi from 'services/sensor'
+import cloudApi from 'services/cloud'
 
 import './console.css'
 

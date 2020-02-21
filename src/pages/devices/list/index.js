@@ -2,7 +2,7 @@ import React from 'react'
 import { Tag, Tooltip, Row, Switch, Col, Table, Button, Input } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import CustomDate from '../../../components/Custom/Date'
+import CustomDate from 'components/Custom/Date'
 
 const mapStateToProps = ({ resource }) => ({
   list: resource.list,

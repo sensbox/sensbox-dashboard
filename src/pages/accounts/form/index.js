@@ -1,7 +1,7 @@
 import React from 'react'
 import { Input, Button, Form, Checkbox, message, Select } from 'antd'
 import { Link } from 'react-router-dom'
-import api from '../../../services/api'
+import api from 'services/api'
 
 const FormItem = Form.Item
 const { Option } = Select

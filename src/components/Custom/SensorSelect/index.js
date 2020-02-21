@@ -1,6 +1,6 @@
 import React from 'react'
 import { Select, Spin } from 'antd'
-import Sensor from '../../../services/sensor'
+import Sensor from 'services/sensor'
 
 const { Option } = Select
 

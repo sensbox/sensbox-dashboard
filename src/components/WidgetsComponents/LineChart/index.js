@@ -1,16 +1,16 @@
 import React from 'react'
-import cloudApi from '../../../services/cloud'
-import LineAdapter from '../../Chartjs/Adapters/Line'
+import cloudApi from 'services/cloud'
+import LineAdapter from 'components/Chartjs/Adapters/Line'
 
 class LineChart extends React.Component {
-  static defaultProps = {
-    series: [
-      {
-        name: 'Sensor',
-        color: '#1f77b4',
-      },
-    ],
-  }
+  // static defaultProps = {
+  //   series: [
+  //     {
+  //       name: 'Sensor',
+  //       color: '#1f77b4',
+  //     },
+  //   ],
+  // }
 
   state = {
     lastPayload: [],

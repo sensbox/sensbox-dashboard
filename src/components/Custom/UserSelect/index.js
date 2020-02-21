@@ -1,6 +1,6 @@
 import React from 'react'
 import { Select, Spin, Avatar } from 'antd'
-import Cloud from '../../../services/cloud'
+import Cloud from 'services/cloud'
 
 const { Option } = Select
 

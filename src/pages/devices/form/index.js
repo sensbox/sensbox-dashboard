@@ -1,10 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
-
-import { Tooltip, Table, Input, Button, Form, Checkbox, message, Descriptions, Modal } from 'antd'
 import { Link } from 'react-router-dom'
+import { Tooltip, Table, Input, Button, Form, Checkbox, message, Descriptions, Modal } from 'antd'
+import api from 'services/api'
 import SensorForm from './sensor'
-import api from '../../../services/api'
 
 const { confirm } = Modal
 const FormItem = Form.Item

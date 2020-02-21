@@ -2,11 +2,10 @@ import React from 'react'
 import { Button, Input, PageHeader, Row, Pagination, Col, message, Modal } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import DashboardCard from '../../../components/Custom/DashboardCard'
+import DashboardCard from 'components/Custom/DashboardCard'
 import DashboardForm from '../form/dashboard'
 import ShareForm from '../form/share'
 import './styles.scss'
-// import api from '../../../services/api';
 
 const { confirm } = Modal
 

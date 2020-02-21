@@ -2,7 +2,7 @@ import React from 'react'
 import { PageHeader, Button } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import GridLayout from '../../../components/Custom/GridLayout'
+import GridLayout from 'components/Custom/GridLayout'
 
 // import './styles.scss'
 

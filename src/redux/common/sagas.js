@@ -1,7 +1,7 @@
 import { all, put, select, takeEvery } from 'redux-saga/effects'
 import { LOCATION_CHANGE } from 'connected-react-router'
 import { matchPath } from 'react-router'
-import { routes } from '../../router'
+import { routes } from 'router'
 
 export function* CLEAR_ALL({ payload }) {
   const location = yield select(({ common }) => common.location)

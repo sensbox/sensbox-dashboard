@@ -3,8 +3,8 @@ import { PageHeader, Tooltip, Row, Switch, Col, Table, Button, Input, Modal } fr
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import { Redirect } from 'react-router-dom'
-import CustomDate from '../../../components/Custom/Date'
-import api from '../../../services/api'
+import CustomDate from 'components/Custom/Date'
+import api from 'services/api'
 
 const { confirm } = Modal
 
