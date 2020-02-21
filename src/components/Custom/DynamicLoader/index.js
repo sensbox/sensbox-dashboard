@@ -1,31 +1,18 @@
 import React, { Suspense } from 'react'
-import Types from '../types'
+import Types from 'components/WidgetsComponents/types'
 
 const componentsMap = new Map()
 
-const propsByType = itemDef => {
-  const { LINE_CHART } = Types
-
-  switch (itemDef.type) {
-    case LINE_CHART:
-      return { series: itemDef.series }
-    default:
-      break
-  }
-  return {}
-}
-
-const DynamicLoader = ({ type, height, extraProps }) => {
+const DynamicLoader = ({ type, height, widgetConfiguration, builderMode }) => {
   const { LINE_CHART } = Types
   let LazyComponent
-  const componentProps = propsByType(extraProps)
 
   if (componentsMap.has(type)) {
     LazyComponent = componentsMap.get(type)
   } else {
     switch (type) {
       case LINE_CHART:
-        LazyComponent = React.lazy(() => import('../LineChart'))
+        LazyComponent = React.lazy(() => import('components/WidgetsComponents/LineChart'))
         componentsMap.set(type, LazyComponent)
         break
       default:
@@ -36,7 +23,11 @@ const DynamicLoader = ({ type, height, extraProps }) => {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <LazyComponent height={height} {...componentProps} />
+      <LazyComponent
+        height={height}
+        widgetConfiguration={widgetConfiguration}
+        builderMode={builderMode}
+      />
     </Suspense>
   )
 }
