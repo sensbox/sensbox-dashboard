@@ -1,23 +1,22 @@
 import React from 'react'
-import { PageHeader, Button, Drawer, Tabs, Card, Divider } from 'antd'
+import { PageHeader, Button, Drawer, Divider } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import GridLayout from '../../../components/Custom/GridLayout'
+import GridLayout from 'components/Custom/GridLayout'
+import GridItem from 'components/Custom/GridItem'
+import WidgetsCatalog from 'components/Custom/WidgetsCatalog'
 import EditWidgetForm from '../form/editWidget'
-import GridItem from '../../../components/Custom/GridItem'
-import Types from '../../../components/WidgetsComponents/types'
 
 import styles from './style.module.scss'
 
-const { TabPane } = Tabs
-const { Meta } = Card
+// const { TabPane } = Tabs
+// const { Meta } = Card
 
 const mapStateToProps = ({ resource, user, builder }) => ({
   list: resource.list,
   total: resource.total,
   loading: resource.loading,
   current: resource.current,
-  user,
   layouts: builder.layouts,
   widgets: builder.widgets,
   stopGridLayoutUpdates: builder.stopGridLayoutUpdates,
@@ -25,6 +24,7 @@ const mapStateToProps = ({ resource, user, builder }) => ({
   currentWidgetErrors: builder.currentWidgetErrors,
   showWidgetEditor: builder.showWidgetEditor,
   showWidgetsCatalog: builder.showWidgetsCatalog,
+  user,
 })
 
 const mapDispatchToProps = dispatch => {
@@ -260,28 +260,13 @@ class DashboardBuilder extends React.Component {
           onEditButtonClick={widget => openWidgetEditor(widget)}
           onRemoveButtonClick={widget => removeWidget(widget)}
           stopUpdates={stopGridLayoutUpdates}
+          builderMode
         />
-        <Drawer
-          title={<div className={styles.drawerTitle}>Add Widgets</div>}
-          bodyStyle={{ padding: 10 }}
-          width={450}
-          placement="right"
-          closable={false}
-          onClose={() => closeWidgetCatalog()}
+        <WidgetsCatalog
           visible={showWidgetsCatalog}
-          // destroyOnClose
-        >
-          <Tabs defaultActiveKey="1" onChange={key => console.log(key)}>
-            <TabPane tab="Historic" key="1">
-              <Card hoverable onClick={() => addWidget(Types.LINE_CHART)}>
-                <Meta title="Line Chart" description="Basic Line chart" />
-              </Card>
-            </TabPane>
-            <TabPane tab="Real Time" key="2">
-              REAL TIME WIDGETS
-            </TabPane>
-          </Tabs>
-        </Drawer>
+          onClose={closeWidgetCatalog}
+          onAdd={addWidget}
+        />
         <Drawer
           title={<div className={styles.drawerTitle}>Edit Widget</div>}
           bodyStyle={{ padding: 10 }}
@@ -297,6 +282,7 @@ class DashboardBuilder extends React.Component {
             <>
               <div className={styles.widgetPreview}>
                 <GridItem
+                  builderMode
                   itemDef={currentWidget}
                   dynamicSize={false}
                   hoverable={false}
