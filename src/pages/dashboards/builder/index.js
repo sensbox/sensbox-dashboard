@@ -1,16 +1,10 @@
 import React from 'react'
-import { PageHeader, Button, Drawer, Divider } from 'antd'
+import { PageHeader, Button } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import GridLayout from 'components/Custom/GridLayout'
-import GridItem from 'components/Custom/GridItem'
 import WidgetsCatalog from 'components/Custom/WidgetsCatalog'
-import EditWidgetForm from '../form/editWidget'
-
-import styles from './style.module.scss'
-
-// const { TabPane } = Tabs
-// const { Meta } = Card
+import WidgetEditor from 'components/Custom/WidgetEditor'
 
 const mapStateToProps = ({ resource, user, builder }) => ({
   list: resource.list,
@@ -267,42 +261,14 @@ class DashboardBuilder extends React.Component {
           onClose={closeWidgetCatalog}
           onAdd={addWidget}
         />
-        <Drawer
-          title={<div className={styles.drawerTitle}>Edit Widget</div>}
-          bodyStyle={{ padding: 10 }}
-          // height="95%"
-          width="80%"
-          placement="right"
-          onClose={() => closeWidgetEditor()}
+        <WidgetEditor
+          widget={currentWidget}
+          widgetErrors={currentWidgetErrors}
           visible={showWidgetEditor}
-          closable
-          destroyOnClose
-        >
-          {currentWidget && (
-            <>
-              <div className={styles.widgetPreview}>
-                <GridItem
-                  builderMode
-                  itemDef={currentWidget}
-                  dynamicSize={false}
-                  hoverable={false}
-                  editable={false}
-                  bordered={false}
-                />
-              </div>
-              <Divider className={styles.divider} dashed />
-              <EditWidgetForm
-                itemDef={currentWidget}
-                errors={currentWidgetErrors}
-                onDefinitionChange={(widget, widgetErrors) =>
-                  updateCurrentWidget(widget, widgetErrors)
-                }
-                onSubmit={widget => commitWidgetChanges(widget)}
-                onCancel={() => closeWidgetEditor()}
-              />
-            </>
-          )}
-        </Drawer>
+          onDefinitionChange={updateCurrentWidget}
+          onSubmit={commitWidgetChanges}
+          onCancel={closeWidgetEditor}
+        />
       </div>
     )
   }

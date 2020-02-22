@@ -63,7 +63,7 @@ class EditWidgetForm extends React.Component {
     return (
       <>
         <Form hideRequiredMark className={styles.editWidgetForm}>
-          <Tabs tabPosition="top" defaultActiveKey="1" size="small">
+          <Tabs tabPosition="left" defaultActiveKey="1" size="small">
             <TabPane tab="Graph Controls" key="1">
               <Row>
                 <Col>
