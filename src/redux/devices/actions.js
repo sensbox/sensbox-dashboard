@@ -1,0 +1,5 @@
+export default {
+  REQUEST_KEY: 'REQUEST_KEY',
+  RECEIVE_KEY: 'RECEIVE_KEY',
+  CLEAR_KEY: 'CLEAR_KEY'
+}

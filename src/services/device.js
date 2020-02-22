@@ -57,6 +57,19 @@ async function search(value) {
   }
 }
 
+function getKey(query) {
+  // const result = await Api.findById(RESOURCE_CLASS_NAME, query)
+  return new Promise(resolve => {
+    setTimeout(() => {
+      return resolve({
+        deviceKey: `esta cosa ${query.password}`,
+        lastUpdate: Date.now()
+      });
+
+    }, 1200);
+  })
+}
+
 export default {
   find,
   findById,
@@ -65,4 +78,5 @@ export default {
   search,
   subscribeToMessages,
   unsubscribe,
+  getKey
 }

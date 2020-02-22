@@ -1,14 +1,23 @@
 import React from 'react'
-import { Tag, Tooltip, Row, Switch, Col, Table, Button, Input } from 'antd'
+import { Tag, Tooltip, Row, Switch, Col, Table, Button, Input, Modal, Typography } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import CustomDate from '../../../components/Custom/Date'
+import { fetchKeyAction } from '../../../redux/devices/sagas';
 
-const mapStateToProps = ({ resource }) => ({
+import 'antd/es/statistic/style';
+
+const { Password } = Input;
+const InputGroup = Input.Group;
+const { Paragraph } = Typography;
+
+const mapStateToProps = ({ resource, devices }) => ({
   list: resource.list,
   total: resource.total,
   loading: resource.loading,
-})
+  isFetchingDeviceKey: devices.isFetching,
+  deviceKey: devices.deviceKey
+});
 
 @connect(mapStateToProps)
 class Devices extends React.Component {
@@ -19,6 +28,9 @@ class Devices extends React.Component {
     sortOrder: 'ascend',
     currentPage: 0,
     limit: 10,
+    visibleModal: false,
+    device: {},
+    password: ''
   }
 
   constructor(props) {
@@ -75,7 +87,29 @@ class Devices extends React.Component {
     // console.log(row, this.props);
   }
 
-  updateActive(objectId, active) {
+  onShowModal = (device) => {
+    this.setState({
+      visibleModal: true,
+      device
+    });
+  };
+
+  onHideModal = () => {
+    const { dispatch } = this.props;
+    this.setState({
+      visibleModal: false,
+      device: {},
+      password: '',
+    });
+
+    dispatch(
+      {
+        type: 'CLEAR_KEY',
+        payload: {}
+      });
+  }
+
+  updateActive = (objectId, active) => {
     const { dispatch } = this.props
     dispatch({
       type: 'resource/UPDATE',
@@ -88,6 +122,17 @@ class Devices extends React.Component {
       },
     })
   }
+
+  dispatchSearchKey = () => {
+    const { password, device } = this.state;
+    const { dispatch } = this.props;
+    const query = {
+      password,
+      uuid: device.uuid
+    };
+
+    dispatch(fetchKeyAction(query))
+  };
 
   dispatchGetData() {
     const { dispatch } = this.props
@@ -108,8 +153,8 @@ class Devices extends React.Component {
   }
 
   render() {
-    const { list, total, loading } = this.props
-    const { currentPage } = this.state
+    const { list, total, loading, isFetchingDeviceKey, deviceKey } = this.props
+    const { currentPage, visibleModal, password, device } = this.state
     // console.log(loading)
     const pagination = {
       current: currentPage,
@@ -169,6 +214,14 @@ class Devices extends React.Component {
         key: 'action',
         render: row => (
           <>
+            <Tooltip title="Copy Device Key">
+              <Button
+                shape="circle"
+                icon="key"
+                type="primary"
+                onClick={() => this.onShowModal(row)}
+              />
+            </Tooltip>
             <Tooltip title="Device Settings">
               <Button
                 shape="circle"
@@ -230,6 +283,40 @@ class Devices extends React.Component {
             </Row>
           </div>
           <div className="card-body">
+            <Modal
+              title={`Copy Device Key from: ${device.uuid}`}
+              visible={visibleModal}
+              onCancel={this.onHideModal}
+              footer={null}
+            >
+              <div className="ant-statistic mb-2">
+                <div className="ant-statistic-title">Device Key</div>
+                <div className="ant-statistic-content">
+                  <Paragraph className="ant-statistic-content-value" copyable={deviceKey}>{deviceKey || '-'}</Paragraph>
+                </div>
+              </div>
+
+              <InputGroup compact>
+                <Password
+                  value={password}
+                  placeholder="Enter your password..."
+                  allowClear
+                  onChange={(el) => { this.setState({ password: el.target.value }) }}
+                  style={{ width: '90%' }}
+                  onPressEnter={this.dispatchSearchKey}
+                />
+                <Tooltip title="Search device key">
+                  <Button
+                    type="primary"
+                    icon="search"
+                    style={{ width: '10%' }}
+                    loading={isFetchingDeviceKey}
+                    onClick={this.dispatchSearchKey}
+                  />
+                </Tooltip>
+              </InputGroup>
+            </Modal>
+
             <Table
               rowKey="objectId"
               // className="utils__scrollTable"
