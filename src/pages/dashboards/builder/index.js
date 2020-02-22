@@ -266,6 +266,7 @@ class DashboardBuilder extends React.Component {
           widgetErrors={currentWidgetErrors}
           visible={showWidgetEditor}
           onDefinitionChange={updateCurrentWidget}
+          onCloseEditor={closeWidgetEditor}
           onSubmit={commitWidgetChanges}
           onCancel={closeWidgetEditor}
         />
