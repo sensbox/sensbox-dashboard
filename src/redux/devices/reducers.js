@@ -18,7 +18,7 @@ export default function deviceReducers( state = initialState, action ) {
       return Object.assign({}, state, {
         isFetching: false,
         didInvalidate: false,
-        deviceKey: action.payload.deviceKey,
+        deviceKey: action.payload.key,
         lastUpdated: action.payload.receivedAt
       })
     case actions.CLEAR_KEY:

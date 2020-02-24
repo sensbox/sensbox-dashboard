@@ -15,18 +15,33 @@ export function fetchKeyAction(query) {
       message: 'Getting Device Key from server... ',
       description: ``,
     })
+    
+    try {
+      const result = await Device.getKey(query);
+      
+      dispatch({
+        type: 'RECEIVE_KEY',
+        payload: result
+      });
+  
+      notification.success({
+        message: 'Device Key retrieved ',
+        description: ``,
+      })
+        
+    } catch (error) {
+      console.log(error);
 
-    const response = await Device.getKey(query);
+      notification.error({
+        message: 'Oops! Something went wrong! ',
+        description: `${error}`,
+      })
 
-    dispatch({
-      type: 'RECEIVE_KEY',
-      payload: response
-    });
-
-    notification.success({
-      message: 'Device Key retrieved ',
-      description: ``,
-    })
+      dispatch({
+        type: 'RECEIVE_KEY',
+        payload: {key: '', receivedAt: Date.now()}
+      })
+    } 
 
   }
 }
