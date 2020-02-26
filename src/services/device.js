@@ -58,7 +58,6 @@ async function search(value) {
 }
 
 function getKey(query) {
-  console.log(query);
   return Parse.Cloud.run('requestDeviceKey', query);
   // MOCK RESPONSE 
 }

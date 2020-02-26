@@ -3,7 +3,6 @@ import { Tag, Tooltip, Row, Switch, Col, Table, Button, Input, Modal, Typography
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import CustomDate from '../../../components/Custom/Date'
-import { fetchKeyAction } from '../../../redux/devices/sagas';
 
 import 'antd/es/statistic/style';
 
@@ -102,9 +101,8 @@ class Devices extends React.Component {
       password: '',
     });
 
-    dispatch(
-      {
-        type: 'CLEAR_KEY',
+    dispatch({
+        type: 'device/CLEAR_KEY',
         payload: {}
       });
   }
@@ -131,7 +129,10 @@ class Devices extends React.Component {
       uuid: device.uuid
     };
 
-    dispatch(fetchKeyAction(query))
+    dispatch({
+      type: 'device/FETCH_KEY',
+      payload: query
+    })
   };
 
   dispatchGetData() {
@@ -214,14 +215,6 @@ class Devices extends React.Component {
         key: 'action',
         render: row => (
           <>
-            <Tooltip title="Copy Device Key">
-              <Button
-                shape="circle"
-                icon="key"
-                type="primary"
-                onClick={() => this.onShowModal(row)}
-              />
-            </Tooltip>
             <Tooltip title="Device Settings">
               <Button
                 shape="circle"
@@ -236,6 +229,14 @@ class Devices extends React.Component {
                 icon="desktop"
                 className="mr-1"
                 onClick={() => this.onConsole(row)}
+              />
+            </Tooltip>
+            <Tooltip title="Copy Device Key">
+              <Button
+                shape="circle"
+                icon="key"
+                type=""
+                onClick={() => this.onShowModal(row)}
               />
             </Tooltip>
             <Tooltip title="Remove Device">
