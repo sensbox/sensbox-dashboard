@@ -26,7 +26,7 @@ const initialState = {
   }),
 }
 
-export default function userReducer(state = initialState, action) {
+export default function settingsReducer(state = initialState, action) {
   switch (action.type) {
     case actions.SET_STATE:
       return { ...state, ...action.payload }
