@@ -7,6 +7,7 @@ import sensor from './sensor/reducers'
 import settings from './settings/reducers'
 import common from './common/reducers'
 import builder from './builder/reducers'
+import dashboard from './dashboard/reducers'
 
 export default history =>
   combineReducers({
@@ -18,4 +19,5 @@ export default history =>
     sensor,
     common,
     builder,
+    dashboard,
   })
