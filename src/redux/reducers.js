@@ -8,6 +8,7 @@ import settings from './settings/reducers'
 import common from './common/reducers'
 import builder from './builder/reducers'
 import dashboard from './dashboard/reducers'
+import devices from './device/reducers'
 
 export default history =>
   combineReducers({
@@ -20,4 +21,5 @@ export default history =>
     common,
     builder,
     dashboard,
+    devices,
   })

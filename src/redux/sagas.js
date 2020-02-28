@@ -7,7 +7,18 @@ import sensor from './sensor/sagas'
 import common from './common/sagas'
 import builder from './builder/sagas'
 import dashboard from './dashboard/sagas'
+import device from './device/sagas'
 
 export default function* rootSaga() {
-  yield all([user(), menu(), settings(), resource(), sensor(), common(), builder(), dashboard()])
+  yield all([
+    user(),
+    menu(),
+    settings(),
+    resource(),
+    sensor(),
+    common(),
+    builder(),
+    dashboard(),
+    device(),
+  ])
 }
