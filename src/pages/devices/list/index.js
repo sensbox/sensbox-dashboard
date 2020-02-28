@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tag, Tooltip, Row, Switch, Col, Table, Button, Input, Modal, Typography } from 'antd'
+import { Tag, Tooltip, Row, Switch, Col, Table, Button, Input, Modal, Typography, Form } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import CustomDate from 'components/Custom/Date'
@@ -16,6 +16,7 @@ const mapStateToProps = ({ resource, devices }) => ({
   loading: resource.loading,
   isFetchingDeviceKey: devices.isFetching,
   deviceKey: devices.deviceKey,
+  lastError: devices.lastError,
 })
 
 @connect(mapStateToProps)
@@ -154,7 +155,7 @@ class Devices extends React.Component {
   }
 
   render() {
-    const { list, total, loading, isFetchingDeviceKey, deviceKey } = this.props
+    const { list, total, loading, isFetchingDeviceKey, deviceKey, lastError } = this.props
     const { currentPage, visibleModal, password, device } = this.state
     // console.log(loading)
     const pagination = {
@@ -232,7 +233,13 @@ class Devices extends React.Component {
               />
             </Tooltip>
             <Tooltip title="Copy Device Key">
-              <Button shape="circle" icon="key" type="" onClick={() => this.onShowModal(row)} />
+              <Button
+                shape="circle"
+                icon="key"
+                className="mr-1"
+                type=""
+                onClick={() => this.onShowModal(row)}
+              />
             </Tooltip>
             <Tooltip title="Remove Device">
               <Button
@@ -285,36 +292,47 @@ class Devices extends React.Component {
               onCancel={this.onHideModal}
               footer={null}
             >
-              <div className="ant-statistic mb-2">
-                <div className="ant-statistic-title">Device Key</div>
-                <div className="ant-statistic-content">
-                  <Paragraph className="ant-statistic-content-value" copyable={deviceKey}>
-                    {deviceKey || '-'}
-                  </Paragraph>
+              {deviceKey ? (
+                <div className="ant-statistic mb-2">
+                  <div className="ant-statistic-title">Device Key</div>
+                  <div className="ant-statistic-content">
+                    <Paragraph
+                      code
+                      ellipsis
+                      copyable={deviceKey}
+                      style={{ fontSize: 20, marginLeft: -2, width: 400 }}
+                    >
+                      {deviceKey}
+                    </Paragraph>
+                  </div>
                 </div>
-              </div>
-
-              <InputGroup compact>
-                <Password
-                  value={password}
-                  placeholder="Enter your password..."
-                  allowClear
-                  onChange={el => {
-                    this.setState({ password: el.target.value })
-                  }}
-                  style={{ width: '90%' }}
-                  onPressEnter={this.dispatchSearchKey}
-                />
-                <Tooltip title="Search device key">
-                  <Button
-                    type="primary"
-                    icon="search"
-                    style={{ width: '10%' }}
-                    loading={isFetchingDeviceKey}
-                    onClick={this.dispatchSearchKey}
-                  />
-                </Tooltip>
-              </InputGroup>
+              ) : (
+                <Form>
+                  <Form.Item validateStatus={lastError && 'error'}>
+                    <InputGroup compact>
+                      <Password
+                        value={password}
+                        placeholder="Enter your password..."
+                        allowClear
+                        onChange={el => {
+                          this.setState({ password: el.target.value })
+                        }}
+                        style={{ width: '90%' }}
+                        onPressEnter={this.dispatchSearchKey}
+                      />
+                      <Tooltip title="Search device key">
+                        <Button
+                          type="primary"
+                          icon="search"
+                          style={{ width: '10%' }}
+                          loading={isFetchingDeviceKey}
+                          onClick={this.dispatchSearchKey}
+                        />
+                      </Tooltip>
+                    </InputGroup>
+                  </Form.Item>
+                </Form>
+              )}
             </Modal>
 
             <Table

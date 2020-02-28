@@ -1,7 +1,7 @@
 import actions from './actions'
 
 const initialState = {
-  deviceKey: '',
+  deviceKey: null,
   isFetching: false,
   lastError: null,
 }

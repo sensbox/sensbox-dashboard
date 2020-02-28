@@ -1,15 +1,10 @@
 import { all, put, call, takeEvery } from 'redux-saga/effects'
-import { notification } from 'antd'
+import { message, notification } from 'antd'
 import Device from 'services/device'
 
 import actions from './actions'
 
 function* loading() {
-  notification.info({
-    message: 'Getting Device Key from server... ',
-    description: ``,
-  })
-
   yield put({
     type: 'device/SET_STATE',
     payload: { isFetching: true, lastError: null },
@@ -18,8 +13,8 @@ function* loading() {
 
 function* receiveKey(response) {
   notification.success({
-    message: 'Device Key retrieved ',
-    description: ``,
+    message: 'Success',
+    description: 'Device Key retrieved ',
   })
 
   const res = {
@@ -38,34 +33,33 @@ function* receiveKey(response) {
 function* setError(err) {
   notification.error({
     message: 'Oops! Something went wrong! ',
-    description: `${err}`,
+    description: 'Please Verify your password',
   })
 
   yield put({
     type: 'device/SET_STATE',
-    payload: { key: '', lastUpdated: Date.now(), isFetching: false, lastError: err },
+    payload: { lastUpdated: Date.now(), isFetching: false, lastError: err },
   })
 }
 
 export function* FETCH_KEY({ payload }) {
   const query = payload
-
+  const loadingMessage = message.loading('Getting Device Key from server... ', 0)
   yield call(loading)
-
   try {
     const response = yield call(Device.getKey, query)
-
     yield call(receiveKey, response)
   } catch (error) {
     yield call(setError, error)
   }
+  setTimeout(loadingMessage, 0)
 }
 
 export function* CLEAR_KEY() {
   yield put({
     type: 'device/SET_STATE',
     payload: {
-      deviceKey: '',
+      deviceKey: null,
       receivedAt: Date.now(),
     },
   })
