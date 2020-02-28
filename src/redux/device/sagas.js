@@ -6,17 +6,28 @@ import Device from 'services/device'
 import actions from './actions'
 
 function* loading(){
+
+  notification.info({
+    message: 'Getting Device Key from server... ',
+    description: ``,
+  })
+
   yield put({
     type: 'device/SET_STATE',
-    payload: { isFetching: true, didInvalidate: false }
+    payload: { isFetching: true, lastError: null }
   })
 }
 
 function* receiveKey(response){
 
+  notification.success({
+    message: 'Device Key retrieved ',
+    description: ``,
+  })
+
   const res = {
     isFetching: false,
-    didInvalidate: false,
+    lastError: null,
     deviceKey: response.key,
     lastUpdated: Date.now()
   };
@@ -28,44 +39,41 @@ function* receiveKey(response){
 
 }
 
+function* setError(err){
+
+  notification.error({
+    message: 'Oops! Something went wrong! ',
+    description: `${err}`,
+  })
+
+  yield put({
+    type: 'device/SET_STATE',
+    payload: { key: '', lastUpdated: Date.now(), isFetching: false, lastError: err }
+  })
+}
 
 
-export function* fetchKeyAction({ payload }) {
+
+export function* FETCH_KEY({ payload }) {
   const query = payload;
 
   yield call(loading);
 
-  notification.info({
-    message: 'Getting Device Key from server... ',
-    description: ``,
-  })
-
   try {
+
     const response = yield call(Device.getKey, query)
     
     yield call(receiveKey, response);
 
-    notification.success({
-      message: 'Device Key retrieved ',
-      description: ``,
-    })
-
   } catch (error) {
 
-    notification.error({
-      message: 'Oops! Something went wrong! ',
-      description: `${error}`,
-    })
+    yield call(setError, error);
 
-    yield put({
-      type: 'device/SET_STATE',
-      payload: { key: '', lastUpdated: Date.now(), isFetching: false, didInvalidate: true }
-    })
   }
 
 }
 
-export function* clearKey() {
+export function* CLEAR_KEY() {
 
   yield put({
     type: 'device/SET_STATE',
@@ -87,9 +95,9 @@ export function copyingToClipboard() {
 
 export default function* rootSaga() {
   yield all([
-    takeEvery(actions.FETCH_KEY, fetchKeyAction),
+    takeEvery(actions.FETCH_KEY, FETCH_KEY),
     // takeEvery(actions.REQUEST_KEY, requestKey),
-    takeEvery(actions.CLEAR_KEY, clearKey)
+    takeEvery(actions.CLEAR_KEY, CLEAR_KEY)
   ])
 }
 

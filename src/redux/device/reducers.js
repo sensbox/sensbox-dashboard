@@ -3,8 +3,7 @@ import actions from './actions';
 const initialState = {
   deviceKey: '',
   isFetching: false,
-  didInvalidate: false,
-
+  lastError: null,
 }
 
 /* export default function deviceReducers( state = initialState, action ) {
