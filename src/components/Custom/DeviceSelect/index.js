@@ -1,6 +1,6 @@
 import React from 'react'
 import { Select, Spin } from 'antd'
-import Device from '../../../services/device'
+import Device from 'services/device'
 
 const { Option } = Select
 

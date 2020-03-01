@@ -57,6 +57,11 @@ async function search(value) {
   }
 }
 
+function getKey(query) {
+  return Parse.Cloud.run('requestDeviceKey', query)
+  // MOCK RESPONSE
+}
+
 export default {
   find,
   findById,
@@ -65,4 +70,5 @@ export default {
   search,
   subscribeToMessages,
   unsubscribe,
+  getKey,
 }

@@ -1,9 +1,9 @@
 import React from 'react'
 import { withSize } from 'react-sizeme'
-
 import { Card, Button, Input, Modal } from 'antd'
+import DynamicLoader from 'components/Custom/DynamicLoader'
+
 import './styles.scss'
-import { LineChart } from '../../WidgetsComponents'
 
 const { confirm } = Modal
 
@@ -14,6 +14,7 @@ class GridItem extends React.Component {
     editable: true,
     dynamicSize: true,
     bordered: true,
+    builderMode: false,
     onSaveWidget: itemDef => console.log(`Save widget ${itemDef}`),
     onRemoveButtonClick: itemDef => console.log(`Remove widget ${itemDef}`),
     onEditButtonClick: () => console.log(`Button Edit clicked`),
@@ -73,10 +74,10 @@ class GridItem extends React.Component {
   }
 
   render() {
-    const { hoverable, editable, itemDef, size, dynamicSize, bordered } = this.props
-    // console.log(size)
+    const { hoverable, editable, itemDef, size, dynamicSize, bordered, builderMode } = this.props
     const { showTitleInput } = this.state
     const { title = 'title' } = itemDef
+    // const componentProps = propsByType(itemDef)
     return (
       <Card
         className="GridItem"
@@ -124,7 +125,12 @@ class GridItem extends React.Component {
           )
         }
       >
-        <LineChart series={itemDef.series} height={dynamicSize ? size.height : null} />
+        <DynamicLoader
+          type={itemDef.type}
+          height={dynamicSize ? size.height : null}
+          widgetConfiguration={itemDef}
+          builderMode={builderMode}
+        />
       </Card>
     )
   }

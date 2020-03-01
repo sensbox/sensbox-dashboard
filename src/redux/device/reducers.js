@@ -1,13 +1,9 @@
 import actions from './actions'
 
 const initialState = {
-  layouts: [],
-  widgets: [],
-  showWidgetEditor: false,
-  showWidgetsCatalog: false,
-  stopGridLayoutUpdates: false,
-  currentWidget: null,
-  currentWidgetErrors: [],
+  deviceKey: null,
+  isFetching: false,
+  lastError: null,
 }
 
 export default function userReducer(state = initialState, action) {

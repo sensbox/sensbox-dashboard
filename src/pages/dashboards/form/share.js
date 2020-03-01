@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Form, Modal, Switch } from 'antd'
-import UserSelect from '../../../components/Custom/UserSelect'
+import UserSelect from 'components/Custom/UserSelect'
 
 const getFormField = (value, errors) =>
   Form.createFormField({ value, errors: errors && errors.map(e => new Error(e)) })

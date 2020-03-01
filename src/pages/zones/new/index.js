@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import { PageHeader } from 'antd'
 import { Helmet } from 'react-helmet'
 import { Redirect } from 'react-router-dom'
+import api from 'services/api'
 import ZoneForm from '../form'
-import api from '../../../services/api'
 
 const mapStateToProps = ({ resource }) => ({
   saving: resource.saving,

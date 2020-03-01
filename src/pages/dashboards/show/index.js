@@ -2,7 +2,7 @@ import React from 'react'
 import { PageHeader, Button } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import GridLayout from '../../../components/Custom/GridLayout'
+import GridLayout from 'components/Custom/GridLayout'
 
 // import './styles.scss'
 
@@ -78,7 +78,6 @@ class DashboardShow extends React.Component {
         <GridLayout
           layouts={current.layouts}
           widgets={current.widgets}
-          onLayoutChange={this.saveLayout}
           isDraggable={false}
           isResizable={false}
           widgetsHoverable={false}

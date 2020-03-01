@@ -2,7 +2,7 @@ import React from 'react'
 import { Tooltip, Row, Switch, Col, Table, Button, Input, Modal } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import CustomDate from '../../../components/Custom/Date'
+import CustomDate from 'components/Custom/Date'
 
 const { confirm } = Modal
 const mapStateToProps = ({ resource }) => ({

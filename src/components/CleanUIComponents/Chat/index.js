@@ -1,6 +1,6 @@
 import React from 'react'
+import Avatar from 'components/CleanUIComponents/Avatar'
 import { chats } from './data.json'
-import Avatar from '../Avatar'
 
 import style from './style.module.scss'
 
