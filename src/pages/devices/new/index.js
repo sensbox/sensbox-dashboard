@@ -58,12 +58,14 @@ class DeviceNew extends React.Component {
           <div className="card-body">
             <div className="row">
               <div className="col-lg-8">
+                
                 <DeviceForm
                   device={current}
                   disableSaveButton={saving}
                   saveAction={this.saveAction}
                   errors={formErrors}
                 />
+                
               </div>
             </div>
           </div>
