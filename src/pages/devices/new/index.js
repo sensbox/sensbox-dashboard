@@ -3,15 +3,9 @@ import { connect } from 'react-redux'
 import { PageHeader } from 'antd'
 import { Helmet } from 'react-helmet'
 
-import DeviceForm from '../form'
+import DeviceFormIndex from '../form'
 
-const mapStateToProps = ({ resource }) => ({
-  saving: resource.saving,
-  current: resource.current,
-  formErrors: resource.formErrors,
-})
-
-@connect(mapStateToProps)
+@connect()
 class DeviceNew extends React.Component {
   constructor(props) {
     super(props)
@@ -31,7 +25,7 @@ class DeviceNew extends React.Component {
 
   saveAction(formData) {
     // eslint-disable-next-line no-unused-vars
-    const { current, dispatch } = this.props
+    const { dispatch } = this.props
     dispatch({
       type: 'resource/CREATE',
       payload: {
@@ -43,7 +37,7 @@ class DeviceNew extends React.Component {
   }
 
   render() {
-    const { saving, current, formErrors, history } = this.props
+    const { history } = this.props
 
     return (
       <div>
@@ -59,11 +53,8 @@ class DeviceNew extends React.Component {
             <div className="row">
               <div className="col-lg-8">
                 
-                <DeviceForm
-                  device={current}
-                  disableSaveButton={saving}
+                <DeviceFormIndex
                   saveAction={this.saveAction}
-                  errors={formErrors}
                 />
                 
               </div>

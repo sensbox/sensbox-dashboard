@@ -1,15 +1,23 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Tooltip, Table, Button, message, Descriptions, Modal, Tabs, Icon } from 'antd'
-import DeviceForm from './device'
+
+import api from 'services/api'
+
+import DetailsForm from './device'
 import SensorForm from './sensor'
 
 const { confirm } = Modal
 const { TabPane } = Tabs;
 
+const mapStateToProps = ({ resource }) => ({
+  saving: resource.saving,
+  device: resource.current,
+  formErrors: resource.formErrors,
+})
 
-@connect()
-class DeviceIndex extends React.Component {
+@connect(mapStateToProps)
+class DeviceFormIndex extends React.Component {
   state = {
     modalVisible: false,
   }
@@ -89,7 +97,7 @@ class DeviceIndex extends React.Component {
   }
 
   render() {
-    const {device } = this.props
+    const { device, saving, formErrors, saveAction } = this.props
 
     const { modalVisible } = this.state
 
@@ -171,7 +179,12 @@ class DeviceIndex extends React.Component {
       <div>
         <Tabs defaultActiveKey="1">
           <TabPane tab={<span className="h5"> <Icon type="alert" /> Device Info. </span>} key="1">
-            <DeviceForm />
+            <DetailsForm
+              device={device}
+              disableSaveButton={saving}
+              saveAction={saveAction}
+              errors={formErrors}
+            />
           </TabPane>
           {device && device.objectId && (
             <TabPane tab={<span className="h5"> <Icon type="sliders" /> Sensors </span>} key="2">
@@ -189,6 +202,7 @@ class DeviceIndex extends React.Component {
                 />
                 <div className="row">
                   <div className="col-lg-12">
+
                     <Table
                       rowKey="objectId"
                       className="utils__scrollTable"
@@ -200,6 +214,11 @@ class DeviceIndex extends React.Component {
                   </div>
                 </div>
               </div>
+            </TabPane>            
+          )}
+          {device && device.objectId && (
+            <TabPane tab={<span className="h5"> <Icon type="share-alt" /> Share </span>} key="3">
+              Share Options
             </TabPane>
           )}
         </Tabs>
@@ -207,4 +226,4 @@ class DeviceIndex extends React.Component {
     )
   }
 }
-export default DeviceIndex
+export default DeviceFormIndex
