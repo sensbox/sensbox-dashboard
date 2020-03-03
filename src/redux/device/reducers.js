@@ -1,6 +1,7 @@
 import actions from './actions'
 
 const initialState = {
+  activeTab: 'details',
   deviceKey: null,
   isFetching: false,
   lastError: null,

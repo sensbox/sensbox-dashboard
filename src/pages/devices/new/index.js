@@ -5,7 +5,11 @@ import { Helmet } from 'react-helmet'
 
 import DeviceFormIndex from '../form'
 
-@connect()
+const mapStateToProps = ({ device }) => ({
+  activeTab: device.activeTab
+})
+
+@connect(mapStateToProps)
 class DeviceNew extends React.Component {
   constructor(props) {
     super(props)
@@ -33,11 +37,19 @@ class DeviceNew extends React.Component {
         data: formData,
         notify: true,
       },
+    });
+
+    dispatch({
+      type: 'device/ACTIVE_TAB',
+      payload: {
+        activeTab: 'sensors'
+      }
     })
+
   }
 
   render() {
-    const { history } = this.props
+    const { history, activeTab } = this.props
 
     return (
       <div>
@@ -48,19 +60,10 @@ class DeviceNew extends React.Component {
           onBack={() => history.goBack()}
           title="New Device"
         />
-        <div className="card">
-          <div className="card-body">
-            <div className="row">
-              <div className="col-lg-8">
-                
-                <DeviceFormIndex
-                  saveAction={this.saveAction}
-                />
-                
-              </div>
-            </div>
-          </div>
-        </div>
+        <DeviceFormIndex
+          saveAction={this.saveAction}
+          activeTab={activeTab}
+        />
       </div>
     )
   }
