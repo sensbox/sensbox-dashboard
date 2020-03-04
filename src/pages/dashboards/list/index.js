@@ -35,6 +35,7 @@ class Dashboards extends React.Component {
     this.dispatchGetData()
     this.addDashboard.bind(this)
     this.handlePaginationChange.bind(this)
+    this.handleConfirmShareDashboard.bind(this)
   }
 
   handlePaginationChange = current => {
@@ -86,9 +87,8 @@ class Dashboards extends React.Component {
     })
   }
 
-  handleConfirmShareDashboard = objectId => {
-    const { dispatch } = this.props
-    const { form } = this.shareFormRef.props
+  handleConfirmShareDashboard = ({objectId}, className, form) => {
+    const { dispatch } = this.props;
     form.validateFields((err, values) => {
       const permissions = {
         public: {
@@ -107,7 +107,7 @@ class Dashboards extends React.Component {
         dispatch({
           type: 'resource/SET_PERMISSIONS',
           payload: {
-            className: 'Dashboard',
+            className,
             objectId,
             permissions,
             notify: true,
