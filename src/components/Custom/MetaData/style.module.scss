@@ -1,0 +1,23 @@
+@import 'assets/styles/mixins.scss';
+
+.editor {
+  min-height: 200px;
+  padding: 1rem;
+  border-radius: 5px;
+  border: 1px solid $gray-border;
+}
+
+.customCol{
+  padding-left: .5em!important;
+  padding-right: .5em!important;
+}
+
+.metadataItem {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .textAlignXsCenter {
+    text-align: center !important;
+  }
+}
