@@ -12,18 +12,18 @@ class MetaData extends React.Component {
     const alignClasses = {
       left: {
         container: `text-md-${align}`,
-        col1: `${style.customCol} ${style.textAlignXsCenter} col-md-6 col-xl-4 text-md-left`,
-        col2: `${style.customCol} ${style.textAlignXsCenter} col-md-6 col-xl-8  text-md-left`
+        col1: `${style.customCol} ${style.textAlignXsCenter} ant-col-md-12 ant-col-xl-8 text-md-left`,
+        col2: `${style.customCol} ${style.textAlignXsCenter} ant-col-md-12 ant-col-xl-16  text-md-left`
       },
       center: {
         container: `text-md-${align}`,
-        col1: `${style.customCol} ${style.textAlignXsCenter} col-md-6 text-md-right`,
-        col2: `${style.customCol} ${style.textAlignXsCenter} col-md-6 text-md-left`
+        col1: `${style.customCol} ${style.textAlignXsCenter} ant-col-md-12 text-md-right`,
+        col2: `${style.customCol} ${style.textAlignXsCenter} ant-col-md-12 text-md-left`
       },
       right: {
         container: `text-md-${align}`,
-        col1: `${style.customCol} ${style.textAlignXsCenter} col-md-6 text-md-right`,
-        col2: `${style.customCol} ${style.textAlignXsCenter} col-md-6 text-md-right`
+        col1: `${style.customCol} ${style.textAlignXsCenter} ant-col-md-12 text-md-right`,
+        col2: `${style.customCol} ${style.textAlignXsCenter} ant-col-md-12 text-md-right`
       },
     }
 
@@ -35,25 +35,25 @@ class MetaData extends React.Component {
     };
     return (
       <div className={`${alignClasses[align].container}`}>
-        <h5 className="mb-3 text-black">
+        <h5 className="mx-2 mb-3 text-black">
           <strong>Metadata</strong>
         </h5>
-        <dl className="row">
+        <dl className="ant-row">
           <dt className={`${alignClasses[align].col1}`}>Created by:</dt>
           <dd className={`${alignClasses[align].col2}`}><CustomAvatar user={metadata.createdBy} /></dd>
         </dl>
 
-        <dl className="row">
+        <dl className="ant-row">
           <dt className={`${alignClasses[align].col1}`}>Updated by:</dt>
           <dd className={`${alignClasses[align].col2}`}><CustomAvatar user={metadata.updatedBy} /></dd>
         </dl>
 
-        <dl className="row">
+        <dl className="ant-row">
           <dt className={`${alignClasses[align].col1}`}>Created:</dt>
           <dd className={`${alignClasses[align].col2}`}>{metadata.createdAt}</dd>
         </dl>
 
-        <dl className="row">
+        <dl className="ant-row">
           <dt className={`${alignClasses[align].col1}`}>Updated:</dt>
           <dd className={`${alignClasses[align].col2}`}>{metadata.updatedAt}</dd>
         </dl>
