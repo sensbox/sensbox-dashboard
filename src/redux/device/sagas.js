@@ -33,7 +33,7 @@ function* receiveKey(response) {
 function* setError(err) {
   notification.error({
     message: 'Oops! Something went wrong! ',
-    description: 'Please Verify your password',
+    description: err.message,
   })
 
   yield put({
