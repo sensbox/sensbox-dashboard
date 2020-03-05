@@ -5,8 +5,11 @@ import { Helmet } from 'react-helmet'
 
 import DeviceFormIndex from '../form'
 
-const mapStateToProps = ({ device }) => ({
-  activeTab: device.activeTab
+const mapStateToProps = ({ resource, device }) => ({
+  activeTab: device.activeTab,
+  device: resource.current,
+  saving: resource.saving,
+  formErrors: resource.formErrors,
 })
 
 @connect(mapStateToProps)
@@ -16,40 +19,41 @@ class DeviceNew extends React.Component {
     this.saveAction = this.saveAction.bind(this)
   }
 
-  componentDidUpdate() {
-    const { current } = this.props
-    if (current && current.objectId) {
-      const { history } = this.props
-      history.push({
-        pathname: `/devices/settings/${current.uuid}`,
-        state: { device: current },
-      })
-    }
+  dispatchChangeTab = tab => {
+    const { dispatch } = this.props
+
+    dispatch({
+      type: 'device/ACTIVE_TAB',
+      payload: {
+        activeTab: tab,
+      },
+    })
   }
 
   saveAction(formData) {
     // eslint-disable-next-line no-unused-vars
     const { dispatch } = this.props
+
     dispatch({
       type: 'resource/CREATE',
       payload: {
         className: 'Device',
         data: formData,
         notify: true,
+        callback: () => {
+          dispatch({
+            type: 'device/ACTIVE_TAB',
+            payload: {
+              activeTab: 'sensors',
+            },
+          })
+        },
       },
-    });
-
-    dispatch({
-      type: 'device/ACTIVE_TAB',
-      payload: {
-        activeTab: 'sensors'
-      }
     })
-
   }
 
   render() {
-    const { history, activeTab } = this.props
+    const { saving, history, activeTab, device, formErrors } = this.props
 
     return (
       <div>
@@ -61,8 +65,12 @@ class DeviceNew extends React.Component {
           title="New Device"
         />
         <DeviceFormIndex
+          device={device}
           saveAction={this.saveAction}
+          disableSaveButton={saving}
+          formErrors={formErrors}
           activeTab={activeTab}
+          onTabChange={this.dispatchChangeTab}
         />
       </div>
     )

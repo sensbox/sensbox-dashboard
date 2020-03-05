@@ -1,10 +1,20 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Tooltip, Table, Button, message, Descriptions, Input, Form, Modal, InputNumber } from 'antd'
+import {
+  Tooltip,
+  Table,
+  Button,
+  message,
+  Descriptions,
+  Input,
+  Form,
+  Modal,
+  InputNumber,
+} from 'antd'
 
 import api from 'services/api'
 
-const { confirm } = Modal;
+const { confirm } = Modal
 
 const getFormField = (value, errors) =>
   Form.createFormField({ value, errors: errors && errors.map(e => new Error(e)) })
@@ -46,7 +56,6 @@ const mapStateToProps = ({ sensor }) => ({
 @connect(mapStateToProps)
 @Form.create({ mapPropsToFields })
 class SensorForm extends React.Component {
-
   state = {
     modalVisible: false,
   }
@@ -201,7 +210,6 @@ class SensorForm extends React.Component {
       },
     ]
 
-
     return (
       <div className="col-lg-12">
         <div className="ant-row">
@@ -241,7 +249,9 @@ class SensorForm extends React.Component {
               style={{ marginBottom: 5 }}
               extra="Configure input parameters such as min/max values and unit type: e.g, from 5 to 200 Km/h"
             >
-              <span style={{ display: 'inline-block', width: '40px', textAlign: 'left' }}>From</span>
+              <span style={{ display: 'inline-block', width: '40px', textAlign: 'left' }}>
+                From
+              </span>
               <Form.Item
                 style={{ display: 'inline-block', width: 'calc(25% - 12px)', marginBottom: 0 }}
               >
@@ -253,7 +263,9 @@ class SensorForm extends React.Component {
               >
                 {getFieldDecorator('inputMax')(<InputNumber min={-9999} max={9999} />)}
               </Form.Item>
-              <span style={{ display: 'inline-block', width: '40px', textAlign: 'left' }}>Unit</span>
+              <span style={{ display: 'inline-block', width: '40px', textAlign: 'left' }}>
+                Unit
+              </span>
               <Form.Item
                 style={{ display: 'inline-block', width: 'calc(25% - 12px)', marginBottom: 0 }}
               >
@@ -274,7 +286,9 @@ class SensorForm extends React.Component {
               style={{ marginBottom: 5 }}
               extra="Configure output parameters such as min/max values and unit type: e.g, from 0 to 10 Volts (optional configuration)"
             >
-              <span style={{ display: 'inline-block', width: '40px', textAlign: 'left' }}>From</span>
+              <span style={{ display: 'inline-block', width: '40px', textAlign: 'left' }}>
+                From
+              </span>
               <Form.Item
                 style={{ display: 'inline-block', width: 'calc(25% - 12px)', marginBottom: 0 }}
               >
@@ -286,7 +300,9 @@ class SensorForm extends React.Component {
               >
                 {getFieldDecorator('outputMax')(<InputNumber min={-9999} max={9999} />)}
               </Form.Item>
-              <span style={{ display: 'inline-block', width: '40px', textAlign: 'left' }}>Unit</span>
+              <span style={{ display: 'inline-block', width: '40px', textAlign: 'left' }}>
+                Unit
+              </span>
               <Form.Item
                 style={{ display: 'inline-block', width: 'calc(25% - 12px)', marginBottom: 0 }}
               >
@@ -300,7 +316,6 @@ class SensorForm extends React.Component {
         </Modal>
         <div className="row">
           <div className="col-lg-12">
-
             <Table
               rowKey="objectId"
               className="utils__scrollTable"
@@ -312,7 +327,6 @@ class SensorForm extends React.Component {
           </div>
         </div>
       </div>
-
     )
   }
 }

@@ -219,6 +219,6 @@ export default function* rootSaga() {
     takeEvery(actions.UPDATE, UPDATE),
     takeEvery(actions.CREATE, CREATE),
     takeEvery(actions.CLEAR, CLEAR),
-    takeEvery(actions.REMOVE, REMOVE)
+    takeEvery(actions.REMOVE, REMOVE),
   ])
 }

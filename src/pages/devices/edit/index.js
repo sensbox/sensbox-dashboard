@@ -8,13 +8,12 @@ import { Redirect } from 'react-router-dom'
 
 import DeviceFormIndex from '../form'
 
-
-
 const mapStateToProps = ({ resource, device }) => ({
   current: resource.current,
   saving: resource.saving,
   objectNotFound: resource.objectNotFound,
-  activeTab: device.activeTab
+  activeTab: device.activeTab,
+  formErrors: resource.formErrors,
 })
 
 @connect(mapStateToProps)
@@ -27,11 +26,23 @@ class DeviceSettings extends React.Component {
         type: 'resource/GET_CURRENT',
         payload: {
           className: 'Device',
+          includes: ['createdBy', 'updatedBy'],
           objectId: location.state.device.objectId,
         },
       })
     }
     this.saveAction = this.saveAction.bind(this)
+  }
+
+  dispatchChangeTab = tab => {
+    const { dispatch } = this.props
+
+    dispatch({
+      type: 'device/ACTIVE_TAB',
+      payload: {
+        activeTab: tab,
+      },
+    })
   }
 
   saveAction(formData) {
@@ -48,7 +59,7 @@ class DeviceSettings extends React.Component {
   }
 
   render() {
-    const { saving, objectNotFound, location, history, current, activeTab } = this.props
+    const { saving, objectNotFound, location, history, current, formErrors, activeTab } = this.props
     // console.log(history);
     if (!location.state || objectNotFound) {
       return <Redirect to="/devices" />
@@ -68,7 +79,9 @@ class DeviceSettings extends React.Component {
           device={current}
           disableSaveButton={saving}
           saveAction={this.saveAction}
+          formErrors={formErrors}
           activeTab={activeTab}
+          onTabChange={this.dispatchChangeTab}
         />
       </div>
     )

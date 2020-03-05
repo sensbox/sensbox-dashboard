@@ -39,6 +39,16 @@ class Devices extends React.Component {
     this.onAdd.bind(this)
   }
 
+  componentDidMount = () => {
+    const { dispatch } = this.props
+    dispatch({
+      type: 'device/ACTIVE_TAB',
+      payload: {
+        activeTab: 'details',
+      },
+    })
+  }
+
   handleTableChange = (pagination, filters, sorters) => {
     const { current } = pagination
     const { columnKey, order } = sorters
