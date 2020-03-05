@@ -83,7 +83,6 @@ class OrganizationEdit extends React.Component {
               <div className="col-md-3">
                 <MetaData item={current} />
               </div>
-
             </div>
           </div>
         </div>

@@ -8,8 +8,6 @@ import { Redirect } from 'react-router-dom'
 
 import DeviceFormIndex from '../form'
 
-
-
 const mapStateToProps = ({ resource, device }) => ({
   current: resource.current,
   saving: resource.saving,
@@ -35,18 +33,18 @@ class DeviceSettings extends React.Component {
     }
     this.saveAction = this.saveAction.bind(this)
   }
-  
-  dispatchChangeTab = (tab) => {
-    const { dispatch } = this.props;
+
+  dispatchChangeTab = tab => {
+    const { dispatch } = this.props
 
     dispatch({
       type: 'device/ACTIVE_TAB',
       payload: {
-        activeTab: tab
-      }
+        activeTab: tab,
+      },
     })
   }
-  
+
   saveAction(formData) {
     const { current, dispatch } = this.props
     dispatch({

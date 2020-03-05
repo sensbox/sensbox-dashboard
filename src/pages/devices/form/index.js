@@ -6,13 +6,18 @@ import MetaData from 'components/Custom/MetaData'
 import DetailsForm from './device'
 import SensorForm from './sensor'
 
-
-const { TabPane } = Tabs;
+const { TabPane } = Tabs
 
 class DeviceFormIndex extends React.Component {
-
   render() {
-    const { device = {}, saving = false, formErrors = {}, saveAction, activeTab = 'details', onTabChange } = this.props
+    const {
+      device = {},
+      saving = false,
+      formErrors = {},
+      saveAction,
+      activeTab = 'details',
+      onTabChange,
+    } = this.props
 
     return (
       <div>
@@ -20,8 +25,20 @@ class DeviceFormIndex extends React.Component {
           <div className="card-body">
             <div className="row">
               <div className="col-md-9">
-                <Tabs defaultActiveKey="details" activeKey={activeTab} onChange={onTabChange}>
-                  <TabPane tab={<span className="h5"> <Icon type="alert" /> Device Info. </span>} key="details">
+                <Tabs
+                  size="small"
+                  defaultActiveKey="details"
+                  activeKey={activeTab}
+                  onChange={onTabChange}
+                >
+                  <TabPane
+                    tab={
+                      <span className="h6">
+                        <Icon type="alert" /> Device Info.
+                      </span>
+                    }
+                    key="details"
+                  >
                     <DetailsForm
                       device={device}
                       disableSaveButton={saving}
@@ -29,10 +46,26 @@ class DeviceFormIndex extends React.Component {
                       errors={formErrors}
                     />
                   </TabPane>
-                  <TabPane disabled={!device.objectId} tab={<span className="h5"> <Icon type="sliders" /> Sensors </span>} key="sensors">
+                  <TabPane
+                    disabled={!device.objectId}
+                    tab={
+                      <span className="h6">
+                        <Icon type="sliders" /> Sensors
+                      </span>
+                    }
+                    key="sensors"
+                  >
                     <SensorForm device={device} />
                   </TabPane>
-                  <TabPane disabled={!device.objectId} tab={<span className="h5"> <Icon type="share-alt" /> Share </span>} key="share">
+                  <TabPane
+                    disabled={!device.objectId}
+                    tab={
+                      <span className="h6">
+                        <Icon type="share-alt" /> Share
+                      </span>
+                    }
+                    key="share"
+                  >
                     Share Options
                   </TabPane>
                 </Tabs>
@@ -43,7 +76,6 @@ class DeviceFormIndex extends React.Component {
                   <MetaData item={device} />
                 </div>
               )}
-
             </div>
           </div>
         </div>

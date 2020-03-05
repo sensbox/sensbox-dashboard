@@ -65,12 +65,11 @@ export function* CLEAR_KEY() {
   })
 }
 
-export function* ACTIVE_TAB({payload}){
-
+export function* ACTIVE_TAB({ payload }) {
   yield put({
     type: 'device/SET_STATE',
-    payload
-  });
+    payload,
+  })
 }
 
 export default function* rootSaga() {
@@ -78,6 +77,6 @@ export default function* rootSaga() {
     takeEvery(actions.FETCH_KEY, FETCH_KEY),
     // takeEvery(actions.REQUEST_KEY, requestKey),
     takeEvery(actions.CLEAR_KEY, CLEAR_KEY),
-    takeEvery(actions.ACTIVE_TAB, ACTIVE_TAB)
+    takeEvery(actions.ACTIVE_TAB, ACTIVE_TAB),
   ])
 }

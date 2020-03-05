@@ -40,13 +40,13 @@ class Devices extends React.Component {
   }
 
   componentDidMount = () => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props
     dispatch({
       type: 'device/ACTIVE_TAB',
       payload: {
-        activeTab: 'details'
-      }
-    })  
+        activeTab: 'details',
+      },
+    })
   }
 
   handleTableChange = (pagination, filters, sorters) => {

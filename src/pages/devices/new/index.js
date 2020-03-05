@@ -19,42 +19,41 @@ class DeviceNew extends React.Component {
     this.saveAction = this.saveAction.bind(this)
   }
 
-  dispatchChangeTab = (tab) => {
-    const { dispatch } = this.props;
+  dispatchChangeTab = tab => {
+    const { dispatch } = this.props
 
     dispatch({
       type: 'device/ACTIVE_TAB',
       payload: {
-        activeTab: tab
-      }
+        activeTab: tab,
+      },
     })
   }
 
   saveAction(formData) {
     // eslint-disable-next-line no-unused-vars
     const { dispatch } = this.props
-    
+
     dispatch({
       type: 'resource/CREATE',
       payload: {
         className: 'Device',
         data: formData,
         notify: true,
-        callback: ()=>{
+        callback: () => {
           dispatch({
             type: 'device/ACTIVE_TAB',
             payload: {
-              activeTab: 'sensors'
-            }
+              activeTab: 'sensors',
+            },
           })
-        }
+        },
       },
-    });
-
+    })
   }
 
   render() {
-    const { saving, history, activeTab, device, formErrors} = this.props
+    const { saving, history, activeTab, device, formErrors } = this.props
 
     return (
       <div>

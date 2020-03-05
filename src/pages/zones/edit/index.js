@@ -8,7 +8,6 @@ import { Redirect } from 'react-router-dom'
 import MetaData from 'components/Custom/MetaData'
 import ZoneForm from '../form'
 
-
 const mapStateToProps = ({ resource }) => ({
   current: resource.current,
   saving: resource.saving,
