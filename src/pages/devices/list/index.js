@@ -10,13 +10,13 @@ const { Password } = Input
 const InputGroup = Input.Group
 const { Paragraph } = Typography
 
-const mapStateToProps = ({ resource, devices }) => ({
+const mapStateToProps = ({ resource, device }) => ({
   list: resource.list,
   total: resource.total,
   loading: resource.loading,
-  isFetchingDeviceKey: devices.isFetching,
-  deviceKey: devices.deviceKey,
-  lastError: devices.lastError,
+  isFetchingDeviceKey: device.isFetching,
+  deviceKey: device.deviceKey,
+  lastError: device.lastError,
 })
 
 @connect(mapStateToProps)
@@ -37,6 +37,16 @@ class Devices extends React.Component {
     super(props)
     this.dispatchGetData()
     this.onAdd.bind(this)
+  }
+
+  componentDidMount = () => {
+    const {dispatch} = this.props;
+    dispatch({
+      type: 'device/ACTIVE_TAB',
+      payload: {
+        activeTab: 'details'
+      }
+    })  
   }
 
   handleTableChange = (pagination, filters, sorters) => {

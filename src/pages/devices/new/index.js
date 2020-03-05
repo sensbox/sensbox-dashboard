@@ -3,11 +3,12 @@ import { connect } from 'react-redux'
 import { PageHeader } from 'antd'
 import { Helmet } from 'react-helmet'
 
-import DeviceForm from '../form'
+import DeviceFormIndex from '../form'
 
-const mapStateToProps = ({ resource }) => ({
+const mapStateToProps = ({ resource, device }) => ({
+  activeTab: device.activeTab,
+  device: resource.current,
   saving: resource.saving,
-  current: resource.current,
   formErrors: resource.formErrors,
 })
 
@@ -18,32 +19,42 @@ class DeviceNew extends React.Component {
     this.saveAction = this.saveAction.bind(this)
   }
 
-  componentDidUpdate() {
-    const { current } = this.props
-    if (current && current.objectId) {
-      const { history } = this.props
-      history.push({
-        pathname: `/devices/settings/${current.uuid}`,
-        state: { device: current },
-      })
-    }
+  dispatchChangeTab = (tab) => {
+    const { dispatch } = this.props;
+
+    dispatch({
+      type: 'device/ACTIVE_TAB',
+      payload: {
+        activeTab: tab
+      }
+    })
   }
 
   saveAction(formData) {
     // eslint-disable-next-line no-unused-vars
-    const { current, dispatch } = this.props
+    const { dispatch } = this.props
+    
     dispatch({
       type: 'resource/CREATE',
       payload: {
         className: 'Device',
         data: formData,
         notify: true,
+        callback: ()=>{
+          dispatch({
+            type: 'device/ACTIVE_TAB',
+            payload: {
+              activeTab: 'sensors'
+            }
+          })
+        }
       },
-    })
+    });
+
   }
 
   render() {
-    const { saving, current, formErrors, history } = this.props
+    const { saving, history, activeTab, device, formErrors} = this.props
 
     return (
       <div>
@@ -54,20 +65,14 @@ class DeviceNew extends React.Component {
           onBack={() => history.goBack()}
           title="New Device"
         />
-        <div className="card">
-          <div className="card-body">
-            <div className="row">
-              <div className="col-lg-8">
-                <DeviceForm
-                  device={current}
-                  disableSaveButton={saving}
-                  saveAction={this.saveAction}
-                  errors={formErrors}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <DeviceFormIndex
+          device={device}
+          saveAction={this.saveAction}
+          disableSaveButton={saving}
+          formErrors={formErrors}
+          activeTab={activeTab}
+          onTabChange={this.dispatchChangeTab}
+        />
       </div>
     )
   }
