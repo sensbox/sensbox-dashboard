@@ -5,10 +5,8 @@ import { PageHeader } from 'antd'
 import { Helmet } from 'react-helmet'
 
 import { Redirect } from 'react-router-dom'
-import CustomAvatar from 'components/Custom/Avatar'
+import MetaData from 'components/Custom/MetaData'
 import OrganizationForm from '../form'
-
-import style from './style.module.scss'
 
 const mapStateToProps = ({ resource }) => ({
   current: resource.current,
@@ -54,12 +52,6 @@ class OrganizationEdit extends React.Component {
   render() {
     const { saving, objectNotFound, location, history, current, formErrors } = this.props
     const { backLink } = this.state
-    const metadata = {
-      createdBy: current.createdBy,
-      updatedBy: current.updatedBy,
-      createdAt: current.createdAt && new Date(current.createdAt).toLocaleString(),
-      updatedAt: current.updatedAt && new Date(current.updatedAt).toLocaleString(),
-    }
 
     if (!location.state || objectNotFound) {
       return <Redirect to={backLink} />
@@ -77,7 +69,7 @@ class OrganizationEdit extends React.Component {
         <div className="card">
           <div className="card-body">
             <div className="row">
-              <div className="col-lg-8">
+              <div className="col-md-9">
                 {current && (
                   <OrganizationForm
                     organization={current}
@@ -88,25 +80,10 @@ class OrganizationEdit extends React.Component {
                   />
                 )}
               </div>
-              <div className="col-lg-4">
-                <h5 className="mb-3 text-black">
-                  <strong>Metadata</strong>
-                </h5>
-                <dl className="row">
-                  <dt className={`col-xl-4 ${style.metadataItem}`}>Created by:</dt>
-                  <dd className="col-xl-8">
-                    <CustomAvatar user={metadata.createdBy} />
-                  </dd>
-                  <dt className={`col-xl-4 ${style.metadataItem}`}>Updated by:</dt>
-                  <dd className="col-xl-8">
-                    <CustomAvatar user={metadata.updatedBy} />
-                  </dd>
-                  <dt className={`col-xl-4 ${style.metadataItem}`}>Created:</dt>
-                  <dd className="col-xl-8">{metadata.createdAt}</dd>
-                  <dt className={`col-xl-4 ${style.metadataItem}`}>Updated:</dt>
-                  <dd className="col-xl-8">{metadata.updatedAt}</dd>
-                </dl>
+              <div className="col-md-3">
+                <MetaData item={current} />
               </div>
+
             </div>
           </div>
         </div>

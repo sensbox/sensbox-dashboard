@@ -28,7 +28,6 @@ class DeviceForm extends React.Component {
     const { form, saveAction } = this.props
 
     form.validateFields((err, values) => {
-      console.log('here is')
       if (!err) {
         saveAction(values)
         form.getFieldInstance('uuid').focus()
