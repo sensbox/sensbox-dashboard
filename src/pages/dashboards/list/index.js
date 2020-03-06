@@ -87,8 +87,10 @@ class Dashboards extends React.Component {
     })
   }
 
-  handleConfirmShareDashboard = ({objectId}, className, form) => {
-    const { dispatch } = this.props;
+  handleConfirmShareDashboard = ({ objectId }, className, form) => {
+    console.log(form)
+
+    const { dispatch } = this.props
     form.validateFields((err, values) => {
       const permissions = {
         public: {

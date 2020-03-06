@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Modal} from 'antd'
+import { Modal } from 'antd'
 
 import ShareForm from 'components/Custom/Share'
 // import Dashboard from 'pages/ecommerce/dashboard'
@@ -29,7 +29,7 @@ class ShareModal extends React.Component {
         footer={null}
         centered
       >
-        <ShareForm 
+        <ShareForm
           className="Dashboard"
           resource={dashboard}
           cancelCallback={onCancel}
