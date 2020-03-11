@@ -17,7 +17,7 @@ const mapStateToProps = ({ resource, user }) => ({
 @connect(mapStateToProps)
 class ShareModal extends React.Component {
   render() {
-    const { saving, visible, dashboard, onCancel, onConfirm } = this.props
+    const { formErrors, saving, visible, dashboard, permissions, onCancel, onConfirm } = this.props
     return (
       <Modal
         visible={visible}
@@ -31,7 +31,10 @@ class ShareModal extends React.Component {
       >
         <ShareForm
           className="Dashboard"
+          searchOn={['Organizations', 'Users', 'Zones']}
           resource={dashboard}
+          errors={formErrors}
+          permissions={permissions}
           cancelCallback={onCancel}
           okCallback={onConfirm}
           saving={saving}

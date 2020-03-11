@@ -1,10 +1,12 @@
+/* eslint-disable no-debugger */
+
 import React from 'react'
 import { Button, Input, PageHeader, Row, Pagination, Col, message, Modal } from 'antd'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import DashboardCard from 'components/Custom/DashboardCard'
 import DashboardForm from '../form/dashboard'
-import ShareForm from '../form/share'
+import ShareModal from '../form/share'
 import './styles.scss'
 
 const { confirm } = Modal
@@ -88,8 +90,6 @@ class Dashboards extends React.Component {
   }
 
   handleConfirmShareDashboard = ({ objectId }, className, form) => {
-    console.log(form)
-
     const { dispatch } = this.props
     form.validateFields((err, values) => {
       const permissions = {
@@ -98,7 +98,14 @@ class Dashboards extends React.Component {
           write: false,
         },
       }
-      permissions.users = values.users.map(u => ({ id: u.key, read: true, write: false }))
+
+      //  permissions.users = values.users.map(u => ({ id: u.key, read: true, write: false }))
+
+      permissions.users = values.permissions_details.map(u => ({
+        id: u.id,
+        read: true,
+        write: u.permission === 'edit',
+      }))
 
       const callback = () => {
         form.resetFields()
@@ -300,8 +307,7 @@ class Dashboards extends React.Component {
           onCancel={this.handleCancelDashboard}
           onConfirm={this.handleConfirmDashboard}
         />
-        <ShareForm
-          wrappedComponentRef={this.saveShareFormRef}
+        <ShareModal
           visible={shareModalVisible}
           onCancel={this.handleCancelShareDashboard}
           onConfirm={this.handleConfirmShareDashboard}

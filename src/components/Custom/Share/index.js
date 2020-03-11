@@ -1,15 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Form, Switch, Input, Button, Icon } from 'antd'
+import { Form, Switch, Button } from 'antd'
 import UserSelect from 'components/Custom/UserSelect'
-
-let rowsCount = 0
+import ShareDetails from './ShareDetails'
 
 const getFormField = (value, errors) =>
   Form.createFormField({ value, errors: errors && errors.map(e => new Error(e)) })
 
-const mapPropsToFields = ({ currentUser, permissions, formErrors }) => {
+const mapPropsToFields = ({ currentUser, permissions, errors }) => {
   const publicReadAccess = permissions.public ? permissions.public.read : false
+
   const users = permissions.users
     ? permissions.users
         .filter(u => u.userId !== currentUser.id)
@@ -19,110 +19,49 @@ const mapPropsToFields = ({ currentUser, permissions, formErrors }) => {
         }))
     : []
 
+  const permissionsDetails = permissions.users
+    .filter(u => u.userId !== currentUser.id)
+    .map(el => ({
+      id: el.userId,
+      name: el.account.username,
+      permission: el.write ? 'edit' : 'view',
+    }))
+
   return {
-    public: getFormField(publicReadAccess, formErrors.public),
-    users: getFormField(users, formErrors.users),
-    keys: getFormField(users.map((el, idx) => idx)),
+    public: getFormField(publicReadAccess, errors.public),
+    users: getFormField(users, errors.users),
+    permissions_details: getFormField(permissionsDetails, errors.permissions_details),
   }
 }
 
-const mapStateToProps = ({ resource, user }) => ({
+const mapStateToProps = ({ user }) => ({
   currentUser: user,
-  resource: resource.current,
-  permissions: resource.currentObjectPermissions,
-  saving: resource.saving,
-  formErrors: resource.formErrors,
-  objectNotFound: resource.objectNotFound,
 })
 
 @connect(mapStateToProps)
 @Form.create({ mapPropsToFields })
 class ShareForm extends React.Component {
-  componentDidMount() {
-    const { form } = this.props
-    const { users } = form.getFieldsValue()
-    form.setFieldsValue({ users_2: users.map(u => u.label) })
-  }
-  
+  setPermissionsDetailsData = (elems, form) => {
+    const origValues = form.getFieldsValue().permissions_details
 
-  removeRow = k => {
-    const { form } = this.props
-    // can use data-binding to get
-    const keys = form.getFieldValue('keys')
-    // We need at least one passenger
-    if (keys.length === 1) {
-      return
-    }
-
-    // can use data-binding to set
-    form.setFieldsValue({
-      keys: keys.filter(key => key !== k),
+    const newValues = elems.map(el => {
+      const exists = origValues.find(reg => reg.id === el.key)
+      if (exists) return exists
+      const newReg = {
+        id: el.key,
+        name: el.label,
+        permission: 'view',
+        type: 'organization',
+      }
+      return newReg
     })
-  }
 
-  addRow = () => {
-    const { form } = this.props
-    // can use data-binding to get
-    const keys = form.getFieldValue('keys')
-
-    rowsCount += 1
-
-    const nextKeys = keys.concat(rowsCount)
-    // can use data-binding to set
-    // important! notify form to detect changes
-    form.setFieldsValue({
-      keys: nextKeys,
-    })
+    form.setFieldsValue({ permissions_details: newValues })
   }
 
   render() {
     const { form, okCallback, cancelCallback, saving, resource, className } = this.props
-    const { getFieldDecorator, getFieldValue } = form
-
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 6 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 18 },
-      },
-    }
-    const formItemLayoutWithOutLabel = {
-      wrapperCol: {
-        xs: { span: 24, offset: 0 },
-        sm: { span: 18, offset: 6 },
-      },
-    }
-
-    getFieldDecorator('keys', { initialValue: [] })
-    const keys = getFieldValue('keys')
-
-    const formItems = keys.map((k, index) => (
-      <Form.Item
-        {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-        label={index === 0 ? 'Share Options' : ''}
-        required={false}
-        key={k}
-      >
-        {getFieldDecorator(`users_2[${index}]`, {
-          rules: [
-            {
-              required: false,
-            },
-          ],
-        })(<Input placeholder="passenger name" style={{ width: '85%', marginRight: 8 }} />)}
-        {keys.length > 1 ? (
-          <Icon
-            className="dynamic-delete-button"
-            type="minus-circle-o"
-            onClick={() => this.removeRow(k)}
-          />
-        ) : null}
-        <Icon className="dynamic-delete-button" type="plus-circle" onClick={() => this.addRow()} />
-      </Form.Item>
-    ))
+    const { getFieldDecorator } = form
 
     return (
       <Form layout="vertical">
@@ -137,11 +76,13 @@ class ShareForm extends React.Component {
           extra="List of organizations, zones, users that you want to share your dashboard."
         >
           {getFieldDecorator('users', {
-            onChange: values => {form.setFieldsValue({ users_2: values.map(u => u.label) }),
+            onChange: elems => this.setPermissionsDetailsData(elems, form),
           })(<UserSelect />)}
         </Form.Item>
 
-        {formItems}
+        {getFieldDecorator('permissions_details', {
+          initialValue: [],
+        })(<ShareDetails />)}
 
         <div className="text-right">
           <div className="form-actions m-0">
