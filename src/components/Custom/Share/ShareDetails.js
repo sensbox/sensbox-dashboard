@@ -23,51 +23,54 @@ class ShareDetails extends React.Component {
   }
 
   render = () => {
-    const { value } = this.props
+    const { value, rowsDetailsCount } = this.props
     const { users = [], roles = [] } = value
 
     const elems = [
       ...users.map(el => ({ ...el, type: 'User' })),
       ...roles.map(el => ({ ...el, type: 'Role' })),
     ]
-    return elems.map((row, index) => (
-      <Form.Item
-        label={index === 0 ? 'Share Options' : ''}
-        required={false}
-        key={row.id || index}
-        className={`${style.myRow}`}
-      >
-        {
-          <Input
-            placeholder="share options"
-            size="small"
-            disabled
-            style={{ width: '76%', marginRight: 8 }}
-            value={`${row.name}`}
-          />
-        }
-        {
-          <Radio.Group
-            size="small"
-            defaultValue="view"
-            onChange={el => this.onChange(el, row)}
-            buttonStyle="solid"
-            value={row.permission}
-          >
-            <Tooltip title="View">
-              <Radio.Button value="view">
-                <Icon type="eye" />
-              </Radio.Button>
-            </Tooltip>
-            <Tooltip title="Edit">
-              <Radio.Button value="edit">
-                <Icon type="edit" />
-              </Radio.Button>
-            </Tooltip>
-          </Radio.Group>
-        }
-      </Form.Item>
-    ))
+
+    return (
+      elems.length > 0 && (
+        <div style={{ maxHeight: rowsDetailsCount * 40, overflowY: 'scroll' }}>
+          <span className="ant-col ant-form-item-label">Share Options</span>
+          {elems.map((row, index) => (
+            <Form.Item required={false} key={row.id || index} className={`${style.myRow}`}>
+              {
+                <Input
+                  placeholder="share options"
+                  size="small"
+                  disabled
+                  style={{ width: '76%', marginRight: 8 }}
+                  value={`${row.name}`}
+                />
+              }
+              {
+                <Radio.Group
+                  size="small"
+                  defaultValue="view"
+                  onChange={el => this.onChange(el, row)}
+                  buttonStyle="solid"
+                  value={row.permission}
+                >
+                  <Tooltip title="View">
+                    <Radio.Button value="view">
+                      <Icon type="eye" />
+                    </Radio.Button>
+                  </Tooltip>
+                  <Tooltip title="Edit">
+                    <Radio.Button value="edit">
+                      <Icon type="edit" />
+                    </Radio.Button>
+                  </Tooltip>
+                </Radio.Group>
+              }
+            </Form.Item>
+          ))}
+        </div>
+      )
+    )
   }
 }
 

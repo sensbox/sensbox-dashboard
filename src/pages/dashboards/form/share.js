@@ -25,7 +25,6 @@ class ShareModal extends React.Component {
         title={`Share Dashboard ${dashboard.name}`}
         okText="Share"
         onCancel={onCancel}
-        // onOk={() => onConfirm(dashboard.objectId)}
         footer={null}
         centered
       >
@@ -34,6 +33,7 @@ class ShareModal extends React.Component {
           searchOn={['Organization', 'User', 'Zone']}
           resource={dashboard}
           errors={formErrors}
+          rowsDetailsCount={3}
           permissions={permissions}
           cancelCallback={onCancel}
           okCallback={onConfirm}

@@ -85,7 +85,16 @@ class ShareForm extends React.Component {
   }
 
   render() {
-    const { form, okCallback, cancelCallback, saving, resource, className, searchOn } = this.props
+    const {
+      form,
+      okCallback,
+      cancelCallback,
+      saving,
+      resource,
+      className,
+      searchOn,
+      rowsDetailsCount,
+    } = this.props
     const { getFieldDecorator } = form
 
     return (
@@ -108,23 +117,21 @@ class ShareForm extends React.Component {
         {getFieldDecorator('permissions_details', {
           initialValue: [],
           onChange: elems => console.log(elems),
-        })(<ShareDetails />)}
+        })(<ShareDetails rowsDetailsCount={rowsDetailsCount} />)}
 
-        <div className="text-right">
-          <div className="form-actions m-0">
-            <Button
-              className="m-1"
-              icon="share-alt"
-              loading={saving}
-              type="primary"
-              onClick={() => okCallback(resource, className, form)}
-            >
-              Share
-            </Button>
-            <Button className="m-1" onClick={() => cancelCallback(resource, className, form)}>
-              Cancel
-            </Button>
-          </div>
+        <div className="form-actions text-right pt-3 mt-3 mb-0">
+          <Button
+            className="m-1"
+            icon="share-alt"
+            loading={saving}
+            type="primary"
+            onClick={() => okCallback(resource, className, form)}
+          >
+            Share
+          </Button>
+          <Button className="m-1" onClick={() => cancelCallback(resource, className, form)}>
+            Cancel
+          </Button>
         </div>
       </Form>
     )
