@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Form, Switch, Button } from 'antd'
-import UserSelect from 'components/Custom/UserSelect'
+import EntitySelect from 'components/Custom/EntitySelect'
 import ShareDetails from './ShareDetails'
 
 const getFormField = (value, errors) =>
@@ -16,10 +16,20 @@ const mapPropsToFields = ({ currentUser, permissions, errors }) => {
         .map(u => ({
           key: u.userId,
           label: `${u.account.firstName} ${u.account.lastName} (${u.account.username})`,
+          type: 'User',
+          ClassName: 'User',
         }))
     : []
+  const roles = permissions.roles
+    ? permissions.roles.map(rol => ({
+        key: rol.name,
+        label: `${rol.object.attributes.name}`,
+        type: 'Role',
+        className: rol.className,
+      }))
+    : []
 
-  const permissionsDetails = permissions.users
+  const usersDetails = permissions.users
     .filter(u => u.userId !== currentUser.id)
     .map(el => ({
       id: el.userId,
@@ -27,10 +37,19 @@ const mapPropsToFields = ({ currentUser, permissions, errors }) => {
       permission: el.write ? 'edit' : 'view',
     }))
 
+  const rolesDetails = permissions.roles.map(rol => ({
+    id: rol.name,
+    name: `${rol.object.attributes.name}`,
+    permission: rol.write ? 'edit' : 'view',
+  }))
+
   return {
     public: getFormField(publicReadAccess, errors.public),
-    users: getFormField(users, errors.users),
-    permissions_details: getFormField(permissionsDetails, errors.permissions_details),
+    users: getFormField([...users, ...roles], errors.users),
+    permissions_details: getFormField(
+      { users: usersDetails, roles: rolesDetails },
+      errors.permissions_details,
+    ),
   }
 }
 
@@ -44,23 +63,29 @@ class ShareForm extends React.Component {
   setPermissionsDetailsData = (elems, form) => {
     const origValues = form.getFieldsValue().permissions_details
 
-    const newValues = elems.map(el => {
-      const exists = origValues.find(reg => reg.id === el.key)
-      if (exists) return exists
-      const newReg = {
-        id: el.key,
-        name: el.label,
-        permission: 'view',
-        type: 'organization',
-      }
-      return newReg
-    })
+    const newUsers = elems
+      .filter(({ type }) => type === 'User')
+      .map(({ key: id, label: name, className }) => {
+        const exists = origValues.users.find(reg => reg.id === id)
+        if (exists) return exists
+        const newReg = { id, name, permission: 'view', className }
+        return newReg
+      })
 
-    form.setFieldsValue({ permissions_details: newValues })
+    const newRoles = elems
+      .filter(({ type }) => type === 'Role')
+      .map(({ key: id, label: name, className }) => {
+        const exists = origValues.roles.find(reg => reg.id === id)
+        if (exists) return exists
+        const newReg = { id, name, permission: 'view', className }
+        return newReg
+      })
+
+    form.setFieldsValue({ permissions_details: { users: newUsers, roles: newRoles } })
   }
 
   render() {
-    const { form, okCallback, cancelCallback, saving, resource, className } = this.props
+    const { form, okCallback, cancelCallback, saving, resource, className, searchOn } = this.props
     const { getFieldDecorator } = form
 
     return (
@@ -77,11 +102,12 @@ class ShareForm extends React.Component {
         >
           {getFieldDecorator('users', {
             onChange: elems => this.setPermissionsDetailsData(elems, form),
-          })(<UserSelect />)}
+          })(<EntitySelect searchOn={searchOn} />)}
         </Form.Item>
 
         {getFieldDecorator('permissions_details', {
           initialValue: [],
+          onChange: elems => console.log(elems),
         })(<ShareDetails />)}
 
         <div className="text-right">

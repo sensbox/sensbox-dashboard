@@ -1,5 +1,3 @@
-/* eslint-disable no-debugger */
-
 import React from 'react'
 import { Button, Input, PageHeader, Row, Pagination, Col, message, Modal } from 'antd'
 import { connect } from 'react-redux'
@@ -91,6 +89,7 @@ class Dashboards extends React.Component {
 
   handleConfirmShareDashboard = ({ objectId }, className, form) => {
     const { dispatch } = this.props
+
     form.validateFields((err, values) => {
       const permissions = {
         public: {
@@ -99,12 +98,18 @@ class Dashboards extends React.Component {
         },
       }
 
-      //  permissions.users = values.users.map(u => ({ id: u.key, read: true, write: false }))
+      const { users, roles } = values.permissions_details
 
-      permissions.users = values.permissions_details.map(u => ({
+      permissions.users = users.map(u => ({
         id: u.id,
         read: true,
         write: u.permission === 'edit',
+      }))
+
+      permissions.roles = roles.map(role => ({
+        name: role.id,
+        read: true,
+        write: role.permission === 'edit',
       }))
 
       const callback = () => {

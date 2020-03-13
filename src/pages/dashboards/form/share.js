@@ -31,7 +31,7 @@ class ShareModal extends React.Component {
       >
         <ShareForm
           className="Dashboard"
-          searchOn={['Organizations', 'Users', 'Zones']}
+          searchOn={['Organization', 'User', 'Zone']}
           resource={dashboard}
           errors={formErrors}
           permissions={permissions}

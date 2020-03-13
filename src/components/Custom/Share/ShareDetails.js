@@ -6,17 +6,31 @@ class ShareDetails extends React.Component {
   onChange = (input, row) => {
     const { value, onChange } = this.props
     row.permission = input.target.value
-    const newValue = value.map(reg => (reg.id === row.id ? row : reg))
 
-    if (onChange) onChange([...newValue])
+    let newValues
 
-    return newValue
+    if (row.type === 'Role') {
+      const roles = value.roles.map(reg => (reg.id === row.id ? row : reg))
+      newValues = { users: value.users, roles }
+    } else if (row.type === 'User') {
+      const users = value.users.map(reg => (reg.id === row.id ? row : reg))
+      newValues = { roles: value.roles, users }
+    }
+
+    if (onChange) onChange(newValues)
+
+    return newValues
   }
 
   render = () => {
     const { value } = this.props
+    const { users = [], roles = [] } = value
 
-    return value.map((row, index) => (
+    const elems = [
+      ...users.map(el => ({ ...el, type: 'User' })),
+      ...roles.map(el => ({ ...el, type: 'Role' })),
+    ]
+    return elems.map((row, index) => (
       <Form.Item
         label={index === 0 ? 'Share Options' : ''}
         required={false}
