@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import DashboardCard from 'components/Custom/DashboardCard'
 import DashboardForm from '../form/dashboard'
-import ShareForm from '../form/share'
+import ShareModal from '../form/share'
 import './styles.scss'
 
 const { confirm } = Modal
@@ -35,6 +35,7 @@ class Dashboards extends React.Component {
     this.dispatchGetData()
     this.addDashboard.bind(this)
     this.handlePaginationChange.bind(this)
+    this.handleConfirmShareDashboard.bind(this)
   }
 
   handlePaginationChange = current => {
@@ -86,9 +87,9 @@ class Dashboards extends React.Component {
     })
   }
 
-  handleConfirmShareDashboard = objectId => {
+  handleConfirmShareDashboard = ({ objectId }, className, form) => {
     const { dispatch } = this.props
-    const { form } = this.shareFormRef.props
+
     form.validateFields((err, values) => {
       const permissions = {
         public: {
@@ -96,7 +97,20 @@ class Dashboards extends React.Component {
           write: false,
         },
       }
-      permissions.users = values.users.map(u => ({ id: u.key, read: true, write: false }))
+
+      const { users, roles } = values.permissions_details
+
+      permissions.users = users.map(u => ({
+        id: u.id,
+        read: true,
+        write: u.permission === 'edit',
+      }))
+
+      permissions.roles = roles.map(role => ({
+        name: role.id,
+        read: true,
+        write: role.permission === 'edit',
+      }))
 
       const callback = () => {
         form.resetFields()
@@ -107,7 +121,7 @@ class Dashboards extends React.Component {
         dispatch({
           type: 'resource/SET_PERMISSIONS',
           payload: {
-            className: 'Dashboard',
+            className,
             objectId,
             permissions,
             notify: true,
@@ -271,7 +285,11 @@ class Dashboards extends React.Component {
                   title={dashboard.name}
                   description={dashboard.description}
                   public={dashboard.ACL['*'] ? dashboard.ACL['*'].read : false}
-                  sharedBy={dashboard.createdBy.objectId === user.id ? null : dashboard.createdBy}
+                  sharedBy={
+                    dashboard.createdBy && dashboard.createdBy.objectId === user.id
+                      ? null
+                      : dashboard.createdBy
+                  }
                   editAction={() => this.editDashboard(dashboard)}
                   removeAction={() => this.removeDashboard(dashboard)}
                   shareAction={() => this.shareDashboard(dashboard)}
@@ -298,8 +316,7 @@ class Dashboards extends React.Component {
           onCancel={this.handleCancelDashboard}
           onConfirm={this.handleConfirmDashboard}
         />
-        <ShareForm
-          wrappedComponentRef={this.saveShareFormRef}
+        <ShareModal
           visible={shareModalVisible}
           onCancel={this.handleCancelShareDashboard}
           onConfirm={this.handleConfirmShareDashboard}

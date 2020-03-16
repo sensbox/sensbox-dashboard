@@ -2,6 +2,7 @@ import React from 'react'
 import { Tabs, Icon } from 'antd'
 
 import MetaData from 'components/Custom/MetaData'
+import ShareForm from 'components/Custom/Share'
 
 import DetailsForm from './device'
 import SensorForm from './sensor'
@@ -14,7 +15,10 @@ class DeviceFormIndex extends React.Component {
       device = {},
       saving = false,
       formErrors = {},
+      permissions,
+      showShareForm = false,
       saveAction,
+      shareCallback,
       activeTab = 'details',
       onTabChange,
     } = this.props
@@ -57,17 +61,28 @@ class DeviceFormIndex extends React.Component {
                   >
                     <SensorForm device={device} />
                   </TabPane>
-                  <TabPane
-                    disabled={!device.objectId}
-                    tab={
-                      <span className="h6">
-                        <Icon type="share-alt" /> Share
-                      </span>
-                    }
-                    key="share"
-                  >
-                    Share Options
-                  </TabPane>
+                  {showShareForm && (
+                    <TabPane
+                      disabled={!device.objectId}
+                      tab={
+                        <span className="h6">
+                          <Icon type="share-alt" /> Share
+                        </span>
+                      }
+                      key="share"
+                    >
+                      <ShareForm
+                        className="Device"
+                        searchOn={['Organization', 'User', 'Zone']}
+                        resource={device}
+                        errors={formErrors}
+                        rowsDetailsCount={3}
+                        permissions={permissions}
+                        okCallback={shareCallback}
+                        saving={saving}
+                      />
+                    </TabPane>
+                  )}
                 </Tabs>
               </div>
 

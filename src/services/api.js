@@ -128,7 +128,7 @@ function createPointer(className, objectId) {
 }
 
 async function setPermissions(className, objectId, permissions) {
-  const { public: pubPerm, users } = permissions
+  const { public: pubPerm, users, roles } = permissions
   const Class = Parse.Object.extend(className)
   const object = Class.createWithoutData(objectId)
   const acl = new Parse.ACL()
@@ -137,6 +137,11 @@ async function setPermissions(className, objectId, permissions) {
   users.forEach(user => {
     acl.setReadAccess(user.id, user.read)
     acl.setWriteAccess(user.id, user.write)
+  })
+
+  roles.forEach(role => {
+    acl.setRoleReadAccess(role.name, role.read)
+    acl.setRoleWriteAccess(role.name, role.write)
   })
 
   object.setACL(acl)
