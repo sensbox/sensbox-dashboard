@@ -30,18 +30,22 @@ const mapPropsToFields = ({ currentUser, permissions, errors }) => {
     : []
 
   const usersDetails = permissions.users
-    .filter(u => u.userId !== currentUser.id)
-    .map(el => ({
-      id: el.userId,
-      name: el.account.username,
-      permission: el.write ? 'edit' : 'view',
-    }))
+    ? permissions.users
+        .filter(u => u.userId !== currentUser.id)
+        .map(el => ({
+          id: el.userId,
+          name: el.account.username,
+          permission: el.write ? 'edit' : 'view',
+        }))
+    : []
 
-  const rolesDetails = permissions.roles.map(rol => ({
-    id: rol.name,
-    name: `${rol.object.attributes.name}`,
-    permission: rol.write ? 'edit' : 'view',
-  }))
+  const rolesDetails = permissions.users
+    ? permissions.roles.map(rol => ({
+        id: rol.name,
+        name: `${rol.object.attributes.name}`,
+        permission: rol.write ? 'edit' : 'view',
+      }))
+    : []
 
   return {
     public: getFormField(publicReadAccess, errors.public),
@@ -129,9 +133,11 @@ class ShareForm extends React.Component {
           >
             Share
           </Button>
-          <Button className="m-1" onClick={() => cancelCallback(resource, className, form)}>
-            Cancel
-          </Button>
+          {cancelCallback && (
+            <Button className="m-1" onClick={() => cancelCallback(resource, className, form)}>
+              Cancel
+            </Button>
+          )}
         </div>
       </Form>
     )

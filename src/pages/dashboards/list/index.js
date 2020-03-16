@@ -285,7 +285,11 @@ class Dashboards extends React.Component {
                   title={dashboard.name}
                   description={dashboard.description}
                   public={dashboard.ACL['*'] ? dashboard.ACL['*'].read : false}
-                  sharedBy={dashboard.createdBy.objectId === user.id ? null : dashboard.createdBy}
+                  sharedBy={
+                    dashboard.createdBy && dashboard.createdBy.objectId === user.id
+                      ? null
+                      : dashboard.createdBy
+                  }
                   editAction={() => this.editDashboard(dashboard)}
                   removeAction={() => this.removeDashboard(dashboard)}
                   shareAction={() => this.shareDashboard(dashboard)}
