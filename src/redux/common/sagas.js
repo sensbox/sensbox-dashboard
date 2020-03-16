@@ -17,6 +17,12 @@ export function* CLEAR_ALL({ payload }) {
     })
 
     yield put({
+      type: 'device/SET_STATE',
+      payload: {
+        activeTab: 'details',
+      },
+    })
+    yield put({
       type: 'resource/SET_STATE',
       payload: {
         list: [],
