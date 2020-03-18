@@ -117,9 +117,6 @@ class DeviceSettings extends React.Component {
       currentUser,
     } = this.props
 
-    console.log('current User', currentUser.id)
-    console.log('current device', current.createdBy && current.createdBy.objectId)
-
     if (!location.state || objectNotFound) {
       return <Redirect to="/devices" />
     }

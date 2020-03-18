@@ -86,7 +86,7 @@ class AccountForm extends React.Component {
     let username
     if (account.objectId) {
       // eslint-disable-next-line prefer-destructuring
-      username = account.user.username
+      username = account.user && account.user.username
     } else if (
       form.getFieldError('firstName') === undefined &&
       form.getFieldError('lastName') === undefined
