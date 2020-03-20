@@ -134,7 +134,7 @@ class EntitySelect extends React.Component {
               src={d.profilePhoto}
               style={{ marginRight: 6 }}
             />
-            {d.text} {searchOn.length > 1 && <small className="text-muted">{d.class}</small>}
+            {d.text} {searchOn.length > 1 && <small className="text-muted">{d.className}</small>}
           </Option>
         ))}
       </Select>
