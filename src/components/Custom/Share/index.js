@@ -96,11 +96,12 @@ class ShareForm extends React.Component {
       saving,
       resource,
       className,
-      searchOn,
+      searchOn = ['User'],
       rowsDetailsCount,
     } = this.props
     const { getFieldDecorator } = form
 
+    const EntitiesNames = searchOn.map(el => `${el}s`.replace(/\s$/, '')).join(', ')
     return (
       <Form layout="vertical">
         <Form.Item label="Public" extra="Set the dashboard as Public. Anyone could access it.">
@@ -109,10 +110,7 @@ class ShareForm extends React.Component {
           })(<Switch />)}
         </Form.Item>
 
-        <Form.Item
-          label="Share with"
-          extra="List of organizations, zones, users that you want to share your dashboard."
-        >
+        <Form.Item label="Share with" extra={`${EntitiesNames} you want to share with.`}>
           {getFieldDecorator('users', {
             onChange: elems => this.setPermissionsDetailsData(elems, form),
           })(<EntitySelect searchOn={searchOn} />)}
