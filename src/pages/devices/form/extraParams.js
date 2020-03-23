@@ -1,78 +1,24 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Table, Button, Form, Input, InputNumber, Tooltip } from 'antd'
+import { Table, Button, Form, Input, InputNumber, Tooltip, Popconfirm, Icon } from 'antd'
 
 // import api from 'services/api'
 const EditableContext = React.createContext()
 
-class EditableCell extends React.Component {
-  getInput = () => {
-    const { inputType } = this.props
+const mapStateToProps = ({ resource }) => ({
+  current: resource.current,
+})
 
-    if (inputType === 'number') {
-      return <InputNumber />
-    }
-    return <Input />
-  }
-
-  renderCell = ({ form, errors }) => {
-    const { getFieldDecorator } = form
-
-    console.log(errors)
-
-    const {
-      editing,
-      dataIndex,
-      title,
-      inputType,
-      record,
-      index,
-      children,
-      ...restProps
-    } = this.props
-    return (
-      <td {...restProps}>
-        {editing ? (
-          <Form.Item style={{ margin: 0 }}>
-            {getFieldDecorator(dataIndex, {
-              rules: [
-                {
-                  required: true,
-                  message: `Please Input ${title}!`,
-                },
-              ],
-              initialValue: record[dataIndex],
-            })(this.getInput())}
-          </Form.Item>
-        ) : (
-          children
-        )}
-      </td>
-    )
-  }
-
-  render() {
-    return <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer>
-  }
-}
-
-@connect()
+@connect(mapStateToProps)
 @Form.create()
 class ExtraParamsForm extends React.Component {
   state = {
-    data: [],
+    newRecord: null,
     editingKey: '',
-    rowCount: 0,
-    errors: {},
   }
 
   constructor(props) {
     super(props)
-
-    const { device } = this.props
-    const { parameters: data = [] } = device
-
-    this.state = { data, editingKey: '', rowCount: data.length, errors: {} }
 
     this.columns = [
       {
@@ -132,19 +78,55 @@ class ExtraParamsForm extends React.Component {
                 />
               </Tooltip>
               <Tooltip title="Remove Parameter">
-                <Button
-                  shape="circle"
-                  type="danger"
-                  icon="delete"
-                  disabled={editingKey !== ''}
-                  onClick={() => this.remove(record)}
-                />
+                <Popconfirm
+                  title="Are you sure to delete this parameter？"
+                  icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                  onConfirm={() => this.remove(record.key)}
+                >
+                  <Button shape="circle" type="danger" icon="delete" disabled={editingKey !== ''} />
+                </Popconfirm>
               </Tooltip>
             </span>
           )
         },
       },
     ]
+
+    this.state = { newRecord: null, editingKey: '' }
+  }
+
+  dispatchExtraParams = newData => {
+    const { current, dispatch } = this.props
+
+    const newParameters = {}
+    newData.reduce((prev, { key, value }) => {
+      prev[key] = value
+      return prev
+    }, newParameters)
+
+    dispatch({
+      type: 'resource/UPDATE',
+      payload: {
+        className: 'Device',
+        objectId: current.objectId,
+        data: { parameters: newParameters },
+        notify: true,
+        callback: () => {
+          this.setState({ newRecord: null })
+          this.forceUpdate()
+        },
+      },
+    })
+  }
+
+  parseData = data => {
+    return Object.entries(data).map(arr => {
+      const key = arr[0]
+      const value = arr[1]
+      const obj = { key, value }
+
+      return obj
+    })
   }
 
   isEditing = record => {
@@ -153,54 +135,80 @@ class ExtraParamsForm extends React.Component {
   }
 
   cancel = () => {
-    const { data } = this.state
-    this.setState({ editingKey: '', data: data.filter(el => el.isNew !== true), errors: {} })
+    this.setState({ editingKey: '', newRecord: null })
   }
 
   addRow = () => {
-    const { device } = this.props
-    let { rowCount } = this.state
-
-    const { parameters = [] } = device
-    const newData = {
+    const newRecord = {
       key: 'New Parameter',
       value: `value`,
       isNew: true,
     }
+
+    //  form.getFieldInstance('key').focus()
+
     this.setState({
-      data: [...parameters, newData],
-      rowCount: (rowCount += 1),
+      newRecord,
       editingKey: 'New Parameter',
     })
   }
 
-  save(form, key) {
+  save = (form, originalKey) => {
+    const { device } = this.props
+    const { parameters: data = {} } = device
+    const newData = this.parseData(data)
+
     form.validateFields((error, row) => {
       if (error) {
         return
       }
 
-      const { data } = this.state
-      const newData = [...data]
+      const index = newData.findIndex(item => row.key === item.key)
 
-      const index = newData.findIndex(item => key === item.key)
+      const isEditing = newData.findIndex(item => originalKey === item.key)
 
       if (index > -1) {
-        this.setState({ errors: { key: ['La clave debe ser unica'] } })
-      } else {
-        newData.push(row)
-        this.setState({ data: newData, editingKey: '', errors: {} })
+        form.setFields({
+          key: {
+            value: row.key,
+            errors: [new Error('Todos los parametros deben tener nombres diferentes.')],
+          },
+        })
+        form.getFieldInstance('key').focus()
+        return
       }
+
+      newData.push(row)
+      // remove the original element
+      if (isEditing > -1) newData.splice(isEditing, 1)
+      this.setState({ editingKey: '' })
+      this.dispatchExtraParams(newData)
     })
   }
 
-  edit(key) {
+  edit = key => {
     this.setState({ editingKey: key })
   }
 
+  remove = key => {
+    const { device } = this.props
+    const { parameters: data = {} } = device
+
+    let newData = this.parseData(data)
+
+    newData = newData.filter(el => el.key !== key)
+
+    this.dispatchExtraParams(newData)
+  }
+
   render() {
-    const { data, errors } = this.state
-    const { form } = this.props
+    const { newRecord } = this.state
+    const { form, device } = this.props
+    const { parameters: data = {} } = device
+
+    const parsedData = this.parseData(data)
+
+    if (newRecord) parsedData.push(newRecord)
 
     const components = {
       body: {
@@ -233,7 +241,7 @@ class ExtraParamsForm extends React.Component {
         </div>
         <div className="row">
           <div className="col-lg-12">
-            <EditableContext.Provider value={{ form, errors }}>
+            <EditableContext.Provider value={{ form }}>
               <Table
                 onRow={() => {
                   return {
@@ -248,7 +256,7 @@ class ExtraParamsForm extends React.Component {
                 scroll={{ x: '100%' }}
                 components={components}
                 bordered
-                dataSource={data}
+                dataSource={parsedData}
                 columns={cols}
                 rowClassName="editable-row"
                 pagination={false}
@@ -262,3 +270,53 @@ class ExtraParamsForm extends React.Component {
 }
 
 export default ExtraParamsForm
+
+class EditableCell extends React.Component {
+  getInput = () => {
+    const { inputType } = this.props
+
+    if (inputType === 'number') {
+      return <InputNumber />
+    }
+    return <Input />
+  }
+
+  renderCell = ({ form }) => {
+    const { getFieldDecorator } = form
+
+    const {
+      editing,
+      dataIndex,
+      title,
+      inputType,
+      record,
+      index,
+      children,
+      ...restProps
+    } = this.props
+
+    return (
+      <td {...restProps}>
+        {editing ? (
+          <Form.Item style={{ margin: 0 }}>
+            {getFieldDecorator(dataIndex, {
+              rules: [
+                {
+                  required: true,
+                  message: `Please Input ${title}!`,
+                },
+              ],
+              initialValue: record[dataIndex],
+            })(this.getInput())}
+          </Form.Item>
+        ) : (
+          children
+        )}
+      </td>
+    )
+  }
+
+  render() {
+    return <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer>
+  }
+}
