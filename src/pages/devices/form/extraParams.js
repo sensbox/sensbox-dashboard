@@ -111,12 +111,10 @@ class ExtraParamsForm extends React.Component {
         objectId: current.objectId,
         data: { parameters: newParameters },
         notify: true,
-        callback: () => {
-          this.setState({ newRecord: null })
-          this.forceUpdate()
-        },
       },
     })
+
+    this.setState({ newRecord: null })
   }
 
   parseData = data => {
@@ -163,25 +161,28 @@ class ExtraParamsForm extends React.Component {
         return
       }
 
-      const index = newData.findIndex(item => row.key === item.key)
+      const exists = newData.findIndex(item => row.key === item.key && row.key !== originalKey) > -1
 
-      const isEditing = newData.findIndex(item => originalKey === item.key)
+      const idx = newData.findIndex(item => (originalKey === item.key) === row.key)
 
-      if (index > -1) {
+      // const isNew = isEditing === -1
+
+      if (exists) {
         form.setFields({
           key: {
             value: row.key,
-            errors: [new Error('Todos los parametros deben tener nombres diferentes.')],
+            errors: [new Error('Parameters must have diferents names.')],
           },
         })
         form.getFieldInstance('key').focus()
         return
       }
 
-      newData.push(row)
-      // remove the original element
-      if (isEditing > -1) newData.splice(isEditing, 1)
+      if (idx > -1) newData[idx] = row
+      else newData.push(row)
+
       this.setState({ editingKey: '' })
+
       this.dispatchExtraParams(newData)
     })
   }
