@@ -6,11 +6,13 @@ import ShareForm from 'components/Custom/Share'
 
 import DetailsForm from './device'
 import SensorForm from './sensor'
+import ParamsForm from './extraParams'
 
 const { TabPane } = Tabs
 
 class DeviceFormIndex extends React.Component {
   render() {
+    const fontSize = '1.3rem'
     const {
       device = {},
       saving = false,
@@ -38,7 +40,7 @@ class DeviceFormIndex extends React.Component {
                   <TabPane
                     tab={
                       <span className="h6">
-                        <Icon type="alert" /> Device Info.
+                        <Icon type="alert" style={{ fontSize }} /> Device Info.
                       </span>
                     }
                     key="details"
@@ -54,19 +56,30 @@ class DeviceFormIndex extends React.Component {
                     disabled={!device.objectId}
                     tab={
                       <span className="h6">
-                        <Icon type="sliders" /> Sensors
+                        <Icon type="sliders" style={{ fontSize }} /> Sensors
                       </span>
                     }
                     key="sensors"
                   >
                     <SensorForm device={device} />
                   </TabPane>
+                  <TabPane
+                    disabled={!device.objectId}
+                    tab={
+                      <span className="h6">
+                        <Icon type="calculator" style={{ fontSize }} /> Params
+                      </span>
+                    }
+                    key="params"
+                  >
+                    <ParamsForm device={device} />
+                  </TabPane>
                   {showShareForm && (
                     <TabPane
                       disabled={!device.objectId}
                       tab={
                         <span className="h6">
-                          <Icon type="share-alt" /> Share
+                          <Icon type="share-alt" style={{ fontSize }} /> Share
                         </span>
                       }
                       key="share"

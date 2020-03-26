@@ -64,7 +64,7 @@ class AccountNew extends React.Component {
         <div className="card">
           <div className="card-body">
             <div className="row">
-              <div className="col-lg-8">
+              <div className="col-lg-9">
                 <AccountForm
                   account={current}
                   disableSaveButton={saving}
