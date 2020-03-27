@@ -19,6 +19,7 @@ const mapStateToProps = ({ resource }) => ({
 class ZoneEdit extends React.Component {
   state = {
     backLink: '/organizations',
+    activeTab: 'details',
   }
 
   constructor(props) {
@@ -49,6 +50,10 @@ class ZoneEdit extends React.Component {
     })
   }
 
+  changeTab = tab => {
+    this.setState({ activeTab: tab })
+  }
+
   saveAction(formData) {
     const { current, dispatch } = this.props
     dispatch({
@@ -64,7 +69,7 @@ class ZoneEdit extends React.Component {
 
   render() {
     const { saving, objectNotFound, location, current, formErrors } = this.props
-    const { backLink } = this.state
+    const { backLink, activeTab } = this.state
 
     if (!location.state || objectNotFound) {
       return <Redirect to={backLink} />
@@ -90,6 +95,8 @@ class ZoneEdit extends React.Component {
                     saveAction={this.saveAction}
                     errors={formErrors}
                     backLink={{ pathname: backLink, state: { organization: current.organization } }}
+                    activeTab={activeTab}
+                    onTabChange={this.changeTab}
                   />
                 )}
               </div>
