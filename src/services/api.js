@@ -138,6 +138,38 @@ function createPointer(className, objectId) {
   return pointer
 }
 
+function linkModel(className, objectId, relationName, data) {
+  return {
+    className,
+    id: objectId,
+    [relationName]: [...data],
+  }
+}
+
+async function unlinkModel(className, objectId, relationName, data) {
+  /* eslint-disable no-debugger */
+
+  const Class = Parse.Object.extend(className)
+  const query = new Parse.Query(Class)
+  const modelObject = await query.get(objectId)
+
+  const dropRelation = await modelObject
+    .relation(relationName)
+    .query()
+    .containedIn('objectId', data)
+    .find()
+
+  modelObject.relation(relationName).remove(dropRelation)
+  await modelObject.save()
+
+  const newRelated = await modelObject
+    .relation(relationName)
+    .query()
+    .find()
+
+  return { [relationName]: newRelated.map(r => r.toJSON()) }
+}
+
 async function setPermissions(className, objectId, permissions) {
   const { public: pubPerm, users, roles } = permissions
   const Class = Parse.Object.extend(className)
@@ -200,5 +232,7 @@ export default {
   remove,
   createPointer,
   setPermissions,
+  linkModel,
+  unlinkModel,
   ErrorCodes,
 }
