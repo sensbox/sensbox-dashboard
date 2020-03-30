@@ -68,7 +68,18 @@ async function findById(className, objectId, payload = {}) {
   const query = new Parse.Query(Class)
   includes.forEach(include => query.include(include))
   const result = await query.get(objectId)
-  return result ? result.toJSON() : null
+
+  let RelatedObjects = {}
+  if (includes.length > 0) {
+    RelatedObjects = await retrieveRelatedObjects(result, includes)
+  }
+
+  return result
+    ? {
+        ...result.toJSON(),
+        ...RelatedObjects,
+      }
+    : null
 }
 
 async function create(className, data) {
@@ -147,6 +158,36 @@ async function setPermissions(className, objectId, permissions) {
   object.setACL(acl)
   const result = await object.save()
   return result ? result.toJSON() : null
+}
+
+async function retrieveRelatedObjects(res, includes) {
+  /* eslint-disable dot-notation */
+  try {
+    const relationsToRetrieve = includes.filter(relation => {
+      const { attributes } = res
+      return attributes[relation] && attributes[relation].constructor.name === 'ParseRelation'
+    })
+
+    const results = relationsToRetrieve.map(relation =>
+      res
+        .relation(relation)
+        .query()
+        .find(),
+    )
+
+    const resolvedResults = await Promise.all(results)
+
+    const relatedObjects = {}
+    relationsToRetrieve.forEach((key, i) => {
+      const relatedObject = resolvedResults[i].map(el => el.toJSON())
+      relatedObjects[key] = relatedObject
+    })
+
+    return relatedObjects
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 const ErrorCodes = Parse.Error

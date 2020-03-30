@@ -35,6 +35,7 @@ class ZoneEdit extends React.Component {
         payload: {
           className: 'Zone',
           objectId: location.state.zone.objectId,
+          includes: ['relatedDevices'],
         },
       })
     }

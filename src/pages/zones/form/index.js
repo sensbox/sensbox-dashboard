@@ -1,6 +1,7 @@
 import React from 'react'
 import { Input, Button, Form, Checkbox, message, Tabs, Icon } from 'antd'
-import { Link } from 'react-router-dom'
+
+import RelatedDevices from './relatedDevices'
 
 const FormItem = Form.Item
 
@@ -43,14 +44,8 @@ class ZoneForm extends React.Component {
   render() {
     const fontSize = '1.3rem'
 
-    const {
-      backLink,
-      form,
-      zone,
-      disableSaveButton,
-      activeTab = 'details',
-      onTabChange,
-    } = this.props
+    const { form, zone, disableSaveButton, activeTab = 'details', onTabChange } = this.props
+    const { relatedDevices } = zone
 
     return (
       <Tabs size="small" defaultActiveKey="details" activeKey={activeTab} onChange={onTabChange}>
@@ -96,11 +91,6 @@ class ZoneForm extends React.Component {
             </div>
             <div className="col-lg-12">
               <div className="form-actions">
-                <Link to={backLink}>
-                  <Button className="mr-2" icon="arrow-left" type="default">
-                    Return Back
-                  </Button>
-                </Link>
                 <Button
                   className="float-right"
                   icon="save"
@@ -123,7 +113,7 @@ class ZoneForm extends React.Component {
           }
           key="related_devices"
         >
-          Related Devices
+          <RelatedDevices zone={zone} devices={relatedDevices} />
         </TabPane>
       </Tabs>
     )
