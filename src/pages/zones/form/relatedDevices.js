@@ -51,16 +51,24 @@ class RelatedDevices extends React.Component {
 
   removeSelected = () => {
     // ajax request after empty completing
-    const { zone } = this.props
-    const { selectedRowKeys } = this.state
+    const { zone, dispatch } = this.props
 
+    const { selectedRowKeys } = this.state
     const { objectId } = zone
 
-    setTimeout(() => {
-      this.setState({
-        selectedRowKeys: [],
-      })
-    }, 1000)
+    dispatch({
+      type: 'resource/UNLINK_MODEL',
+      payload: {
+        className: 'Zone',
+        objectId,
+        relationName: 'relatedDevices',
+        data: selectedRowKeys,
+        notify: true,
+        callback: () => {
+          this.setState({ selectedRowKeys: [] })
+        },
+      },
+    })
   }
 
   onSelectChange = selectedRowKeys => {
