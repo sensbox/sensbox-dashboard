@@ -138,31 +138,44 @@ function createPointer(className, objectId) {
   return pointer
 }
 
-function linkModel(className, objectId, relationName, data) {
-  return {
-    className,
-    id: objectId,
-    [relationName]: [...data],
-  }
+async function linkModel(className, objectId, relationType, data) {
+  /* eslint-disable no-debugger */
+  debugger
+  const targetClass = Parse.Object.extend(className)
+  const targetQuery = new Parse.Query(targetClass)
+  const targetObject = await targetQuery.get(objectId)
+
+  const relatedClass = Parse.Object.extend(relationType.relatedClass)
+  const relatedQuery = new Parse.Query(relatedClass)
+
+  const newRelations = await relatedQuery.containedIn('objectId', data).find()
+
+  targetObject.relation(relationType.relationName).add(newRelations)
+  await targetObject.save()
+
+  const newRelated = await targetObject
+    .relation(relationType.relationName)
+    .query()
+    .find()
+
+  return { [relationType.relationName]: newRelated }
 }
 
 async function unlinkModel(className, objectId, relationName, data) {
-  /* eslint-disable no-debugger */
+  const targetClass = Parse.Object.extend(className)
+  const query = new Parse.Query(targetClass)
+  const targetObject = await query.get(objectId)
 
-  const Class = Parse.Object.extend(className)
-  const query = new Parse.Query(Class)
-  const modelObject = await query.get(objectId)
-
-  const dropRelation = await modelObject
+  const relationsToRemove = await targetObject
     .relation(relationName)
     .query()
     .containedIn('objectId', data)
     .find()
 
-  modelObject.relation(relationName).remove(dropRelation)
-  await modelObject.save()
+  targetObject.relation(relationName).remove(relationsToRemove)
+  await targetObject.save()
 
-  const newRelated = await modelObject
+  const newRelated = await targetObject
     .relation(relationName)
     .query()
     .find()

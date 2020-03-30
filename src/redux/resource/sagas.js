@@ -211,9 +211,34 @@ export function* REMOVE({ payload }) {
 }
 
 export function* LINK_MODEL({ payload }) {
-  const { className, objectId, relationName, data } = payload
-  const resource = yield call(Api.linkModel, className, objectId, relationName, data)
-  console.log('Holi, here likeando', resource)
+  const { className, objectId, relationType, data, notify, callback } = payload
+
+  const savingMessage = message.loading('Updating...', 0)
+  try {
+    yield call(Api.linkModel, className, objectId, relationType, data)
+
+    yield put({
+      type: 'resource/GET_CURRENT',
+      payload: {
+        className,
+        objectId,
+        includes: [relationType.relationName],
+      },
+    })
+
+    setTimeout(savingMessage, 0)
+
+    if (notify) {
+      yield notification.success({
+        message: 'Perfect!',
+        description: 'Resource updated successfully',
+        duration: 1.5,
+      })
+    }
+    if (callback) yield call(callback)
+  } catch (error) {
+    yield call(handleError, error, { objectId, ...data }, 'unlink model')
+  }
 }
 
 export function* UNLINK_MODEL({ payload }) {

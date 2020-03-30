@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Button, Form, Table, Tag } from 'antd'
-// import api from 'services/api'
+import { Button, Form, Table, Tag, Popconfirm, Icon } from 'antd'
 
 const mapStateToProps = ({ resource }) => ({
   current: resource.current,
@@ -44,10 +43,27 @@ class RelatedDevices extends React.Component {
         //  width: 150,
       },
     ]
-    // this.dispatchGetData()
   }
 
-  addRow = () => {}
+  attachDevices = () => {
+    const { zone, dispatch } = this.props
+
+    const { objectId } = zone
+
+    dispatch({
+      type: 'resource/LINK_MODEL',
+      payload: {
+        className: 'Zone',
+        objectId,
+        relationType: { relationName: 'relatedDevices', relatedClass: 'Device' },
+        data: ['sTy8umT5QX', '8QvC4qfeFo'],
+        notify: true,
+        callback: () => {
+          this.setState({ selectedRowKeys: [] })
+        },
+      },
+    })
+  }
 
   removeSelected = () => {
     // ajax request after empty completing
@@ -90,19 +106,20 @@ class RelatedDevices extends React.Component {
     return (
       <div className="col-lg-12">
         <div className="ant-row">
-          <Button
-            type="primary"
-            onClick={this.removeSelected}
-            disabled={!hasSelected}
-            loading={loading}
+          <Popconfirm
+            title="are you sure to remove the relationship of these devices？"
+            icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+            onConfirm={() => this.removeSelected()}
           >
-            Remove
-          </Button>
+            <Button type="primary" disabled={!hasSelected} loading={loading}>
+              Remove
+            </Button>
+          </Popconfirm>
           <span style={{ marginLeft: 8 }}>
             {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
           </span>
 
-          <Button className="float-right mb-1" icon="plus" onClick={this.addRow}>
+          <Button className="float-right mb-1" icon="plus" onClick={this.attachDevices}>
             Attach Device...
           </Button>
         </div>
