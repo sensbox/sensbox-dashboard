@@ -9,6 +9,7 @@ const actions = {
   SET_PERMISSIONS: 'resource/SET_PERMISSIONS',
   LINK_MODEL: 'resource/LINK_MODEL',
   UNLINK_MODEL: 'resource/UNLINK_MODEL',
+  PUT_RELATION: 'resource/PUT_RELATION',
 }
 
 export default actions

@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Button, Form, Table, Tag, Popconfirm, Icon } from 'antd'
+import { Button, Form, Table, Tag, Popconfirm, Icon, Modal } from 'antd'
+import DeviceSelect from 'components/Custom/DeviceSelect'
 
 const mapStateToProps = ({ resource }) => ({
   current: resource.current,
@@ -10,7 +11,9 @@ const mapStateToProps = ({ resource }) => ({
 @Form.create()
 class RelatedDevices extends React.Component {
   state = {
-    selectedRowKeys: [], // Check here to configure the default column
+    rowsToRemove: [], // Check here to configure the default column
+    showModal: false,
+    devices: [],
   }
 
   constructor(props) {
@@ -43,33 +46,38 @@ class RelatedDevices extends React.Component {
         //  width: 150,
       },
     ]
+
+    const { devices } = props
+    this.state.devices = devices
   }
 
-  attachDevices = () => {
+  dispatchAttachDevices = () => {
+    const { devices } = this.state
     const { zone, dispatch } = this.props
 
     const { objectId } = zone
 
+    const devicesIds = devices.map(el => el.objectId)
     dispatch({
-      type: 'resource/LINK_MODEL',
+      type: 'resource/PUT_RELATION',
       payload: {
         className: 'Zone',
         objectId,
         relationType: { relationName: 'relatedDevices', relatedClass: 'Device' },
-        data: ['sTy8umT5QX', '8QvC4qfeFo'],
+        data: devicesIds,
         notify: true,
         callback: () => {
-          this.setState({ selectedRowKeys: [] })
+          this.setState({ devices: [] })
+          this.showModal(false)
         },
       },
     })
   }
 
-  removeSelected = () => {
-    // ajax request after empty completing
+  dispatchRemoveSelected = () => {
     const { zone, dispatch } = this.props
 
-    const { selectedRowKeys } = this.state
+    const { rowsToRemove } = this.state
     const { objectId } = zone
 
     dispatch({
@@ -78,48 +86,79 @@ class RelatedDevices extends React.Component {
         className: 'Zone',
         objectId,
         relationName: 'relatedDevices',
-        data: selectedRowKeys,
+        data: rowsToRemove,
         notify: true,
         callback: () => {
-          this.setState({ selectedRowKeys: [] })
+          this.setState({ rowsToRemove: [] })
         },
       },
     })
   }
 
-  onSelectChange = selectedRowKeys => {
-    this.setState({ selectedRowKeys })
+  showModal = showModal => {
+    const { devices } = this.props
+    this.setState({ showModal, devices })
+  }
+
+  onTableSelectChange = rowsToRemove => {
+    this.setState({ rowsToRemove })
+  }
+
+  onModalSelectChange = selectedObjects => {
+    const { devices } = this.state
+    console.log(devices)
+
+    this.setState({ devices: selectedObjects })
   }
 
   render() {
-    const { devices, loading } = this.props
+    const { devices: originalDevices } = this.props
+    const { devices, loading } = this.state
 
-    const { selectedRowKeys } = this.state
+    const { rowsToRemove, showModal } = this.state
 
     const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
+      rowsToRemove,
+      onChange: this.onTableSelectChange,
     }
 
-    const hasSelected = selectedRowKeys.length > 0
+    const hasSelected = rowsToRemove.length > 0
 
     return (
       <div className="col-lg-12">
+        <Modal
+          title="Manage Devices"
+          visible={showModal}
+          onCancel={() => this.showModal(false)}
+          onOk={() => {
+            this.dispatchAttachDevices()
+          }}
+        >
+          <Form.Item
+            label="Related Devices"
+            extra="Input device uuid or description to find one and select it."
+          >
+            <DeviceSelect
+              onChange={newDevices => this.onModalSelectChange(newDevices)}
+              defaultValue={devices}
+            />
+          </Form.Item>
+        </Modal>
         <div className="ant-row">
           <Popconfirm
             title="are you sure to remove the relationship of these devices？"
             icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
-            onConfirm={() => this.removeSelected()}
+            onConfirm={() => this.dispatchRemoveSelected()}
           >
             <Button type="primary" disabled={!hasSelected} loading={loading}>
               Remove
             </Button>
           </Popconfirm>
           <span style={{ marginLeft: 8 }}>
-            {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
+            {hasSelected ? `Selected ${rowsToRemove.length} items` : ''}
           </span>
 
-          <Button className="float-right mb-1" icon="plus" onClick={this.attachDevices}>
+          <Button className="float-right mb-1" icon="plus" onClick={() => this.showModal(true)}>
             Attach Device...
           </Button>
         </div>
@@ -132,7 +171,7 @@ class RelatedDevices extends React.Component {
               className="utils__scrollTable"
               scroll={{ x: '100%' }}
               bordered
-              dataSource={devices}
+              dataSource={originalDevices}
               loading={loading}
               columns={this.columns}
               rowClassName="editable-row"
