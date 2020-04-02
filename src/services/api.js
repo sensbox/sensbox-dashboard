@@ -68,7 +68,18 @@ async function findById(className, objectId, payload = {}) {
   const query = new Parse.Query(Class)
   includes.forEach(include => query.include(include))
   const result = await query.get(objectId)
-  return result ? result.toJSON() : null
+
+  let RelatedObjects = {}
+  if (includes.length > 0) {
+    RelatedObjects = await retrieveRelatedObjects(result, includes)
+  }
+
+  return result
+    ? {
+        ...result.toJSON(),
+        ...RelatedObjects,
+      }
+    : null
 }
 
 async function create(className, data) {
@@ -127,6 +138,90 @@ function createPointer(className, objectId) {
   return pointer
 }
 
+async function linkModel(className, objectId, relationType, data) {
+  // find the target object
+  const targetClass = Parse.Object.extend(className)
+  const targetQuery = new Parse.Query(targetClass)
+  const targetObject = await targetQuery.get(objectId)
+
+  // find the objects that will be related
+  const relatedClass = Parse.Object.extend(relationType.relatedClass)
+  const relatedQuery = new Parse.Query(relatedClass)
+  const newRelations = await relatedQuery.containedIn('objectId', data).find()
+
+  // relate the elements
+  targetObject.relation(relationType.relationName).add(newRelations)
+  await targetObject.save()
+
+  // find the updated relation again to return
+  const newRelated = await targetObject
+    .relation(relationType.relationName)
+    .query()
+    .find()
+
+  return { [relationType.relationName]: newRelated }
+}
+
+async function unlinkModel(className, objectId, relationName, data) {
+  // find the target object
+  const targetClass = Parse.Object.extend(className)
+  const query = new Parse.Query(targetClass)
+  const targetObject = await query.get(objectId)
+
+  // find the related objects that will be unlinked
+  const relationsToRemove = await targetObject
+    .relation(relationName)
+    .query()
+    .containedIn('objectId', data)
+    .find()
+
+  // remove the relation
+  targetObject.relation(relationName).remove(relationsToRemove)
+  await targetObject.save()
+
+  // find the updated relation again to return
+  const newRelated = await targetObject
+    .relation(relationName)
+    .query()
+    .find()
+
+  return { [relationName]: newRelated.map(r => r.toJSON()) }
+}
+
+async function putRelation(className, objectId, relationType, data) {
+  const { relationName, relatedClass } = relationType
+
+  // find the target object
+  const targetClass = Parse.Object.extend(className)
+  const query = new Parse.Query(targetClass)
+  const targetObject = await query.get(objectId)
+
+  // delete the entire relation
+  const relationToRemove = await targetObject
+    .relation(relationName)
+    .query()
+    .find()
+
+  targetObject.relation(relationName).remove(relationToRemove)
+
+  // find the objects that will be related
+  const parseRelatedClass = Parse.Object.extend(relatedClass)
+  const relatedQuery = new Parse.Query(parseRelatedClass)
+  const newRelations = await relatedQuery.containedIn('objectId', data).find()
+
+  // relate the elements
+  targetObject.relation(relationName).add(newRelations)
+  await targetObject.save()
+
+  // find the updated relation again to return
+  const newRelation = await targetObject
+    .relation(relationName)
+    .query()
+    .find()
+
+  return { [relationName]: newRelation.map(r => r.toJSON()) }
+}
+
 async function setPermissions(className, objectId, permissions) {
   const { public: pubPerm, users, roles } = permissions
   const Class = Parse.Object.extend(className)
@@ -149,6 +244,36 @@ async function setPermissions(className, objectId, permissions) {
   return result ? result.toJSON() : null
 }
 
+async function retrieveRelatedObjects(res, includes) {
+  /* eslint-disable dot-notation */
+  try {
+    const relationsToRetrieve = includes.filter(relation => {
+      const { attributes } = res
+      return attributes[relation] && attributes[relation].constructor.name === 'ParseRelation'
+    })
+
+    const results = relationsToRetrieve.map(relation =>
+      res
+        .relation(relation)
+        .query()
+        .find(),
+    )
+
+    const resolvedResults = await Promise.all(results)
+
+    const relatedObjects = {}
+    relationsToRetrieve.forEach((key, i) => {
+      const relatedObject = resolvedResults[i].map(el => el.toJSON())
+      relatedObjects[key] = relatedObject
+    })
+
+    return relatedObjects
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
 const ErrorCodes = Parse.Error
 
 export default {
@@ -159,5 +284,8 @@ export default {
   remove,
   createPointer,
   setPermissions,
+  linkModel,
+  unlinkModel,
+  putRelation,
   ErrorCodes,
 }

@@ -1,8 +1,11 @@
 import React from 'react'
-import { Input, Button, Form, Checkbox, message } from 'antd'
-import { Link } from 'react-router-dom'
+import { Input, Button, Form, Checkbox, message, Tabs, Icon } from 'antd'
+
+import RelatedDevices from './relatedDevices'
 
 const FormItem = Form.Item
+
+const { TabPane } = Tabs
 
 const getFormField = (value, errors) =>
   Form.createFormField({ value, errors: errors ? errors.map(e => new Error(e)) : null })
@@ -39,63 +42,80 @@ class ZoneForm extends React.Component {
   }
 
   render() {
-    const { backLink, form, disableSaveButton } = this.props
+    const fontSize = '1.3rem'
+
+    const { form, zone, disableSaveButton, activeTab = 'details', onTabChange } = this.props
+    const { relatedDevices } = zone
 
     return (
-      <Form layout="vertical" autoComplete="off">
-        <div className="col-lg-12">
-          <h4 className="text-black mb-3">
-            <strong>Information</strong>
-          </h4>
-          <div className="row">
-            <div className="col-lg-6">
-              <div className="form-group">
-                <FormItem label="Name">
-                  {form.getFieldDecorator('name', {
-                    rules: [{ required: true, whitespace: true }],
-                  })(<Input placeholder="Zone name" />)}
-                </FormItem>
+      <Tabs size="small" defaultActiveKey="details" activeKey={activeTab} onChange={onTabChange}>
+        <TabPane
+          tab={
+            <span className="h6">
+              <Icon type="apartment" style={{ fontSize }} /> Zone Info.
+            </span>
+          }
+          key="details"
+        >
+          <Form layout="vertical" autoComplete="off">
+            <div className="col-lg-12">
+              <div className="row">
+                <div className="col-lg-6">
+                  <div className="form-group">
+                    <FormItem label="Name">
+                      {form.getFieldDecorator('name', {
+                        rules: [{ required: true, whitespace: true }],
+                      })(<Input placeholder="Zone name" />)}
+                    </FormItem>
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <div className="form-group">
+                    <FormItem label="Description">
+                      {form.getFieldDecorator('description')(
+                        <Input.TextArea placeholder="Zone Description..." />,
+                      )}
+                    </FormItem>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="form-group">
+                    <FormItem>
+                      {form.getFieldDecorator('active', { valuePropName: 'checked' })(
+                        <Checkbox>Active</Checkbox>,
+                      )}
+                    </FormItem>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="col-lg-12">
-              <div className="form-group">
-                <FormItem label="Description">
-                  {form.getFieldDecorator('description')(
-                    <Input.TextArea placeholder="Zone Description..." />,
-                  )}
-                </FormItem>
+              <div className="form-actions">
+                <Button
+                  className="float-right"
+                  icon="save"
+                  disabled={disableSaveButton}
+                  type="primary"
+                  onClick={this.save}
+                >
+                  Save
+                </Button>
               </div>
             </div>
-            <div className="col-lg-6">
-              <div className="form-group">
-                <FormItem>
-                  {form.getFieldDecorator('active', { valuePropName: 'checked' })(
-                    <Checkbox>Active</Checkbox>,
-                  )}
-                </FormItem>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-12">
-          <div className="form-actions">
-            <Link to={backLink}>
-              <Button className="mr-2" icon="arrow-left" type="default">
-                Return Back
-              </Button>
-            </Link>
-            <Button
-              className="float-right"
-              icon="save"
-              disabled={disableSaveButton}
-              type="primary"
-              onClick={this.save}
-            >
-              Save
-            </Button>
-          </div>
-        </div>
-      </Form>
+          </Form>
+        </TabPane>
+        <TabPane
+          disabled={!zone.objectId}
+          tab={
+            <span className="h6">
+              <Icon type="shake" style={{ fontSize }} /> Devices
+            </span>
+          }
+          key="related_devices"
+        >
+          <RelatedDevices zone={zone} devices={relatedDevices} />
+        </TabPane>
+      </Tabs>
     )
   }
 }

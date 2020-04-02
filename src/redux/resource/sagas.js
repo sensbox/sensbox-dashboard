@@ -210,6 +210,99 @@ export function* REMOVE({ payload }) {
   })
 }
 
+export function* LINK_MODEL({ payload }) {
+  const { className, objectId, relationType, data, notify, callback } = payload
+
+  const savingMessage = message.loading('Updating...', 0)
+  try {
+    yield call(Api.linkModel, className, objectId, relationType, data)
+
+    yield put({
+      type: 'resource/GET_CURRENT',
+      payload: {
+        className,
+        objectId,
+        includes: [relationType.relationName],
+      },
+    })
+
+    setTimeout(savingMessage, 0)
+
+    if (notify) {
+      yield notification.success({
+        message: 'Perfect!',
+        description: 'Resource updated successfully',
+        duration: 1.5,
+      })
+    }
+    if (callback) yield call(callback)
+  } catch (error) {
+    yield call(handleError, error, { objectId, ...data }, 'unlink model')
+  }
+}
+
+export function* UNLINK_MODEL({ payload }) {
+  const { className, objectId, relationName, data, notify, callback } = payload
+
+  const savingMessage = message.loading('Updating...', 0)
+  try {
+    yield call(Api.unlinkModel, className, objectId, relationName, data)
+
+    yield put({
+      type: 'resource/GET_CURRENT',
+      payload: {
+        className,
+        objectId,
+        includes: [relationName],
+      },
+    })
+
+    setTimeout(savingMessage, 0)
+
+    if (notify) {
+      yield notification.success({
+        message: 'Perfect!',
+        description: 'Resource updated successfully',
+        duration: 1.5,
+      })
+    }
+    if (callback) yield call(callback)
+  } catch (error) {
+    yield call(handleError, error, { objectId, ...data }, 'unlink model')
+  }
+}
+
+export function* PUT_RELATION({ payload }) {
+  const { className, objectId, relationType, data, notify, callback } = payload
+
+  const savingMessage = message.loading('Updating...', 0)
+  try {
+    yield call(Api.putRelation, className, objectId, relationType, data)
+
+    yield put({
+      type: 'resource/GET_CURRENT',
+      payload: {
+        className,
+        objectId,
+        includes: [relationType.relationName],
+      },
+    })
+
+    setTimeout(savingMessage, 0)
+
+    if (notify) {
+      yield notification.success({
+        message: 'Perfect!',
+        description: 'Resource updated successfully',
+        duration: 1.5,
+      })
+    }
+    if (callback) yield call(callback)
+  } catch (error) {
+    yield call(handleError, error, { objectId, ...data }, 'unlink model')
+  }
+}
+
 export function* SET_PERMISSIONS({ payload }) {
   const { className, objectId, permissions, notify, callback } = payload
   try {
@@ -301,5 +394,8 @@ export default function* rootSaga() {
     takeEvery(actions.REMOVE, REMOVE),
     takeEvery(actions.CLEAR_CURRENT, CLEAR_CURRENT),
     takeEvery(actions.SET_PERMISSIONS, SET_PERMISSIONS),
+    takeEvery(actions.LINK_MODEL, LINK_MODEL),
+    takeEvery(actions.UNLINK_MODEL, UNLINK_MODEL),
+    takeEvery(actions.PUT_RELATION, PUT_RELATION),
   ])
 }

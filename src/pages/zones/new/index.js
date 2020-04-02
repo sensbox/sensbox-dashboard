@@ -18,6 +18,7 @@ class ZoneNew extends React.Component {
     organization: null,
     backLink: null,
     editLink: null,
+    activeTab: 'details',
   }
 
   constructor(props) {
@@ -60,6 +61,10 @@ class ZoneNew extends React.Component {
     })
   }
 
+  changeTab = tab => {
+    this.setState({ activeTab: tab })
+  }
+
   saveAction(formData) {
     const { dispatch } = this.props
     const { organization } = this.state
@@ -79,7 +84,7 @@ class ZoneNew extends React.Component {
 
   render() {
     const { location, saving, current, formErrors } = this.props
-    const { backLink, organization } = this.state
+    const { backLink, organization, activeTab } = this.state
 
     if (!location.state) {
       return <Redirect to={backLink} />
@@ -105,6 +110,8 @@ class ZoneNew extends React.Component {
                   saveAction={this.saveAction}
                   errors={formErrors}
                   backLink={{ pathname: backLink, state: { organization } }}
+                  activeTab={activeTab}
+                  onTabChange={this.changeTab}
                 />
               </div>
             </div>
