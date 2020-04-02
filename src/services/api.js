@@ -150,7 +150,7 @@ async function linkModel(className, objectId, relationType, data) {
   const newRelations = await relatedQuery.containedIn('objectId', data).find()
 
   // relate the elements
-  targetObject.relation(relationType.relationName).add(newRelations)
+  if (newRelations.length > 0) targetObject.relation(relationType.relationName).add(newRelations)
   await targetObject.save()
 
   // find the updated relation again to return
@@ -210,7 +210,8 @@ async function putRelation(className, objectId, relationType, data) {
   const newRelations = await relatedQuery.containedIn('objectId', data).find()
 
   // relate the elements
-  targetObject.relation(relationName).add(newRelations)
+  if (newRelations.length > 0) targetObject.relation(relationName).add(newRelations)
+
   await targetObject.save()
 
   // find the updated relation again to return
